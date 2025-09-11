@@ -1,11 +1,10 @@
 package com.labndbnb.landbnb.dto;
 
-
 import lombok.Data;
 import java.util.List;
 
 @Data
-public class AlojamientoDetailDto {
+public class AlojamientoDTO {
     private Long id;
     private String titulo;
     private String descripcion;
