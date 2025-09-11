@@ -30,8 +30,6 @@ public class AuthServiceImpl implements AuthService {
 
         newUser.setId(newId);
         newUser.setEmail(request.getEmail());
-        // En una aplicación real, la contraseña debería ser hasheada.
-        // Ejemplo: passwordEncoder.encode(request.getPassword())
         newUser.setPassword(request.getPassword());
         newUser.setNombre(request.getNombre());
         newUser.setTelefono(request.getTelefono());
@@ -77,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
     public void sendResetPasswordEmail(String email) {
         User user = usersByEmail.get(email);
         if (user == null) {
-            // No se lanza error para no revelar si un email existe o no
+
             System.out.println("Solicitud de reseteo para un email no existente: " + email);
             return;
         }
@@ -85,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
         String token = UUID.randomUUID().toString();
         passwordResetTokens.put(token, email);
 
-        // Simula el envío de un correo
+
         System.out.println("======================================================");
         System.out.println("Enviando correo de reseteo de contraseña a: " + email);
         System.out.println("Token: " + token);
@@ -102,19 +100,18 @@ public class AuthServiceImpl implements AuthService {
 
         User user = usersByEmail.get(email);
         if (user != null) {
-            // En una app real, hashear la nueva contraseña
+
             user.setPassword(request.getNewPassword());
             usersByEmail.put(email, user);
             usersById.put(user.getId(), user);
         }
 
-        passwordResetTokens.remove(request.getToken()); // El token se usa una sola vez
+        passwordResetTokens.remove(request.getToken());
     }
 
     @Override
     public void changePassword(ChangePasswordRequest request) {
-        // En una app real, se obtendría el usuario del contexto de seguridad.
-        // Aquí simulamos con el primer usuario para el ejemplo.
+
         User user = usersById.get(1L);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
