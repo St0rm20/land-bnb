@@ -1,0 +1,83 @@
+package com.labndbnb.landbnb.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "lodgings")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class Lodging {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false, length = 200)
+    private String name;
+
+    @Column(name = "description", length = 2000)
+    private String description;
+
+    @Column(name = "city", nullable = false, length = 100)
+    private String city;
+
+    @Column(name = "address", nullable = false, length = 300)
+    private String address;
+
+    @Column(name = "latitude", precision = 9, scale = 6)
+    private Double latitude;
+
+    @Column(name = "longitude", precision = 9, scale = 6)
+    private Double longitude;
+
+    @Column(name = "price_per_night", nullable = false)
+    private Integer pricePerNight;
+
+    @Column(name = "capacity", nullable = false)
+    private Integer capacity;
+
+    @ElementCollection
+    @CollectionTable(name = "lodging_services",
+            joinColumns = @JoinColumn(name = "lodging_id"))
+    @Column(name = "service", length = 100)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    private List<String> services = new ArrayList<>();
+
+    @Column(name = "principal_image_url", length = 500)
+    private String principalImageUrl;
+
+    @ElementCollection
+    @CollectionTable(name = "lodging_images",
+            joinColumns = @JoinColumn(name = "lodging_id"))
+    @Column(name = "image_url", length = 500)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    private List<String> images = new ArrayList<>();
+
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "average_rating", precision = 3, scale = 2)
+    private Double averageRating = 0.0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User host;
+
+
+}

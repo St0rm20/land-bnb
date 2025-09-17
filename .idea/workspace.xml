@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ChangePasswordRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ImagenDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/LoginRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ResetPasswordRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/UserDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/UserRegistration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AlojamientoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AlojamientoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AuthResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Booking.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Comment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Lodging.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/enums/BookingStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/enums/UserRole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/resources/landbnb.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +47,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="com.intellij.jpb.JpaEntity" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -53,21 +56,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "HelenGiraldo"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;HelenGiraldo&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/St0rm20/land-bnb.git",
-    "accountId": "192c08b3-45fd-46fe-9954-395c510fe678"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/St0rm20/land-bnb.git&quot;,
+    &quot;accountId&quot;: &quot;7b79e9bd-ab8a-452b-9e29-6588b5b6a5c6&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="32YpcysC0ZAT7cTnj3Vy3ht35fK" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -78,8 +81,15 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Build landbnb.executor": "Run",
+    "HTTP Request.All in app.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.LandbnbApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -87,10 +97,29 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunDashboard">
+    <option name="configurationStatuses">
+      <map>
+        <entry key="HttpClient.HttpRequestRunConfigurationType">
+          <value>
+            <map>
+              <entry key="All in app" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.LandbnbApplication">
+    <configuration name="All in app" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/app.http">
+      <method v="2" />
+    </configuration>
     <configuration name="LandbnbApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="landbnb.main" />
@@ -99,6 +128,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.All in app" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -116,6 +150,9 @@
       <option name="presentableId" value="Default" />
       <updated>1757607443792</updated>
       <workItem from="1757607444923" duration="931000" />
+      <workItem from="1757784525322" duration="3867000" />
+      <workItem from="1757885107907" duration="1799000" />
+      <workItem from="1758120440199" duration="7089000" />
     </task>
     <servers />
   </component>

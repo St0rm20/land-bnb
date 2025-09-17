@@ -21,6 +21,31 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse register(UserRegistration request) {
+        return null;
+    }
+
+    @Override
+    public AuthResponse login(LoginRequest request) {
+        return null;
+    }
+
+    @Override
+    public void sendResetPasswordEmail(String email) {
+
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+
+    }
+/*
+    @Override
+    public AuthResponse register(UserRegistration request) {
         if (usersByEmail.containsKey(request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El correo electrónico ya está registrado.");
         }
@@ -127,5 +152,7 @@ public class AuthServiceImpl implements AuthService {
 
         System.out.println("Contraseña cambiada exitosamente para el usuario: " + user.getEmail());
     }
+
+ */
 }
 
