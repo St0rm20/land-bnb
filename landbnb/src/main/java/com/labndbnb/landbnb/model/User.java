@@ -48,6 +48,8 @@ public class User {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
+
+@Lob
     @Column(name = "bio", length = 500)
     private String bio;
 
