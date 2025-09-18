@@ -79,5 +79,8 @@ public class Lodging {
     @JoinColumn(name = "user_id", nullable = false)
     private User host;
 
+    @OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Booking> bookings = new ArrayList<>();
+
 
 }
