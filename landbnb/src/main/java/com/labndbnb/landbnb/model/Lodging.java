@@ -82,5 +82,6 @@ public class Lodging {
     @OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<Booking> bookings = new ArrayList<>();
 
-
+@OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Comment> comments = new ArrayList<>();
 }
