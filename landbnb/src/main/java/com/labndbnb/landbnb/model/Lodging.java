@@ -27,6 +27,7 @@ public class Lodging {
     @Column(name = "name", nullable = false, length = 200)
     private String name;
 
+    @Lob
     @Column(name = "description", length = 2000)
     private String description;
 
