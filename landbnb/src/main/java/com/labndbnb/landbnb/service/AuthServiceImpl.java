@@ -1,6 +1,6 @@
 package com.labndbnb.landbnb.service;
 
-import com.labndbnb.landbnb.dto.*;
+import com.labndbnb.landbnb.dto.aut_dto.*;
 import com.labndbnb.landbnb.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

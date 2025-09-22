@@ -19,7 +19,7 @@ public class Comment {
     private Long id;
 
     @Column(nullable = false)
-    private Integer rating; // 1–5 estrellas, por ejemplo
+    private Integer rating;
 
     @Column(nullable = false, length = 2000)
     private String content;

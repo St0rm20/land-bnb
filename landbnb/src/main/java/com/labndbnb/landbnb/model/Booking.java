@@ -28,8 +28,9 @@ public class Booking {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_price", nullable = false)
     private Double totalPrice;
+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

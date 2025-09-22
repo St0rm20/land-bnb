@@ -1,6 +1,6 @@
 package com.labndbnb.landbnb.service;
 
-import com.labndbnb.landbnb.dto.*;
+import com.labndbnb.landbnb.dto.aut_dto.*;
 
 public interface AuthService {
 

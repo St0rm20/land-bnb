@@ -2,6 +2,7 @@ package com.labndbnb.landbnb.model;
 
 import com.labndbnb.landbnb.model.enums.UserRole;
 import jakarta.persistence.*;
+
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -49,7 +50,7 @@ public class User {
     private boolean active = true;
 
 
-@Lob
+    @Lob
     @Column(name = "bio", length = 500)
     private String bio;
 
@@ -67,15 +68,4 @@ public class User {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
-    @OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lodging> lodgings = new ArrayList<>();
-
-@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Booking> bookings = new ArrayList<>();
-        
- @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
 }

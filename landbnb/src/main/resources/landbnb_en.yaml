@@ -1,0 +1,1136 @@
+openapi: 3.0.3
+info:
+  title: Land BnB
+  description: API for managing accommodations, bookings, and reviews for Land BnB.
+  version: 1.0.0
+  contact:
+    name: Land BnB
+    url: https://landbnb-mockup.netlify.app/
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local Land BnB server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: "2024-01-15T10:30:00Z"
+        status: 401
+        error: "Unauthorized"
+        message: "Unauthorized access"
+        path: "/api/accommodations"
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        userId:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+      example:
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        userId: 1
+        email: "user@example.com"
+        role: "USER"
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      example:
+        email: "user@example.com"
+        password: "Password123"
+
+    UserRegistration:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - phone
+        - role
+        - birthDate
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        name:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+        birthDate:
+          type: string
+          format: date
+      example:
+        email: "new@user.com"
+        password: "Password123"
+        name: "John Doe"
+        phone: "+573001234567"
+        role: "USER"
+        birthDate: "1990-01-01"
+
+    ResetPasswordRequest:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          format: password
+      example:
+        token: "abc123def456"
+        newPassword: "NewPassword123"
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          format: password
+        newPassword:
+          type: string
+          format: password
+      example:
+        currentPassword: "Password123"
+        newPassword: "NewPassword123"
+
+    AccommodationDto:
+      type: object
+      required:
+        - title
+        - description
+        - city
+        - address
+        - pricePerNight
+        - maxCapacity
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        pricePerNight:
+          type: number
+          format: double
+        maxCapacity:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+      example:
+        title: "Beautiful apartment in the city center"
+        description: "Spacious apartment with mountain view..."
+        city: "Bogotá"
+        address: "Street 123 #45-67"
+        latitude: 4.7110
+        longitude: -74.0721
+        pricePerNight: 120000
+        maxCapacity: 4
+        amenities: ["WIFI", "KITCHEN", "TV"]
+
+    AccommodationDetailDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        pricePerNight:
+          type: number
+          format: double
+        maxCapacity:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+        host:
+          $ref: '#/components/schemas/UserDto'
+        averageRating:
+          type: number
+          format: double
+        totalBookings:
+          type: integer
+        mainImage:
+          type: string
+          description: URL of the accommodation's main image
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageDto'
+      example:
+        id: 1
+        title: "Beach house"
+        description: "Beautiful house by the sea"
+        city: "Cartagena"
+        address: "Street 123"
+        latitude: 10.3910
+        longitude: -75.4795
+        pricePerNight: 250000
+        maxCapacity: 6
+        amenities: ["WIFI", "POOL", "AIR_CONDITIONING"]
+        host:
+          id: 1
+          email: "host@example.com"
+          name: "Carlos Rodríguez"
+          phone: "+573001234567"
+          role: "HOST"
+        averageRating: 4.8
+        totalBookings: 15
+        mainImage: "https://cdn.landbnb.com/accommodations/1/main.jpg"
+        images:
+          - url: "https://cdn.landbnb.com/accommodations/1/1.jpg"
+            isMain: false
+          - url: "https://cdn.landbnb.com/accommodations/1/2.jpg"
+            isMain: false
+
+    SearchCriteria:
+      type: object
+      properties:
+        city:
+          type: string
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        guests:
+          type: integer
+        minPrice:
+          type: number
+          format: double
+        maxPrice:
+          type: number
+          format: double
+        amenities:
+          type: array
+          items:
+            type: string
+      example:
+        city: "Bogotá"
+        checkIn: "2024-02-01"
+        checkOut: "2024-02-05"
+        guests: 2
+        minPrice: 50000
+        maxPrice: 200000
+        amenities: ["WIFI", "POOL"]
+
+    BookingRequest:
+      type: object
+      required:
+        - accommodationId
+        - checkIn
+        - checkOut
+        - numberOfGuests
+      properties:
+        accommodationId:
+          type: integer
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        numberOfGuests:
+          type: integer
+      example:
+        accommodationId: 1
+        checkIn: "2024-02-01"
+        checkOut: "2024-02-05"
+        numberOfGuests: 2
+
+    BookingDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        checkInDate:
+          type: string
+          format: date
+        checkOutDate:
+          type: string
+          format: date
+        numberOfGuests:
+          type: integer
+        totalPrice:
+          type: number
+          format: double
+        status:
+          type: string
+        accommodation:
+          $ref: '#/components/schemas/AccommodationDto'
+        user:
+          $ref: '#/components/schemas/UserDto'
+
+    ReviewRequest:
+      type: object
+      required:
+        - bookingId
+        - rating
+      properties:
+        bookingId:
+          type: integer
+        rating:
+          type: integer
+        text:
+          type: string
+          maxLength: 500
+      example:
+        bookingId: 1
+        rating: 5
+        text: "Excellent experience, highly recommended"
+
+    ReviewDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        rating:
+          type: integer
+        text:
+          type: string
+        hostResponse:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/UserDto'
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+        profilePicture:
+          type: string
+
+    UserUpdateDto:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        profilePicture:
+          type: string
+        description:
+          type: string
+      example:
+        name: "John Doe Updated"
+        phone: "+573009876543"
+        profilePicture: "https://cloudinary.com/profile.jpg"
+
+    AccommodationMetrics:
+      type: object
+      properties:
+        totalBookings:
+          type: integer
+        averageRating:
+          type: number
+          format: double
+        totalRevenue:
+          type: number
+          format: double
+
+    ImageDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        isMain:
+          type: boolean
+
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Page number (0-based)
+      required: false
+      schema:
+        type: integer
+        default: 0
+    sizeParam:
+      name: size
+      in: query
+      description: Page size
+      required: false
+      schema:
+        type: integer
+        default: 10
+    idPathParam:
+      name: id
+      in: path
+      description: Resource ID
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    UnauthorizedError:
+      description: Invalid or missing token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ForbiddenError:
+      description: Insufficient permissions to access the resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Input data validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ConflictError:
+      description: Conflict with the current resource state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register new user
+      description: Creates a new user or host account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login
+      description: Authenticates a user and returns a JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/forgot-password:
+    post:
+      tags: [Authentication]
+      summary: Request password recovery
+      description: Sends a recovery code to the user's email
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Recovery code sent
+        '400':
+          description: Invalid email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/reset-password:
+    post:
+      tags: [Authentication]
+      summary: Reset password
+      description: Resets password using a recovery code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset successfully
+        '400':
+          description: Invalid or expired code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/change-password:
+    post:
+      tags: [Authentication]
+      summary: Change password
+      description: Changes the authenticated user's password
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password changed successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /accommodations:
+    get:
+      tags: [Accommodations]
+      summary: Get accommodations list
+      description: Returns a paginated list of all active accommodations
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of accommodations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccommodationDto'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags: [Accommodations]
+      summary: Create new accommodation
+      description: Creates a new accommodation (hosts only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                accommodationDto:
+                  $ref: '#/components/schemas/AccommodationDto'
+                mainImage:
+                  type: string
+                  format: binary
+                  description: Main image of the accommodation
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: List of additional accommodation images
+      responses:
+        '201':
+          description: Accommodation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccommodationDetailDto'
+        '400':
+          description: Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /accommodations/{id}:
+    get:
+      tags: [Accommodations]
+      summary: Get accommodation by ID
+      description: Returns complete details of a specific accommodation
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      responses:
+        '200':
+          description: Accommodation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccommodationDetailDto'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags: [Accommodations]
+      summary: Update accommodation
+      description: Updates accommodation information (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccommodationDto'
+      responses:
+        '200':
+          description: Accommodation updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccommodationDto'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags: [Accommodations]
+      summary: Delete accommodation (soft delete)
+      description: Marks an accommodation as deleted (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      responses:
+        '200':
+          description: Accommodation deleted successfully
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /accommodations/search:
+    post:
+      tags: [Accommodations]
+      summary: Search accommodations
+      description: Searches accommodations based on specific criteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchCriteria'
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccommodationDto'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+        '400':
+          description: Invalid search criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /accommodations/host/my-accommodations:
+    get:
+      tags: [Accommodations]
+      summary: Get host accommodations
+      description: Returns the accommodations of the authenticated host
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of host accommodations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccommodationDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /accommodations/{id}/metrics:
+    get:
+      tags: [Accommodations]
+      summary: Get accommodation metrics
+      description: Returns specific metrics for an accommodation (owner only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Accommodation metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccommodationMetrics'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /bookings:
+    post:
+      tags: [Bookings]
+      summary: Create booking
+      description: Creates a new booking for an accommodation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequest'
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingDto'
+        '400':
+          description: Dates not available or invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /bookings/user:
+    get:
+      tags: [Bookings]
+      summary: Get user bookings
+      description: Returns the bookings of the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of user bookings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookingDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /bookings/host:
+    get:
+      tags: [Bookings]
+      summary: Get host bookings
+      description: Returns bookings for the host's accommodations
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accommodationId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of host bookings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookingDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /bookings/{id}/cancel:
+    post:
+      tags: [Bookings]
+      summary: Cancel booking
+      description: Cancels an existing booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      responses:
+        '200':
+          description: Booking canceled successfully
+        '400':
+          description: Cannot cancel booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /reviews:
+    post:
+      tags: [Reviews]
+      summary: Create review
+      description: Creates a new review for a completed booking
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+      responses:
+        '201':
+          description: Review created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDto'
+        '400':
+          description: Cannot review this booking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /reviews/accommodation/{accommodationId}:
+    get:
+      tags: [Reviews]
+      summary: Get accommodation reviews
+      description: Returns reviews for a specific accommodation
+      parameters:
+        - name: accommodationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewDto'
+        '404':
+          description: Accommodation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /reviews/{id}/respond:
+    post:
+      tags: [Reviews]
+      summary: Respond to review
+      description: Adds a response to a review (host only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - name: response
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Response added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          description: Review not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/profile:
+    get:
+      tags: [Users]
+      summary: Get user profile
+      description: Returns the profile of the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags: [Users]
+      summary: Update profile
+      description: Updates the user's profile information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+tags:
+  - name: Authentication
+    description: Endpoints for registration, login and password management
+  - name: Accommodations
+    description: Property management and search
+  - name: Bookings
+    description: Booking creation and management
+  - name: Reviews
+    description: Reviews and ratings
+  - name: Users
+    description: User profile management

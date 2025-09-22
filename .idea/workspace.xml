@@ -4,13 +4,82 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="fix notifications">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/landbnb.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/BookingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/CommentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/LodgingController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/aut_dto/AuthResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/aut_dto/ChangePasswordRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/aut_dto/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/aut_dto/ResetPasswordRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/aut_dto/UserRegistration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/booking_dto/BookingDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/booking_dto/BookingRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/comment_dto/CommentDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/comment_dto/CommentRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/lodging_dto/LodgingDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/lodging_dto/LodgingDetailDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/lodging_dto/LodgingMetrics.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/lodging_dto/SearchCriteria.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/user_dto/UserDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/user_dto/UserUpdateDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/util_dto/ErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/util_dto/ImageDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/util_dto/PageResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/UserRepositoryImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/resources/landbnb_en.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/LandbnbApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/LandbnbApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AlojamientoController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/ComentarioController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/ReservaController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/AlojamientoDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/AuthResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/ChangePasswordRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/ImagenDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/LoginRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/ResetPasswordRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/UserDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/UserRegistration.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/AuthServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/LandbnbApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/LandbnbApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AlojamientoController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/ComentarioController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/ReservaController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AlojamientoDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/AuthResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ChangePasswordRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ImagenDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/LoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/ResetPasswordRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/UserDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/UserRegistration.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Comment.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Comment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +112,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="com.intellij.jpb.JpaEntity" />
+        <option value="OpenAPI" />
         <option value="Enum" />
+        <option value="Record" />
         <option value="Class" />
       </list>
     </option>
@@ -84,6 +155,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.LandbnbApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
@@ -97,6 +169,11 @@
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
   }
 }]]></component>
   <component name="RunManager" selected="Spring Boot.LandbnbApplication">
@@ -137,11 +214,26 @@
       <workItem from="1757885107907" duration="1799000" />
       <workItem from="1758120440199" duration="7089000" />
       <workItem from="1758421810661" duration="2531000" />
-      <workItem from="1758431528324" duration="399000" />
+      <workItem from="1758431528324" duration="4198000" />
+      <workItem from="1758480029231" duration="430000" />
+      <workItem from="1758502301945" duration="8220000" />
     </task>
+    <task id="LOCAL-00001" summary="fix notifications">
+      <option name="closed" value="true" />
+      <created>1758432252264</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1758432252264</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix notifications" />
   </component>
 </project>
