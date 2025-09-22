@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public record UserRegistration(
         @Email String email,
         String password,
-        String nombre,
-        String telefono,
-        String rol,
-        @JsonFormat(pattern = "yyyy-MM-dd") LocalDate fechaNacimiento
+        String name,
+        String phone,
+        String role,
+        @JsonFormat(pattern = "yyyy-MM-dd") LocalDate birthDate
 ) {}

@@ -2,7 +2,7 @@ package com.labndbnb.landbnb.dto.aut_dto;
 
 public record AuthResponse(
         String token,
-        Integer userId,
+        int userId,
         String email,
-        String rol
+        String role
 ) {}

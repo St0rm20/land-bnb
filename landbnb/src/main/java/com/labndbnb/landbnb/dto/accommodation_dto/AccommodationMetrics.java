@@ -1,6 +1,6 @@
-package com.labndbnb.landbnb.dto.lodging_dto;
+package com.labndbnb.landbnb.dto.accommodation_dto;
 
-public record LodgingMetrics(
+public record AccommodationMetrics(
         Integer totalReservas,
         Double promedioCalificacion,
         Double ingresosTotales) {

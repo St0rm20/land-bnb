@@ -1,8 +1,8 @@
 package com.labndbnb.landbnb.controller;
 
-import com.labndbnb.landbnb.dto.lodging_dto.LodgingDTO;
-import com.labndbnb.landbnb.dto.lodging_dto.SearchCriteria;
-import lombok.RequiredArgsConstructor;
+import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
+import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
+import com.labndbnb.landbnb.dto.accommodation_dto.SearchCriteria;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/alojamientos")
-public class LodgingController {
+public class AccommodationController {
 
     @GetMapping
     public ResponseEntity<?> getAlojamientos(
@@ -28,7 +28,7 @@ public class LodgingController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ANFITRION')")
     public ResponseEntity<?> createAlojamiento(
-            @RequestPart LodgingDTO alojamientoDto,
+            @RequestPart AccommodationDto alojamientoDto,
             @RequestPart MultipartFile imagenPrincipal,
             @RequestPart(required = false) List<MultipartFile> imagenes) {
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -41,7 +41,7 @@ public class LodgingController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ANFITRION')")
-    public ResponseEntity<?> updateAlojamiento(@PathVariable Integer id, @RequestBody LodgingDTO alojamientoDto) {
+    public ResponseEntity<?> updateAlojamiento(@PathVariable Integer id, @RequestBody AccommodationDto alojamientoDto) {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

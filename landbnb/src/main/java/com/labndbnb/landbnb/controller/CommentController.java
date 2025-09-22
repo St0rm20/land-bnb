@@ -1,6 +1,6 @@
 package com.labndbnb.landbnb.controller;
 
-import com.labndbnb.landbnb.dto.comment_dto.CommentRequest;
+import com.labndbnb.landbnb.dto.comment_dto.ReviewRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ public class CommentController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createComentario(@RequestBody CommentRequest comentarioRequest) {
+    public ResponseEntity<?> createComentario(@RequestBody ReviewRequest reviewRequest) {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

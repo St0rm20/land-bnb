@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "reviews")
 @Getter
 @Setter
 @NoArgsConstructor 
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,6 @@ public class Comment {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lodging_id", nullable = false)
-    private Lodging lodging;
+    @JoinColumn(name = "accommodation_id", nullable = false)
+    private Accommodation accommodation;
 }

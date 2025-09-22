@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
@@ -13,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "lodgings")
+@Table(name = "accommodations")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Lodging {
+public class Accommodation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,8 +54,8 @@ public class Lodging {
     private Integer capacity;
 
     @ElementCollection
-    @CollectionTable(name = "lodging_services",
-            joinColumns = @JoinColumn(name = "lodging_id"))
+    @CollectionTable(name = "accommodation_services",
+            joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "service", length = 100)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private List<String> services = new ArrayList<>();
@@ -65,8 +64,8 @@ public class Lodging {
     private String principalImageUrl;
 
     @ElementCollection
-    @CollectionTable(name = "lodging_images",
-            joinColumns = @JoinColumn(name = "lodging_id"))
+    @CollectionTable(name = "accommodation_images",
+            joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image_url", length = 500)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private List<String> images = new ArrayList<>();
@@ -82,9 +81,9 @@ public class Lodging {
     @JoinColumn(name = "user_id", nullable = false)
     private User host;
 
-    @OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<Booking> bookings = new ArrayList<>();
 
-@OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Comment> comments = new ArrayList<>();
+@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+private List<Review> reviews = new ArrayList<>();
 }

@@ -1,8 +1,10 @@
 package com.labndbnb.landbnb.dto.aut_dto;
 
 
+import jakarta.validation.constraints.Email;
+
 public record LoginRequest(
-        String email,
+        @Email String email,
         String password
 ) {}
 
