@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.model;
 
 import com.labndbnb.landbnb.model.enums.UserRole;
+import com.labndbnb.landbnb.model.enums.UserStatuts;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -46,10 +47,6 @@ public class User {
     @Column(name = "profile_picture_url", length = 500)
     private String profilePictureUrl;
 
-    @Column(name = "active", nullable = false)
-    private boolean active = true;
-
-
     @Lob
     @Column(name = "bio", length = 500)
     private String bio;
@@ -57,6 +54,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
     private UserRole role = UserRole.USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private UserStatuts status = UserStatuts.ACTIVE;
+
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;

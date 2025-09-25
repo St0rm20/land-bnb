@@ -3,6 +3,7 @@ package com.labndbnb.landbnb.mappers;
 import com.labndbnb.landbnb.dto.aut_dto.UserRegistration;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.UserRole;
+import com.labndbnb.landbnb.model.enums.UserStatuts;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -17,7 +18,7 @@ public interface UserRegistrationMapper {
     @Mapping(target = "role", expression = "java(UserRole.valueOf(dto.role().toUpperCase()))")
     @Mapping(target = "profilePictureUrl", ignore = true) // opcional, no viene del DTO
     @Mapping(target = "bio", ignore = true) // opcional
-    @Mapping(target = "active", constant = "true") // al registrarse queda activo
+    @Mapping(target = "status", constant = "ACTIVE")
     @Mapping(target = "emailVerified", constant = "false") // al inicio no verificado
     @Mapping(target = "createdAt", ignore = true) // lo maneja @CreationTimestamp
     @Mapping(target = "lastLoginAt", ignore = true)
@@ -26,7 +27,6 @@ public interface UserRegistrationMapper {
     @Mapping(target = "password", ignore = true) // nunca devolvemos el password!
     @Mapping(target = "phone", source = "phoneNumber")
     @Mapping(target = "birthDate", source = "dateOfBirth")
-    @Mapping(target = "role", source = "role")
     UserRegistration toDto(User user);
 
 }

@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.dto.user_dto;
 
 import com.labndbnb.landbnb.model.enums.UserRole;
+import com.labndbnb.landbnb.model.enums.UserStatuts;
 
 import java.time.LocalDate;
 
@@ -11,5 +12,6 @@ public record UserDto(
         String phoneNumber,
         UserRole userRole,
         String profilePictureUrl,
-        LocalDate dateBirth
+        LocalDate dateBirth,
+        UserStatuts userStatuts
 ) {}
