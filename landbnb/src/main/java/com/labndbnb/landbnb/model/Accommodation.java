@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
@@ -86,4 +87,8 @@ private List<Booking> bookings = new ArrayList<>();
 
 @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<Review> reviews = new ArrayList<>();
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

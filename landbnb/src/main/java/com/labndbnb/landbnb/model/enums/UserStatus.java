@@ -1,6 +1,6 @@
 package com.labndbnb.landbnb.model.enums;
 
-public enum UserStatuts {
+public enum UserStatus {
     ACTIVE,
     INACTIVE,
 }

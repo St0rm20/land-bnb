@@ -1,9 +1,7 @@
-package com.labndbnb.landbnb.mappers;
+package com.labndbnb.landbnb.mappers.auth;
 
 import com.labndbnb.landbnb.dto.aut_dto.UserRegistration;
 import com.labndbnb.landbnb.model.User;
-import com.labndbnb.landbnb.model.enums.UserRole;
-import com.labndbnb.landbnb.model.enums.UserStatuts;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,10 +10,10 @@ import org.mapstruct.MappingConstants;
 public interface UserRegistrationMapper {
 
     @Mapping(target = "id", ignore = true) // lo maneja la BD con autoincrement
-    @Mapping(target = "passwordHash", source = "password") // password plano -> passwordHash
-    @Mapping(target = "phoneNumber", source = "phone")
+    @Mapping(target = "password", source = "password")
+    @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "dateOfBirth", source = "birthDate")
-    @Mapping(target = "role", expression = "java(UserRole.valueOf(dto.role().toUpperCase()))")
+    @Mapping(target = "role", expression = "java(UserRole.valueOf(dto.role()))")
     @Mapping(target = "profilePictureUrl", ignore = true) // opcional, no viene del DTO
     @Mapping(target = "bio", ignore = true) // opcional
     @Mapping(target = "status", constant = "ACTIVE")
@@ -25,7 +23,7 @@ public interface UserRegistrationMapper {
     User toEntity(UserRegistration dto);
 
     @Mapping(target = "password", ignore = true) // nunca devolvemos el password!
-    @Mapping(target = "phone", source = "phoneNumber")
+    @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "birthDate", source = "dateOfBirth")
     UserRegistration toDto(User user);
 

@@ -1,16 +1,17 @@
 package com.labndbnb.landbnb.model;
 
 import com.labndbnb.landbnb.model.enums.UserRole;
-import com.labndbnb.landbnb.model.enums.UserStatuts;
+import com.labndbnb.landbnb.model.enums.UserStatus;
 import jakarta.persistence.*;
-
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,8 +36,8 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    @Column(name = "password", nullable = false, length = 255)
+    private String password;
 
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
@@ -57,8 +58,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private UserStatuts status = UserStatuts.ACTIVE;
-
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
@@ -67,7 +67,32 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of((GrantedAuthority) () -> "ROLE_" + role.name());
+    }
+
+    @Override
+    public String getUsername() {
+        return email; // Spring Security usará email como "username"
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+
+    @Override
+    public boolean isEnabled() {
+        return status == UserStatus.ACTIVE && emailVerified;
+    }
 }

@@ -25,6 +25,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation' // Added for validation
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
     compileOnly 'org.projectlombok:lombok' // Added for Lombok annotations
     annotationProcessor 'org.projectlombok:lombok' // Added for Lombok
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
