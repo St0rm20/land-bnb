@@ -10,7 +10,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserUpdateMapper {
 
-    // Convierte un DTO a entidad (opcional, útil si necesitas instanciar un User desde cero)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "password", ignore = true)
@@ -22,7 +21,6 @@ public interface UserUpdateMapper {
     @Mapping(target = "dateOfBirth", ignore = true)
     User toEntity(UserUpdateDto dto);
 
-    // Actualiza solo los campos editables sobre un User existente
     @Mapping(target = "profilePictureUrl", source = "photoProfile")
     @Mapping(target = "bio", source = "description")
     void updateUserFromDto(UserUpdateDto dto, @MappingTarget User user);

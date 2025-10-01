@@ -10,6 +10,7 @@ import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
