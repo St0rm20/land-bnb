@@ -53,8 +53,29 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sendResetPasswordEmail(String email) {
+    public void sendResetPasswordEmail(ForgotMyPassword email) {
 
+        try {
+            UserDto userDto = userService.getByEmail(email.email());
+            if (userDto != null) {
+                String resetToken = jwtUtil.generateToken(userDto.email(), Map.of("userId", userDto.id().toString()));
+
+                String resetLink = "http://localhost:4200/reset-password?token=" + resetToken;
+
+                String emailBody = "Hola, " + userDto.name() + "\n\n" +
+                        "Hemos recibido una solicitud para restablecer tu contraseña. " +
+                        "Haz clic en el siguiente enlace para restablecer tu contraseña:\n" +
+                        resetLink + "\n\n" +
+                        "Si no solicitaste este cambio, puedes ignorar este correo electrónico.\n\n" +
+                        "Saludos,\n" +
+                        "El equipo de LabNDBnb";
+
+                mailService.sendSimpleEmail(userDto.email(), "Restablecimiento de contraseña", emailBody);
+            }
+        } catch (Exception e) {
+            // Manejo de excepciones (opcional)
+            e.printStackTrace();
+        }
     }
 
     @Override

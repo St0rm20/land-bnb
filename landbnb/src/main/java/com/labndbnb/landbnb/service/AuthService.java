@@ -8,7 +8,7 @@ public interface AuthService {
 
     AuthResponse login(LoginRequest request) throws Exception;
 
-    void sendResetPasswordEmail(String email);
+    void sendResetPasswordEmail(ForgotMyPassword email);
 
     void resetPassword(ResetPasswordRequest request);
 

@@ -21,3 +21,14 @@ Content-Type: application/json
     "password": "Password123"
 }
 
+
+### 3. Request Password Reset
+POST http://localhost:8080/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "mavargaspelaez@gmail.com"
+}
+
+
+
