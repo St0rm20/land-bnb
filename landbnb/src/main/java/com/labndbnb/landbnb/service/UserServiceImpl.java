@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,23 +26,27 @@ public class UserServiceImpl implements UserService {
     private final UserRegistrationMapper userRegistrationMapper;
     private final UserDtoMapper userDtoMapper;
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
 
     private String encode (String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
 
     @Override
-    public void create(UserRegistration userDto) throws Exception {
+    public Boolean create(UserRegistration userDto) throws Exception {
         if(existsByEmail(userDto.email())){
             throw new EmailAlreadyInUse("Email already in use");
         }
-        User newuser = userRegistrationMapper.toEntity(userDto);
-        newuser.setRole(UserRole.USER);
-        newuser.setCreatedAt(LocalDateTime.now());
-        newuser.setPassword(encode(newuser.getPassword()));
-        userRepository.save(newuser);
+
+        User newUser = userRegistrationMapper.toEntity(userDto);
+        newUser.setRole(UserRole.USER);
+        newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setPassword(encode(newUser.getPassword()));
+
+       userRepository.save(newUser);
+        return true;
     }
 
     private boolean existsByEmail(String email) {
@@ -51,7 +56,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto get(String id) throws Exception {
-        return userDtoMapper.toDto(userRepository.getUsersById(id));
+        return userDtoMapper.toDto(userRepository
+                .getUsersById(Integer.parseInt(id)));
     }
 
     @Override
@@ -79,5 +85,27 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
         user.setProfilePictureUrl(userUpdateDto.photoProfile());
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDto getByEmail(String email) throws Exception {
+        if(!userRepository.existsByEmail(email)){
+            return null;
+        }
+        Optional<User> user = userRepository.findByEmail(email);
+
+        return userDtoMapper.toDto(user.get());
+    }
+
+    @Override
+    public Boolean isThePasswordCorrect(String email, String password) throws Exception {
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null){
+            throw new Exception("User with email " + email + " not found");
+        }
+        System.out.println(passwordEncoder.matches(password, user.getPassword()));
+        return passwordEncoder.matches(password, user.getPassword());
+
     }
 }

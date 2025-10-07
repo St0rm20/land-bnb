@@ -6,6 +6,9 @@ public record UserUpdateDto(
         @Size(max = 100, message = "Name cannot exceed 100 characters")
         String name,
 
+        @Size(max = 100, message = "Last name cannot exceed 100 characters")
+        String lastName,
+
         @Pattern(
                 regexp = "^[+]?\\d{7,15}$",
                 message = "Phone number must be valid (7–15 digits, optional + at start)"

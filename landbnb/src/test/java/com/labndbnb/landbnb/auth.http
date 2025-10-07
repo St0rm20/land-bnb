@@ -1,0 +1,23 @@
+### 1. New User Registration
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "mavargaspelaez@gmail.com",
+  "password": "Password123",
+  "name": "Miguel",
+  "lastName": "Vargas",
+  "phoneNumber": "+573208499853",
+  "birthDate": "2005-11-16"
+}
+
+
+### 2. User Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mavargaspelaez@gmail.com",
+    "password": "Password123"
+}
+

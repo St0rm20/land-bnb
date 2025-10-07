@@ -4,9 +4,9 @@ import com.labndbnb.landbnb.dto.aut_dto.*;
 
 public interface AuthService {
 
-    AuthResponse register(UserRegistration request);
+    Boolean register(UserRegistration request) throws Exception;
 
-    AuthResponse login(LoginRequest request);
+    AuthResponse login(LoginRequest request) throws Exception;
 
     void sendResetPasswordEmail(String email);
 

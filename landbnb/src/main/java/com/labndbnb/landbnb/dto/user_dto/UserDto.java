@@ -17,6 +17,10 @@ public record UserDto(
         @Size(max = 100, message = "Name cannot exceed 100 characters")
         String name,
 
+        @NotBlank(message = "Last name is required")
+        @Size(max = 100, message = "Last name cannot exceed 100 characters")
+        String lastName,
+
         @NotBlank(message = "Phone number is required")
         @Pattern(
                 regexp = "^[+]?\\d{7,15}$",

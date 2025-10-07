@@ -13,7 +13,6 @@ public interface UserRegistrationMapper {
     @Mapping(target = "password", source = "password")
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "dateOfBirth", source = "birthDate")
-    @Mapping(target = "role", expression = "java(UserRole.valueOf(dto.role()))")
     @Mapping(target = "profilePictureUrl", ignore = true)
     @Mapping(target = "bio", ignore = true)
     @Mapping(target = "status", constant = "ACTIVE")
@@ -26,5 +25,4 @@ public interface UserRegistrationMapper {
     @Mapping(target = "phoneNumber", source = "phoneNumber")
     @Mapping(target = "birthDate", source = "dateOfBirth")
     UserRegistration toDto(User user);
-
 }

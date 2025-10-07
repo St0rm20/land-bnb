@@ -8,16 +8,14 @@ public record ErrorResponse(
         LocalDateTime timestamp,
         int status,
         String error,
-        String message,
-        String path
+        String message
 ) {
-    public static ErrorResponse of(HttpStatus status, String message, String path) {
+    public static ErrorResponse of(HttpStatus status, String message) {
         return new ErrorResponse(
                 LocalDateTime.now(),
                 status.value(),
                 status.getReasonPhrase(),
-                message,
-                path
+                message
         );
     }
 }

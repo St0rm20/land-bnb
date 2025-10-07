@@ -9,16 +9,14 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserDtoMapper {
 
-    @Mapping(target = "dateBirth", source = "dateOfBirth")
     @Mapping(target = "userRole", source = "role")
-    @Mapping(target = "userStatuts", source = "status")
+    @Mapping(target = "userStatus", source = "status")
     UserDto toDto(User user);
 
-    @Mapping(target = "dateOfBirth", source = "dateBirth")
     @Mapping(target = "role", source = "userRole")
-    @Mapping(target = "status", source = "userStatuts")
+    @Mapping(target = "status", source = "userStatus")
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "bio", ignore = true)
+    @Mapping(target = "bio", source = "bio") // puedes eliminar este si lo quieres ignorar
     @Mapping(target = "emailVerified", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "lastLoginAt", ignore = true)

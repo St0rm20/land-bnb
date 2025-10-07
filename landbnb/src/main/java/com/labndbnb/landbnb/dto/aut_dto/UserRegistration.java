@@ -23,15 +23,16 @@ public record UserRegistration(
         @Size(max = 100, message = "Name cannot exceed 100 characters")
         String name,
 
+        @NotNull(message = "Last name is required")
+        @Size(max = 100, message = "Last name cannot exceed 100 characters")
+        String lastName,
+
         @NotBlank(message = "Phone number is required")
         @Pattern(
                 regexp = "^[+]?\\d{7,15}$",
                 message = "Phone number must be valid (7–15 digits, optional + at start)"
         )
         String phoneNumber,
-
-        @NotNull(message = "User role is required")
-        UserRole userRole,
 
         @NotNull(message = "Birth date is required")
         @Past(message = "Birth date must be in the past")
