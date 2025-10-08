@@ -3,7 +3,7 @@ package com.labndbnb.landbnb.service.implement;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.labndbnb.landbnb.service.definition.ImageService;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,31 +15,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class ImageServiceImpl implements ImageService {
     private final Cloudinary cloudinary;
 
-    @Value("${cloud.name}")
-    private String name;
-
-    @Value("${cloud.api.key}")
-    private String key;
-
-    @Value("${cloud.api.secret}")
-    private String secret;
-
-    public ImageServiceImpl(){
+    public ImageServiceImpl(
+            @Value("${cloud.name}") String name,
+            @Value("${cloud.api.key}") String key,
+            @Value("${cloud.api.secret}") String secret) {
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", name);
         config.put("api_key", key);
         config.put("api_secret", secret);
-        cloudinary = new Cloudinary(config);
+        this.cloudinary = new Cloudinary(config);
     }
 
     @Override
     public Map upload(MultipartFile image) throws Exception {
         File file = convert(image);
-        return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", "landbnb"));
+        try {
+            return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", "landbnb"));
+        } finally {
+            if (file.exists() && !file.delete()) {
+                log.warn("No se pudo eliminar el archivo temporal: {}", file.getAbsolutePath());
+            }
+        }
     }
 
     @Override
@@ -49,9 +49,9 @@ public class ImageServiceImpl implements ImageService {
 
     private File convert(MultipartFile image) throws IOException {
         File file = File.createTempFile(image.getOriginalFilename(), null);
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(image.getBytes());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(image.getBytes());
+        }
         return file;
     }
 }

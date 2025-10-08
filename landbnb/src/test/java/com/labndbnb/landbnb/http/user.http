@@ -1,4 +1,6 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjYiLCJlbWFpbCI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc1OTk1MTUwMSwiZXhwIjoxNzU5OTU1MTAxfQ.7HsJERzOtseQs86C5EY1RA6p0FQjfSrTtD8F6__k9LK85ZaSSwIZc37FCx_ui_EU7XSTiaqaQJsc16-i-zCxXg
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc1OTk1MjQ2NSwiZXhwIjoxNzU5OTU2MDY1fQ.5MFbtK2Bgqj9ZGw9MiRV1WBejsD6VhKAja5hou6SjRpRXntOQ7YH0KPTkPmnCuBW3BmIAwuiMCOrgstkCoK3EQ
+
+
 
 ### 5. User Registration
 GET http://localhost:8080/api/users/profile
@@ -15,7 +17,7 @@ Authorization: {{token}}
   "firstName": "Miguel Angel",
   "lastName": "Vargas",
   "phoneNumber": "3208499853",
-  "photoProfile": "www.miurl.com/mi-foto-profile.jpg",
+  "photoProfile": "www.miurl.com/mi-foto-profile.jpg"
 }
 
 
