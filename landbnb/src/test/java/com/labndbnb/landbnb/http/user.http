@@ -2,11 +2,25 @@
 
 
 
-
 ### 5. User Registration
 GET http://localhost:8080/api/users/profile
 Content-Type: application/json
 Authorization: {{token}}
+
+
+### 6. User Profile (requires valid JWT)
+PUT http://localhost:8080/api/users/profile
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "firstName": "Miguel Angel",
+  "lastName": "Vargas",
+  "phoneNumber": "3208499853",
+  "photoProfile": "www.miurl.com/mi-foto-profile.jpg",
+}
+
+
 
 
 

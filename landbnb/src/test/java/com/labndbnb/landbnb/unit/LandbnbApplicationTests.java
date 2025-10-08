@@ -1,4 +1,4 @@
-package com.labndbnb.landbnb;
+package com.labndbnb.landbnb.unit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
