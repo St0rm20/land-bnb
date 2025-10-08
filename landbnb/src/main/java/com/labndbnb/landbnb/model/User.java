@@ -3,9 +3,9 @@ package com.labndbnb.landbnb.model;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,6 +19,7 @@ import java.util.List;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "email", name = "uk_users_email")
         })
+@SQLDelete(sql = "UPDATE users SET status = 'INACTIVE' WHERE id = ?")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -85,7 +86,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // Spring Security usará email como "username"
+        return email;
     }
 
     @Override

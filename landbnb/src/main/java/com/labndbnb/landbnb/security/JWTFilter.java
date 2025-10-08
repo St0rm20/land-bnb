@@ -1,6 +1,6 @@
 package com.labndbnb.landbnb.security;
 
-import com.labndbnb.landbnb.service.UserDetailsServiceImpl;
+import com.labndbnb.landbnb.service.implement.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;

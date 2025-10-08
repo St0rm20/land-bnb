@@ -1,4 +1,4 @@
-package com.labndbnb.landbnb.service;
+package com.labndbnb.landbnb.service.implement;
 
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;

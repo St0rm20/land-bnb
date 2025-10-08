@@ -1,19 +1,17 @@
-package com.labndbnb.landbnb.service;
+package com.labndbnb.landbnb.service.implement;
 
 import com.labndbnb.landbnb.dto.aut_dto.*;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
-import com.labndbnb.landbnb.model.User;
-import com.labndbnb.landbnb.repository.UserRepository;
+import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.security.JWTutils;
+import com.labndbnb.landbnb.service.definition.AuthService;
+import com.labndbnb.landbnb.service.definition.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +21,12 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final MailService mailService;
     private final JWTutils  jwtUtil;
+    private final ResetPasswordServiceImpl  resetPasswordService;
 
     @Override
-    public Boolean register(UserRegistration request) throws Exception {
-        return userService.create(request);
+    public InfoDto register(UserRegistration request) throws Exception {
+        userService.create(request);
+        return new InfoDto("Register successful", "The user has been created successfully");
     }
 
     @Override
@@ -53,40 +53,27 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sendResetPasswordEmail(ForgotMyPassword email) {
-
+    public InfoDto sendResetPasswordEmail(ForgotMyPassword email) {
         try {
-            UserDto userDto = userService.getByEmail(email.email());
-            if (userDto != null) {
-                String resetToken = jwtUtil.generateToken(userDto.email(), Map.of("userId", userDto.id().toString()));
+            resetPasswordService.sendResetPasswordEmail(email.email());
 
-                String resetLink = "http://localhost:4200/reset-password?token=" + resetToken;
-
-                String emailBody = "Hola, " + userDto.name() + "\n\n" +
-                        "Hemos recibido una solicitud para restablecer tu contraseña. " +
-                        "Haz clic en el siguiente enlace para restablecer tu contraseña:\n" +
-                        resetLink + "\n\n" +
-                        "Si no solicitaste este cambio, puedes ignorar este correo electrónico.\n\n" +
-                        "Saludos,\n" +
-                        "El equipo de LabNDBnb";
-
-                mailService.sendSimpleEmail(userDto.email(), "Restablecimiento de contraseña", emailBody);
-            }
         } catch (Exception e) {
-            // Manejo de excepciones (opcional)
             e.printStackTrace();
+
         }
+        return new InfoDto("If the email exists, a reset code has been sent", "Please check your email for further instructions.");
     }
 
     @Override
-    public void resetPassword(ResetPasswordRequest request) {
+    public InfoDto resetPassword(ResetPasswordRequest request) throws Exception {
+        if( resetPasswordService.resetPassword(request.email(), request.token(), request.newPassword())){
+            return new InfoDto("Password reset successful", "Your password has been updated successfully.");
+        }
 
+        return  new InfoDto("Error resetting password", "Could not reset the password. Please ensure the email and token are correct.");
     }
 
-    @Override
-    public void changePassword(ChangePasswordRequest request) {
 
-    }
 
 }
 

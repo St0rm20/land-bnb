@@ -1,6 +1,5 @@
-package com.labndbnb.landbnb.service;
+package com.labndbnb.landbnb.service.implement;
 
-import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

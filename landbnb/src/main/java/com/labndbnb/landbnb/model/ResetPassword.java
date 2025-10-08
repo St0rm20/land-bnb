@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "reset_passwords")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 public class ResetPassword {
@@ -35,4 +35,6 @@ public class ResetPassword {
 
     @Column(name = "used", nullable = false)
     private boolean used = false;
+
+    
 }

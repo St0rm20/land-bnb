@@ -3,6 +3,11 @@ package com.labndbnb.landbnb.dto.aut_dto;
 import jakarta.validation.constraints.*;
 
 public record ResetPasswordRequest(
+
+        @NotBlank(message = "Email is required")
+        @Email(message = "Invalid email format")
+        String email,
+
         @NotBlank(message = "Reset token is required")
         String token,
 

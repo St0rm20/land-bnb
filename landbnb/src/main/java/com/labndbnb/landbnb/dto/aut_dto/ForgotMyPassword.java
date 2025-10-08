@@ -7,6 +7,5 @@ public record ForgotMyPassword(
         @NotBlank(message = "Email is required")
         @Email(message = "Invalid email format")
         String email
-
         ) {
 }

@@ -29,4 +29,5 @@ public record UserUpdateDto(
                 message = "Date of birth must be in the format YYYY-MM-DD"
         )
         String dateBirth
+
 ) {}
