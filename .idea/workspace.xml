@@ -5,26 +5,53 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="Services 1">
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/mappers/util/ImageDtoMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/ReviewAnswer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/AccommodationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/MailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AccommodationServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AccommodationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AccommodationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/util_dto/ImageDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/dto/util_dto/ImageDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/AccommodationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/AccommodationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/definition/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/definition/UserService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/AuthServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/MailService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/ResetPasswordServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/ResetPasswordServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/UserServiceImpl.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/SecurityConfig.class.uniqueId0" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/ImageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/ImageServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDetailDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDetailDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/accommodation_dto/AccommodationDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/util_dto/ImageDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/util_dto/ImageDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/mappers/user/UserDtoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/mappers/user/UserDtoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Accommodation.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/model/Accommodation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/AccommodationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/AccommodationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/MailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/MailServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/ResetPasswordServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/ResetPasswordServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/UserServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/user.http" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/user.http" afterDir="false" />
     </list>
     <list id="f0afdf4b-aec1-4883-82cf-bca4753402e4" name="Changes by Helen" comment="" />
-    <list id="67607268-0d0f-4199-aee8-140153ad6c02" name="Changes by mavar" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -103,9 +130,11 @@
     "Gradle.Build landbnb.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
     "HTTP Request.All in app.executor": "Run",
+    "HTTP Request.accommodation | 1. Create Accommodation with token.executor": "Run",
     "HTTP Request.auth | 1. New User Registration.executor": "Run",
     "HTTP Request.auth | 2. User Login.executor": "Run",
     "HTTP Request.user | 5. User Registration.executor": "Run",
+    "HTTP Request.user | 8. Become host User Account (requires valid JWT).executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -142,9 +171,11 @@
         <entry key="HttpClient.HttpRequestRunConfigurationType">
           <value>
             <map>
+              <entry key="accommodation | 1. Create Accommodation with token" value="STOPPED" />
               <entry key="auth | 1. New User Registration" value="STOPPED" />
               <entry key="auth | 2. User Login" value="STOPPED" />
               <entry key="user | 5. User Registration" value="STOPPED" />
+              <entry key="user | 8. Become host User Account (requires valid JWT)" value="STOPPED" />
             </map>
           </value>
         </entry>
@@ -152,7 +183,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.LandbnbApplication">
-    <configuration name="All in app" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/app.http">
+    <configuration name="accommodation | 1. Create Accommodation with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" executionIdentifier="1. Create Accommodation with token" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="auth | 1. New User Registration" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" executionIdentifier="1. New User Registration" runType="Run single request">
@@ -162,6 +193,9 @@
       <method v="2" />
     </configuration>
     <configuration name="user | 5. User Registration" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/user.http" executionIdentifier="5. User Registration" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="user | 8. Become host User Account (requires valid JWT)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/user.http" executionIdentifier="8. Become host User Account (requires valid JWT)" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="LandbnbApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -174,10 +208,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.user | 5. User Registration" />
+        <item itemvalue="HTTP Request.accommodation | 1. Create Accommodation with token" />
+        <item itemvalue="HTTP Request.user | 8. Become host User Account (requires valid JWT)" />
         <item itemvalue="HTTP Request.auth | 2. User Login" />
+        <item itemvalue="HTTP Request.user | 5. User Registration" />
         <item itemvalue="HTTP Request.auth | 1. New User Registration" />
-        <item itemvalue="HTTP Request.All in app" />
       </list>
     </recent_temporary>
   </component>
@@ -216,7 +251,7 @@
       <workItem from="1759194450058" duration="1566000" />
       <workItem from="1759243740925" duration="1448000" />
       <workItem from="1759776384286" duration="1008000" />
-      <workItem from="1759952285479" duration="952000" />
+      <workItem from="1759952285479" duration="9555000" />
     </task>
     <task id="LOCAL-00001" summary="fix notifications">
       <option name="closed" value="true" />
@@ -266,7 +301,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759173246642</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Services 1">
+      <option name="closed" value="true" />
+      <created>1759953260805</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759953260805</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

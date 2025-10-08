@@ -1,5 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc1OTk1MjQ2NSwiZXhwIjoxNzU5OTU2MDY1fQ.5MFbtK2Bgqj9ZGw9MiRV1WBejsD6VhKAja5hou6SjRpRXntOQ7YH0KPTkPmnCuBW3BmIAwuiMCOrgstkCoK3EQ
-
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc1OTk2NDI4NSwiZXhwIjoxNzU5OTY3ODg1fQ.QMf3XDuHazO64f0ieOoyekwPTfOAkoFKr_LkyVUv-dFVOmknYU-UVkG__4s0rBAOqRCRiJ1Q_X0gvi_RSphgzg
 
 
 ### 5. User Registration
@@ -22,9 +21,6 @@ Authorization: {{token}}
 
 
 
-
-
-
 ### 7. Change Password (requires valid JWT)
 POST http://localhost:8080/api/users/change-password
 Content-Type: application/json
@@ -34,3 +30,10 @@ Authorization: {{token}}
   "currentPassword": "NewPassword456",
   "newPassword": "NewPassword789"
 }
+
+
+### 8. Become host User Account (requires valid JWT)
+POST http://localhost:8080/api/users/become-host
+Content-Type: application/json
+Authorization: {{token}}
+

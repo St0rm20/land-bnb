@@ -40,5 +40,8 @@ public record AccommodationDto(
 
         @NotNull(message = "Services are required")
         @Size(min = 1, message = "At least one service is required")
-        List<@NotBlank(message = "Service cannot be blank") String> services
+        List<@NotBlank(message = "Service cannot be blank") String> services,
+
+        @NotNull(message = "Image is required")
+        String url
 ) {}

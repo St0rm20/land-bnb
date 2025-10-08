@@ -16,7 +16,7 @@ public interface UserDtoMapper {
     @Mapping(target = "role", source = "userRole")
     @Mapping(target = "status", source = "userStatus")
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "bio", source = "bio") // puedes eliminar este si lo quieres ignorar
+    @Mapping(target = "bio", source = "bio")
     @Mapping(target = "emailVerified", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "lastLoginAt", ignore = true)

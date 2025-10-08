@@ -44,7 +44,8 @@ public record AccommodationDetailDto(
         Integer maxCapacity,
 
         @NotNull(message = "Services are required")
-        List<@NotBlank(message = "Service cannot be blank") String> services,
+        List<@NotBlank(message = "Service cannot be blank")
+                String> services,
 
         @NotNull(message = "Host is required")
         UserDto host,

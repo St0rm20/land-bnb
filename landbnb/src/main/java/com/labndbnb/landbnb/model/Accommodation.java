@@ -83,10 +83,10 @@ public class Accommodation {
     private User host;
 
     @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Booking> bookings = new ArrayList<>();
+    private List<Booking> bookings = new ArrayList<>();
 
-@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @UpdateTimestamp
     @Column(name = "updated_at")

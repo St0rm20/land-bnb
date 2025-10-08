@@ -19,7 +19,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     private final UserService userService;
-    private final MailService mailService;
+    private final MailServiceImpl mailServiceImpl;
     private final JWTutils  jwtUtil;
     private final ResetPasswordServiceImpl  resetPasswordService;
 
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtil.generateToken(userDto.email(), claims);
 
-        mailService.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, "+ userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
+        mailServiceImpl.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, "+ userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
         return new AuthResponse(
                 token
         );

@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.service.implement;
 
+import com.labndbnb.landbnb.service.definition.MailService;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MailService {
+public class MailServiceImpl implements MailService {
 
     @Value("${mail.smtp.host}")
     private String host;
@@ -30,10 +31,11 @@ public class MailService {
                 .buildMailer();
     }
 
+    @Override
     // Email simple
     public void sendSimpleEmail(String to, String subject, String text) {
         var email = EmailBuilder.startingBlank()
-                .from("Mi App", username)
+                .from("land-bnb", username)
                 .to(to)
                 .withSubject(subject)
                 .withPlainText(text)
@@ -42,10 +44,11 @@ public class MailService {
         getMailer().sendMail(email);
     }
 
+    @Override
     // Email HTML personalizado
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
         var email = EmailBuilder.startingBlank()
-                .from("Mi App", username)
+                .from("land-bnb", username)
                 .to(to)
                 .withSubject(subject)
                 .withHTMLText(htmlContent)
@@ -54,10 +57,11 @@ public class MailService {
         getMailer().sendMail(email);
     }
 
+    @Override
     // Email con nombre personalizado del destinatario
     public void sendPersonalizedEmail(String toName, String toEmail, String subject, String htmlContent) {
         var email = EmailBuilder.startingBlank()
-                .from("Mi App", username)
+                .from("land-bnb", username)
                 .to(toName, toEmail)
                 .withSubject(subject)
                 .withHTMLText(htmlContent)

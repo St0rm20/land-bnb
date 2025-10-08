@@ -1,7 +1,6 @@
 package com.labndbnb.landbnb.service.implement;
 
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
-import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.exceptions.TokenIncorrect;
 import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
 import com.labndbnb.landbnb.model.ResetPassword;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class ResetPasswordServiceImpl implements ResetPasswordService {
 
     private final ResetPasswordRepository passwordRepository;
-    private final MailService emailService;
+    private final MailServiceImpl emailServiceImpl;
     private final UserService userService;
     private final UserDtoMapper userDtoMapper;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -48,7 +47,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
         log.info("user {}" , user.id());
         String subject = "Password Reset Request";
         String message = "Use this code to reset your password: " + token;
-        emailService.sendSimpleEmail(email, subject, message);
+        emailServiceImpl.sendSimpleEmail(email, subject, message);
         return true;
     }
 

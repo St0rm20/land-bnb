@@ -1,0 +1,24 @@
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc1OTk2NDI4NSwiZXhwIjoxNzU5OTY3ODg1fQ.QMf3XDuHazO64f0ieOoyekwPTfOAkoFKr_LkyVUv-dFVOmknYU-UVkG__4s0rBAOqRCRiJ1Q_X0gvi_RSphgzg
+
+
+
+### 1. Create Accommodation with token
+POST http://localhost:8080/api/accommodations
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "title": "Cozy Apartment in Downtown",
+  "description": "A comfortable and modern apartment located in the heart of the city.",
+  "city": "Medallo",
+  "address": "123 Main St, Medallo",
+  "latitude": 6.2429,
+  "longitude": -75.5812,
+  "pricePerNight": 500000,
+  "maxCapacity": 4,
+  "services": ["WiFi", "Air Conditioning", "Kitchen"],
+  "images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"],
+  "mainPhoto": "www.example.com/photo1.jpg"
+}
+
+

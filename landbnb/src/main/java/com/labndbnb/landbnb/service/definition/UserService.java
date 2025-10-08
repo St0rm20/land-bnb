@@ -5,6 +5,7 @@ import com.labndbnb.landbnb.dto.aut_dto.UserRegistration;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.model.User;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -23,4 +24,5 @@ public interface UserService {
     UserDto getUser(HttpServletRequest request) throws Exception;
     InfoDto becomeHost(HttpServletRequest request) throws Exception;
     InfoDto delete(HttpServletRequest request) throws Exception;
+    User getUserFromRequest(HttpServletRequest request) throws Exception;
 }
