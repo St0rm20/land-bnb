@@ -29,7 +29,7 @@ public class AccommodationController {
 
     @GetMapping
     public ResponseEntity<?> getAccommodations(
-            @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page) throws Exception {
         Page<AccommodationDto> accommodations = accommodationService.getAccommodations(page);
         return ResponseEntity.status(HttpStatus.OK).body(accommodations);
     }
@@ -57,8 +57,9 @@ public class AccommodationController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
-    public ResponseEntity<?> deleteAccommodation(@PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<?> deleteAccommodation(@PathVariable Long id, HttpServletRequest request) throws Exception {
+        accommodationService.deleteAccommodation(id, request);
+        return ResponseEntity.ok("Accommodation deleted successfully");
     }
 
     @PostMapping("/search")

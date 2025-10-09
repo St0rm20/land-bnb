@@ -10,13 +10,13 @@ import javax.sound.sampled.DataLine;
 
 public interface AccommodationService {
 
-    Page<AccommodationDto> getAccommodations(Integer page);
+    Page<AccommodationDto> getAccommodations(Integer page) throws Exception;
 
     InfoDto createAccommodation(AccommodationDetailDto accommodationDetailDto, HttpServletRequest request) throws Exception;
 
-    AccommodationDetailDto getAccommodation(Long id);
+    AccommodationDetailDto getAccommodation(Long id) throws Exception;
 
     void deleteAccommodation(Long id);
 
-    AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id);
+    AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws Exception;
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -55,26 +56,61 @@ public class AccommodationServiceImpl implements AccommodationService {
         accommodation.setHost(user);
         accommodation.setAverageRating(BigDecimal.valueOf(0));
         accommodation.setActive(true);
-        accommodationRepository.save(accommodation);
-        return new InfoDto("Accommodation created", "The accommodation has been created successfully");
+        accommodation.setCreatedAt(LocalDateTime.now());
+        accommodation.setUpdatedAt(LocalDateTime.now());
 
+        Accommodation savedAccommodation = accommodationRepository.save(accommodation);
 
-    }
-
-    @Override
-    public AccommodationDetailDto getAccommodation(Long id) {
-        return null;
-    }
-
-    @Override
-    public void deleteAccommodation(Long id) {
+        return new InfoDto("Accommodation created", "The accommodation with ID " + savedAccommodation.getId() + " has been created successfully.");
 
     }
 
     @Override
-    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id) {
-        return null;
+    public AccommodationDetailDto getAccommodation(Long id) throws Exception {
+
+
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new Exception("Accommodation not found"));
+
+        return accommodationDetailDtoMapper.toDto(accommodation);
     }
+
+
+    @Override
+    public void deleteAccommodation(Long id, HttpServletRequest request) throws Exception {
+        User user = userService.getUserFromRequest(request);
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Accommodation not found"));
+        if (user == null || !Objects.equals(accommodation.getHost().getId(), user.getId())) {
+            throw new Exception("You are not the owner of this accommodation");
+        }
+
+        accommodationRepository.delete(accommodation);
+    }
+
+
+    @Override
+    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws Exception {
+        User user = userService.getUserFromRequest(request);
+        if (user == null || !user.getRole().toString().equals("HOST")) {
+            throw new Exception("User is not a host");
+        }
+
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new Exception("Accommodation not found"));
+
+        if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
+            throw new Exception("You are not the owner of this accommodation");
+        }
+
+        accommodationDetailDtoMapper.updateEntityFromDto(accommodationDetailDto, accommodation);
+
+        Accommodation updated = accommodationRepository.save(accommodation);
+
+        return accommodationDetailDtoMapper.toDto(updated);
+
+    }
+
 
 
 }

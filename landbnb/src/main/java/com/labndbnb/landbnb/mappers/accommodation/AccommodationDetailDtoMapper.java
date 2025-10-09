@@ -40,6 +40,18 @@ public interface AccommodationDetailDtoMapper {
     })
     Accommodation toEntity(AccommodationDetailDto dto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "host", ignore = true),
+            @Mapping(target = "bookings", ignore = true),
+            @Mapping(target = "reviews", ignore = true),
+            @Mapping(target = "createdAt", ignore = true),
+            @Mapping(target = "updatedAt", ignore = true),
+            @Mapping(target = "active", ignore = true)
+    })
+    void updateEntityFromDto(AccommodationDetailDto dto, @MappingTarget Accommodation entity);
+
     @Named("longToInteger")
     default Integer longToInteger(Long value) {
         return value != null ? value.intValue() : null;
