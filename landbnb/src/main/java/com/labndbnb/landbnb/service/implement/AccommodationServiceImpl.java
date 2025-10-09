@@ -50,13 +50,11 @@ public class AccommodationServiceImpl implements AccommodationService {
             return new InfoDto("User is not a host", "The user is not a host");
         }
 
-        if(!Objects.equals(user.getId(), accommodationDetailDto.host().id())) {
-            return new InfoDto("User is not the host", "The user is not the host of this accommodation");
-        }
 
         Accommodation accommodation = accommodationDetailDtoMapper.toEntity(accommodationDetailDto);
         accommodation.setHost(user);
         accommodation.setAverageRating(BigDecimal.valueOf(0));
+        accommodation.setActive(true);
         accommodationRepository.save(accommodation);
         return new InfoDto("Accommodation created", "The accommodation has been created successfully");
 

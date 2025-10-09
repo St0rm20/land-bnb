@@ -47,7 +47,6 @@ public record AccommodationDetailDto(
         List<@NotBlank(message = "Service cannot be blank")
                 String> services,
 
-        @NotNull(message = "Host is required")
         UserDto host,
 
         @DecimalMin(value = "0.0", message = "Average rating cannot be less than 0")
@@ -59,5 +58,5 @@ public record AccommodationDetailDto(
 
         String mainImage,
 
-        List<ImageDto> images
+        List<String> images
 ) {}

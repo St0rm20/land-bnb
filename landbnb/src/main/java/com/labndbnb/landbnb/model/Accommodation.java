@@ -49,7 +49,7 @@ public class Accommodation {
 
 
     @Column(name = "price_per_night", nullable = false)
-    private Integer pricePerNight;
+    private Double pricePerNight;
 
     @Column(name = "capacity", nullable = false)
     private Integer capacity;

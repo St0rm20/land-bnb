@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-08T17:55:05-0500",
+    date = "2025-10-09T09:59:24-0500",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.3.jar, environment: Java 21.0.8 (BellSoft)"
 )
 @Component
@@ -26,6 +26,9 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
 
         accommodation.name( dto.title() );
         accommodation.capacity( dto.maxCapacity() );
+        if ( dto.id() != null ) {
+            accommodation.id( Long.parseLong( dto.id() ) );
+        }
         accommodation.description( dto.description() );
         accommodation.city( dto.city() );
         accommodation.address( dto.address() );
@@ -40,7 +43,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
             accommodation.services( new ArrayList<String>( list ) );
         }
 
-        accommodation.pricePerNight( dto.pricePerNight() != null ? dto.pricePerNight().intValue() : null );
+        accommodation.pricePerNight( dto.pricePerNight() != null ? dto.pricePerNight() : null );
 
         return accommodation.build();
     }
@@ -53,6 +56,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
 
         String title = null;
         Integer maxCapacity = null;
+        String id = null;
         String description = null;
         String city = null;
         String address = null;
@@ -62,6 +66,9 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
 
         title = accommodation.getName();
         maxCapacity = accommodation.getCapacity();
+        if ( accommodation.getId() != null ) {
+            id = String.valueOf( accommodation.getId() );
+        }
         description = accommodation.getDescription();
         city = accommodation.getCity();
         address = accommodation.getAddress();
@@ -79,7 +86,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
         Double pricePerNight = accommodation.getPricePerNight() != null ? accommodation.getPricePerNight().doubleValue() : null;
         String url = null;
 
-        AccommodationDto accommodationDto = new AccommodationDto( title, description, city, address, latitude, longitude, pricePerNight, maxCapacity, services, url );
+        AccommodationDto accommodationDto = new AccommodationDto( id, title, description, city, address, latitude, longitude, pricePerNight, maxCapacity, services, url );
 
         return accommodationDto;
     }

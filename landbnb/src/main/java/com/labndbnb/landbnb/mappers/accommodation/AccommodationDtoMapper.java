@@ -10,7 +10,7 @@ public interface AccommodationDtoMapper {
     @Mappings({
             @Mapping(target = "name", source = "title"),
             @Mapping(target = "capacity", source = "maxCapacity"),
-            @Mapping(target = "pricePerNight", expression = "java(dto.pricePerNight() != null ? dto.pricePerNight().intValue() : null)"),
+            @Mapping(target = "pricePerNight", expression = "java(dto.pricePerNight() != null ? dto.pricePerNight() : null)"),
             @Mapping(target = "averageRating", ignore = true),
             @Mapping(target = "principalImageUrl", ignore = true),
             @Mapping(target = "images", ignore = true),

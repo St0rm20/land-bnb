@@ -4,6 +4,9 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 public record AccommodationDto(
+
+        String id,
+
         @NotBlank(message = "Title is required")
         @Size(max = 100, message = "Title cannot exceed 100 characters")
         String title,
