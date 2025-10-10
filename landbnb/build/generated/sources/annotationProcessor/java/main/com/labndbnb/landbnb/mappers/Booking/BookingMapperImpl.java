@@ -1,16 +1,16 @@
 package com.labndbnb.landbnb.mappers.Booking;
 
-import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
+import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
-import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
-import com.labndbnb.landbnb.model.Accommodation;
+import com.labndbnb.landbnb.mappers.accommodation.AccommodationDetailDtoMapper;
 import com.labndbnb.landbnb.model.Booking;
+import com.labndbnb.landbnb.model.User;
+import com.labndbnb.landbnb.model.enums.UserRole;
+import com.labndbnb.landbnb.model.enums.UserStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.processing.Generated;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -21,14 +21,14 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-09T23:04:54-0500",
+    date = "2025-10-10T11:18:37-0500",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.3.jar, environment: Java 21.0.8 (BellSoft)"
 )
 @Component
 public class BookingMapperImpl implements BookingMapper {
 
     @Autowired
-    private UserDtoMapper userDtoMapper;
+    private AccommodationDetailDtoMapper accommodationDetailDtoMapper;
     private final DatatypeFactory datatypeFactory;
 
     public BookingMapperImpl() {
@@ -46,27 +46,27 @@ public class BookingMapperImpl implements BookingMapper {
             return null;
         }
 
-        UserDto user = null;
-        AccommodationDto accommodation = null;
-        String status = null;
+        Integer id = null;
         LocalDate checkInDate = null;
         LocalDate checkOutDate = null;
-        Integer id = null;
         Integer numberOfGuests = null;
         Double totalPrice = null;
+        String status = null;
+        AccommodationDetailDto accommodation = null;
+        UserDto user = null;
 
-        user = userDtoMapper.toDto( booking.getGuest() );
-        accommodation = accommodationToAccommodationDto( booking.getAccommodation() );
-        if ( booking.getBookingStatus() != null ) {
-            status = booking.getBookingStatus().name();
-        }
-        checkInDate = xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( booking.getStartDate() ) );
-        checkOutDate = xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( booking.getEndDate() ) );
         if ( booking.getId() != null ) {
             id = booking.getId().intValue();
         }
+        checkInDate = xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( booking.getStartDate() ) );
+        checkOutDate = xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( booking.getEndDate() ) );
         numberOfGuests = booking.getNumberOfGuests();
         totalPrice = booking.getTotalPrice();
+        if ( booking.getBookingStatus() != null ) {
+            status = booking.getBookingStatus().name();
+        }
+        accommodation = accommodationDetailDtoMapper.toDto( booking.getAccommodation() );
+        user = userToUserDto( booking.getGuest() );
 
         BookingDto bookingDto = new BookingDto( id, checkInDate, checkOutDate, numberOfGuests, totalPrice, status, accommodation, user );
 
@@ -97,44 +97,34 @@ public class BookingMapperImpl implements BookingMapper {
         return LocalDate.of( xcal.getYear(), xcal.getMonth(), xcal.getDay() );
     }
 
-    protected AccommodationDto accommodationToAccommodationDto(Accommodation accommodation) {
-        if ( accommodation == null ) {
+    protected UserDto userToUserDto(User user) {
+        if ( user == null ) {
             return null;
         }
 
         Integer id = null;
-        String description = null;
-        String city = null;
-        String address = null;
-        Double latitude = null;
-        Double longitude = null;
-        Double pricePerNight = null;
-        List<String> services = null;
+        String email = null;
+        String name = null;
+        String lastName = null;
+        String phoneNumber = null;
+        String profilePictureUrl = null;
+        LocalDate dateOfBirth = null;
+        String bio = null;
 
-        if ( accommodation.getId() != null ) {
-            id = accommodation.getId().intValue();
-        }
-        description = accommodation.getDescription();
-        city = accommodation.getCity();
-        address = accommodation.getAddress();
-        if ( accommodation.getLatitude() != null ) {
-            latitude = accommodation.getLatitude().doubleValue();
-        }
-        if ( accommodation.getLongitude() != null ) {
-            longitude = accommodation.getLongitude().doubleValue();
-        }
-        pricePerNight = accommodation.getPricePerNight();
-        List<String> list = accommodation.getServices();
-        if ( list != null ) {
-            services = new ArrayList<String>( list );
-        }
+        id = user.getId();
+        email = user.getEmail();
+        name = user.getName();
+        lastName = user.getLastName();
+        phoneNumber = user.getPhoneNumber();
+        profilePictureUrl = user.getProfilePictureUrl();
+        dateOfBirth = user.getDateOfBirth();
+        bio = user.getBio();
 
-        String title = null;
-        Integer maxCapacity = null;
-        String url = null;
+        UserRole userRole = null;
+        UserStatus userStatus = null;
 
-        AccommodationDto accommodationDto = new AccommodationDto( id, title, description, city, address, latitude, longitude, pricePerNight, maxCapacity, services, url );
+        UserDto userDto = new UserDto( id, email, name, lastName, phoneNumber, userRole, profilePictureUrl, dateOfBirth, userStatus, bio );
 
-        return accommodationDto;
+        return userDto;
     }
 }

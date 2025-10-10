@@ -1,4 +1,6 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjMiLCJlbWFpbCI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDA2OTU1NSwiZXhwIjoxNzYwMDczMTU1fQ.j4B0w0sDdsUqYbiHUs0pQlzl6TLlUldqDtjSG_n6Ac8jkJy3HQvZjJcTlWBUmnLFIIrQsV2wLos_3kUnIobMbA
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjMiLCJlbWFpbCI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDExMzQ3MCwiZXhwIjoxNzYwMTE3MDcwfQ.r0_4e5Cl8F_F_OqWj2Ci5ilJuiMeDpsgPNnjo5SZsNxv7v_wX-vpTuSd5UgJ0MdfuqcUNE1ciQAI6vBuVwEtEg
+
+
 ### 1. Create Booking with token
 
 POST http://localhost:8080/api/reservas
@@ -19,14 +21,14 @@ Authorization: {{token}}
 
 ### List all Bookings by Host with token and optional status filter
 GET http://localhost:8080/api/reservas/anfitrion
-Authorization: {{token_host}}
+Authorization:  {{token}}
 
 ### List specific bookings and confirmed status by Host with token
 GET http://localhost:8080/api/reservas/anfitrion?accommodationId=1&status=CONFIRMED
-Authorization: {{token_host}}
+Authorization:  {{token}}
 
 
 ### Cancel Booking by Id with token
-POST http://localhost:8080/api/reservas/3/cancelar
+POST http://localhost:8080/api/reservas/1/cancelar
 Authorization: {{token}}
 

@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.dto.booking_dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import jakarta.validation.constraints.*;
@@ -31,7 +32,7 @@ public record BookingDto(
         String status,
 
         @NotNull(message = "Accommodation is required")
-        AccommodationDto accommodation,
+        AccommodationDetailDto accommodation,
 
         @NotNull(message = "User is required")
         UserDto user

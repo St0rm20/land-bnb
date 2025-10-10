@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-09T23:04:54-0500",
+    date = "2025-10-10T11:18:36-0500",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.3.jar, environment: Java 21.0.8 (BellSoft)"
 )
 @Component
@@ -30,24 +30,33 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
 
         Integer id = null;
         String title = null;
+        Double latitude = null;
+        Double longitude = null;
+        Double averageRating = null;
+        Integer maxCapacity = null;
+        String mainImage = null;
+        Integer totalBookings = null;
+        UserDto host = null;
         String description = null;
         String city = null;
         String address = null;
         Double pricePerNight = null;
-        Integer maxCapacity = null;
-        String mainImage = null;
         List<String> services = null;
         List<String> images = null;
-        UserDto host = null;
 
         id = longToInteger( accommodation.getId() );
         title = accommodation.getName();
+        latitude = bigDecimalToDouble( accommodation.getLatitude() );
+        longitude = bigDecimalToDouble( accommodation.getLongitude() );
+        averageRating = bigDecimalToDouble( accommodation.getAverageRating() );
+        maxCapacity = accommodation.getCapacity();
+        mainImage = accommodation.getPrincipalImageUrl();
+        totalBookings = countBookings( accommodation.getBookings() );
+        host = userDtoMapper.toDto( accommodation.getHost() );
         description = accommodation.getDescription();
         city = accommodation.getCity();
         address = accommodation.getAddress();
         pricePerNight = accommodation.getPricePerNight();
-        maxCapacity = accommodation.getCapacity();
-        mainImage = accommodation.getPrincipalImageUrl();
         List<String> list = accommodation.getServices();
         if ( list != null ) {
             services = new ArrayList<String>( list );
@@ -56,12 +65,6 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
         if ( list1 != null ) {
             images = new ArrayList<String>( list1 );
         }
-        host = userDtoMapper.toDto( accommodation.getHost() );
-
-        Double latitude = accommodation.getLatitude() != null ? accommodation.getLatitude().doubleValue() : null;
-        Double longitude = accommodation.getLongitude() != null ? accommodation.getLongitude().doubleValue() : null;
-        Double averageRating = accommodation.getAverageRating() != null ? accommodation.getAverageRating().doubleValue() : null;
-        Integer totalBookings = accommodation.getBookings() != null ? accommodation.getBookings().size() : 0;
 
         AccommodationDetailDto accommodationDetailDto = new AccommodationDetailDto( id, title, description, city, address, latitude, longitude, pricePerNight, maxCapacity, services, host, averageRating, totalBookings, mainImage, images );
 
@@ -76,13 +79,17 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
 
         Accommodation.AccommodationBuilder accommodation = Accommodation.builder();
 
+        accommodation.id( integerToLong( dto.id() ) );
         accommodation.name( dto.title() );
+        accommodation.latitude( doubleToBigDecimal( dto.latitude() ) );
+        accommodation.longitude( doubleToBigDecimal( dto.longitude() ) );
+        accommodation.averageRating( doubleToBigDecimal( dto.averageRating() ) );
+        accommodation.capacity( dto.maxCapacity() );
+        accommodation.principalImageUrl( dto.mainImage() );
         accommodation.description( dto.description() );
         accommodation.city( dto.city() );
         accommodation.address( dto.address() );
         accommodation.pricePerNight( dto.pricePerNight() );
-        accommodation.capacity( dto.maxCapacity() );
-        accommodation.principalImageUrl( dto.mainImage() );
         List<String> list = dto.services();
         if ( list != null ) {
             accommodation.services( new ArrayList<String>( list ) );
@@ -93,11 +100,6 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
         }
         accommodation.host( userDtoMapper.toEntity( dto.host() ) );
 
-        accommodation.id( dto.id() != null ? dto.id().longValue() : null );
-        accommodation.averageRating( dto.averageRating() != null ? java.math.BigDecimal.valueOf(dto.averageRating()) : java.math.BigDecimal.ZERO );
-        accommodation.latitude( dto.latitude() != null ? java.math.BigDecimal.valueOf(dto.latitude()) : null );
-        accommodation.longitude( dto.longitude() != null ? java.math.BigDecimal.valueOf(dto.longitude()) : null );
-
         return accommodation.build();
     }
 
@@ -107,6 +109,15 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
             return;
         }
 
+        if ( dto.title() != null ) {
+            entity.setName( dto.title() );
+        }
+        if ( dto.maxCapacity() != null ) {
+            entity.setCapacity( dto.maxCapacity() );
+        }
+        if ( dto.mainImage() != null ) {
+            entity.setPrincipalImageUrl( dto.mainImage() );
+        }
         if ( dto.description() != null ) {
             entity.setDescription( dto.description() );
         }

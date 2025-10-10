@@ -14,6 +14,7 @@ import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-
+@Transactional
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -46,8 +47,7 @@ public class BookingServiceImpl implements BookingService {
 
         Double totalPrice = accommodation.getPricePerNight() * (bookingRequest.checkOut().toEpochDay() - bookingRequest.checkIn().toEpochDay());
 
-
-        Booking booking =Booking.builder()
+        Booking booking = Booking.builder()
                 .guest(user)
                 .accommodation(accommodation)
                 .startDate(bookingRequest.checkIn().atStartOfDay())
@@ -59,9 +59,12 @@ public class BookingServiceImpl implements BookingService {
                 .bookingStatus(BookingStatus.PENDING)
                 .build();
 
-        bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
 
-        return bookingMapper.toDto(booking);
+        Booking reloadedBooking = bookingRepository.findByIdWithDetails(savedBooking.getId())
+                .orElseThrow(() -> new Exception("Booking not found after save"));
+
+        return bookingMapper.toDto(reloadedBooking);
     }
 
     @Override
