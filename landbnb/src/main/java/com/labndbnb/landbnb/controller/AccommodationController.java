@@ -43,17 +43,28 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAccommodationById(@PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<?> getAccommodationById(@PathVariable Long id) throws Exception{
+        AccommodationDetailDto accommodationDetailDto = accommodationService.getAccommodation(id);
+        return ResponseEntity.status(HttpStatus.OK).body(accommodationDetailDto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> updateAccommodation(
-            @PathVariable Integer id,
-            @RequestBody AccommodationDto accommodationDto) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+            @PathVariable Long id,
+            @RequestBody @Valid AccommodationDetailDto accommodationDetailDto,
+            HttpServletRequest request) {
+
+        try {
+            AccommodationDetailDto updated =
+                    accommodationService.updateAccommodation(accommodationDetailDto, id, request);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Update failed", e.getMessage()));
+        }
     }
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
@@ -76,6 +87,8 @@ public class AccommodationController {
             @RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    //getAccommodationsByHostId
 
     @GetMapping("/{id}/metrics")
     @PreAuthorize("hasRole('HOST')")

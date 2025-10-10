@@ -14,24 +14,28 @@ public interface AccommodationDetailDtoMapper {
     @Mappings({
             @Mapping(target = "id", source = "id", qualifiedByName = "longToInteger"),
             @Mapping(target = "title", source = "name"),
-            @Mapping(target = "maxCapacity", source = "capacity"),
-            @Mapping(target = "pricePerNight", source = "pricePerNight"), // Double → Double
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "city", source = "city"),
+            @Mapping(target = "address", source = "address"),
+            @Mapping(target = "latitude", expression = "java(accommodation.getLatitude() != null ? accommodation.getLatitude().doubleValue() : null)"),
+            @Mapping(target = "longitude", expression = "java(accommodation.getLongitude() != null ? accommodation.getLongitude().doubleValue() : null)"),
             @Mapping(target = "averageRating", expression = "java(accommodation.getAverageRating() != null ? accommodation.getAverageRating().doubleValue() : null)"),
+            @Mapping(target = "pricePerNight", source = "pricePerNight"),
+            @Mapping(target = "maxCapacity", source = "capacity"),
             @Mapping(target = "mainImage", source = "principalImageUrl"),
+            @Mapping(target = "services", source = "services"),
+            @Mapping(target = "images", source = "images"),
             @Mapping(target = "totalBookings", expression = "java(accommodation.getBookings() != null ? accommodation.getBookings().size() : 0)"),
-            @Mapping(target = "images", source = "images"), // List<String>
-            @Mapping(target = "services", source = "services") // también List<String>
+            @Mapping(target = "host", source = "host")
     })
     AccommodationDetailDto toDto(Accommodation accommodation);
 
     @InheritInverseConfiguration
     @Mappings({
             @Mapping(target = "id", expression = "java(dto.id() != null ? dto.id().longValue() : null)"),
-            @Mapping(target = "name", source = "title"),
-            @Mapping(target = "capacity", source = "maxCapacity"),
-            @Mapping(target = "pricePerNight", source = "pricePerNight"), // Double → Double
             @Mapping(target = "averageRating", expression = "java(dto.averageRating() != null ? java.math.BigDecimal.valueOf(dto.averageRating()) : java.math.BigDecimal.ZERO)"),
-            @Mapping(target = "principalImageUrl", source = "mainImage"),
+            @Mapping(target = "latitude", expression = "java(dto.latitude() != null ? java.math.BigDecimal.valueOf(dto.latitude()) : null)"),
+            @Mapping(target = "longitude", expression = "java(dto.longitude() != null ? java.math.BigDecimal.valueOf(dto.longitude()) : null)"),
             @Mapping(target = "bookings", ignore = true),
             @Mapping(target = "reviews", ignore = true),
             @Mapping(target = "createdAt", ignore = true),

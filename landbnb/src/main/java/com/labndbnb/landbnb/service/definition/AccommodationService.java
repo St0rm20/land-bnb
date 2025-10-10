@@ -6,7 +6,6 @@ import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 
-import javax.sound.sampled.DataLine;
 
 public interface AccommodationService {
 
@@ -16,7 +15,7 @@ public interface AccommodationService {
 
     AccommodationDetailDto getAccommodation(Long id) throws Exception;
 
-    void deleteAccommodation(Long id);
+    void deleteAccommodation(Long id, HttpServletRequest request) throws Exception;
 
     AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws Exception;
 }

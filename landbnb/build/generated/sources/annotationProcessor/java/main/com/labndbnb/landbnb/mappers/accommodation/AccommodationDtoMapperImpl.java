@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-09T09:59:24-0500",
+    date = "2025-10-09T22:16:13-0500",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.3.jar, environment: Java 21.0.8 (BellSoft)"
 )
 @Component
@@ -27,7 +27,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
         accommodation.name( dto.title() );
         accommodation.capacity( dto.maxCapacity() );
         if ( dto.id() != null ) {
-            accommodation.id( Long.parseLong( dto.id() ) );
+            accommodation.id( dto.id().longValue() );
         }
         accommodation.description( dto.description() );
         accommodation.city( dto.city() );
@@ -56,7 +56,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
 
         String title = null;
         Integer maxCapacity = null;
-        String id = null;
+        Integer id = null;
         String description = null;
         String city = null;
         String address = null;
@@ -67,7 +67,7 @@ public class AccommodationDtoMapperImpl implements AccommodationDtoMapper {
         title = accommodation.getName();
         maxCapacity = accommodation.getCapacity();
         if ( accommodation.getId() != null ) {
-            id = String.valueOf( accommodation.getId() );
+            id = accommodation.getId().intValue();
         }
         description = accommodation.getDescription();
         city = accommodation.getCity();

@@ -1,7 +1,7 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjEiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDAxMjk5NiwiZXhwIjoxNzYwMDE2NTk2fQ.jMy5VeHqpBl3t_6sgZZwJTeAodQhBrnLMg2KrISE36Tngm3K6YmLiYz8OeqEjkj_NSxxs6PKskyd-i3MgxiHnw
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjMiLCJlbWFpbCI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDA2ODczNiwiZXhwIjoxNzYwMDcyMzM2fQ.WXyyixrGsZYUcAV1Q7kKmBVKgRS7jsBJ8lOGkDbY7Q9XbVQ1iE7wQFjKIuP2iUwHQ7gKRG3HLUgwb3qU-yQO5g
 
 
-### 5. User Registration
+### 5. Get Profile to verify updates
 GET http://localhost:8080/api/users/profile
 Content-Type: application/json
 Authorization: {{token}}
@@ -13,26 +13,28 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "firstName": "Miguel Angel",
+  "name": "Miguel Ángel",
   "lastName": "Vargas",
   "phoneNumber": "3208499853",
+  "bio": "Anfitrión en Medellín",
+  "dateBirth": "2005-11-16",
   "photoProfile": "www.miurl.com/mi-foto-profile.jpg"
 }
 
 
 
-### 7. Change Password (requires valid JWT)
+### 8. Change Password (requires valid JWT)
 POST http://localhost:8080/api/users/change-password
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "currentPassword": "NewPassword456",
+  "currentPassword": "Password123",
   "newPassword": "NewPassword789"
 }
 
 
-### 8. Become host User Account (requires valid JWT)
+### 9. Become host User Account (requires valid JWT)
 POST http://localhost:8080/api/users/become-host
 Content-Type: application/json
 Authorization: {{token}}

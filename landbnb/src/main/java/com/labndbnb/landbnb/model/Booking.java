@@ -46,7 +46,6 @@ public class Booking {
     @JoinColumn(name = "guest_id", nullable = false)
     private User guest;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id", nullable = false)
     private Accommodation accommodation;

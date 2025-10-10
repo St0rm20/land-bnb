@@ -33,7 +33,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateProfile(@RequestBody UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
         InfoDto info = userService.update(userUpdateDto, request);
-        return ResponseEntity.status(HttpStatus.OK).body(request);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
     @PostMapping("/change-password")

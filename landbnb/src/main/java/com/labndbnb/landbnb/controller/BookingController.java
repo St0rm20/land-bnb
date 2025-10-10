@@ -1,44 +1,81 @@
 package com.labndbnb.landbnb.controller;
 
+import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
+import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.service.definition.BookingService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/reservas")
 public class BookingController {
 
+    private final BookingService bookingService;
+
+
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createReserva(@RequestBody BookingRequest reservaRequest) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<?> createBooking(
+            @RequestBody BookingRequest reservaRequest,
+            HttpServletRequest request) {
+        try {
+            BookingDto booking = bookingService.createBooking(reservaRequest, request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error creating booking", e.getMessage()));
+        }
     }
 
     @GetMapping("/usuario")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getReservasUsuario(
-            @RequestParam(required = false) String estado,
+    public ResponseEntity<?> getBookingsUser(
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        try {
+            Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, request);
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error fetching bookings", e.getMessage()));
+        }
     }
 
     @GetMapping("/anfitrion")
-    @PreAuthorize("hasRole('ANFITRION')")
-    public ResponseEntity<?> getReservasAnfitrion(
-            @RequestParam(required = false) Integer alojamientoId,
-            @RequestParam(required = false) String estado,
+    @PreAuthorize("hasRole('HOST')")
+    public ResponseEntity<?> getBookingsHost(
+            @RequestParam(required = false) Integer accommodationId,
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        try {
+            Page<BookingDto> bookings = bookingService.getBookingsByHost(accommodationId, status, page, size, request);
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error fetching host bookings", e.getMessage()));
+        }
     }
 
     @PostMapping("/{id}/cancelar")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> cancelarReserva(@PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, HttpServletRequest request) {
+        try {
+            bookingService.cancelBooking(id, request);
+            return ResponseEntity.ok(new InfoDto("Booking cancelled", "The booking was successfully cancelled."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error cancelling booking", e.getMessage()));
+        }
     }
 }
