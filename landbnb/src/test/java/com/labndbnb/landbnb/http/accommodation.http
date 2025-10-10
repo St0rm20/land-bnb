@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjMiLCJlbWFpbCI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFycGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDA2ODI2MywiZXhwIjoxNzYwMDcxODYzfQ.ZmudkkVGOYHMRWVmJBHY5FpcmaAOQauwKvim1BncSuJ-MhVdkaVozlQn1R8-IE3GWc3QvSHO7Q5pzC-0DiPWiw
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjEiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDA2OTQ3NiwiZXhwIjoxNzYwMDczMDc2fQ.MjJ8JzJyk_9La1BDxIT75iKL-pnSDtycipNiUZbRBn2ek6ziCU30vBNG3aKBWrfq84sPoBk1n_NmTLpx2U9HwA
 
 ### 1. Create Accommodation with token
 POST http://localhost:8080/api/accommodations
@@ -6,17 +6,19 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "title": "Cozy Apartment in Downtown",
-  "description": "A comfortable and modern apartment located in the heart of the city.",
-  "city": "Medallo",
-  "address": "123 Main St, Medallo",
-  "latitude": 6.2429,
-  "longitude": -75.5812,
-  "pricePerNight": 500000,
-  "maxCapacity": 4,
-  "services": ["WiFi", "Air Conditioning", "Kitchen"],
-  "images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"],
-  "mainPhoto": "www.example.com/photo1.jpg"
+"id": 1,
+"title": "Cozy Apartment in Downtown",
+"description": "A comfortable and modern apartment located in the heart of the city.",
+"city": "Medallo",
+"address": "123 Main St, Medallo",
+"latitude": 6.2429,
+"longitude": -75.5812,
+"pricePerNight": 500000.0,
+"maxCapacity": 4,
+"services": ["WiFi", "Air Conditioning", "Kitchen"],
+"mainImage": "www.example.com/photo1.jpg",
+"images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"]
 }
+
 
 
