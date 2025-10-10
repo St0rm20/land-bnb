@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "review_answers")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ReviewAnswer {

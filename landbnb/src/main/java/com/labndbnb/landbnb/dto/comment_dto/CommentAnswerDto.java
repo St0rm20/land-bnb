@@ -8,6 +8,11 @@ public record CommentAnswerDto(
 
         @Size(max = 1000, message = "Text cannot exceed 1000 characters")
         @NotBlank(message = "Text is required")
-        String message
+        @NotNull(message = "Text cannot be null")
+        String message,
+
+        @NotBlank(message = "Comment ID is required")
+        @NotNull(message = "Comment ID cannot be null")
+        Long commentId
 ) {
 }

@@ -136,5 +136,12 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
     }
 
+    @Override
+    public Booking getBookingById(Long id) throws Exception {
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new Exception("Booking not found"));
+    }
+
+
 
 }

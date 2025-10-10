@@ -14,21 +14,52 @@ Authorization: {{token}}
   "numberOfGuests": 2
 }
 
-### List Bookings by User with token and optional status filter
-GET http://localhost:8080/api/reservas/usuario?status=PENDING&page=0&size=5
+
+### 2. Get User Bookings by Status (PENDING)with token
+GET http://localhost:8080/api/reservas/usuario?status=PENDING&page=0&size=10
+content-Type: application/json
+Authorization: {{token}}
+
+### 3. Get User Bookings by Status (CONFIRMED)with token
+GET http://localhost:8080/api/reservas/usuario?status=CONFIRMED&page=0&size=10
+content-Type: application/json
 Authorization: {{token}}
 
 
-### List all Bookings by Host with token and optional status filter
+### 4. Get User Bookings by Status (CANCELLED)with token
+GET http://localhost:8080/api/reservas/usuario?status=CANCELLED&page=0&size=10
+content-Type: application/json
+Authorization: {{token}}
+
+
+### 5. Get User Booking (All statues)
+GET http://localhost:8080/api/reservas/usuario?page=0&size=10
+content-Type: application/json
+Authorization: {{token}}
+
+
+### 6. Get all Bookings by Host with token
 GET http://localhost:8080/api/reservas/anfitrion
+content-Type: application/json
 Authorization:  {{token}}
 
-### List specific bookings and confirmed status by Host with token
-GET http://localhost:8080/api/reservas/anfitrion?accommodationId=1&status=CONFIRMED
+### 7. get specific bookings by Host with token
+GET http://localhost:8080/api/reservas/anfitrion?accommodationId=1&page=0&size=10
+content-Type: application/json
 Authorization:  {{token}}
 
+### 8. get specific bookings by Host with token (status=PENDING)
+GET http://localhost:8080/api/reservas/anfitrion?accommodationId=1&page=0&size=10&status=PENDING
+content-Type: application/json
+Authorization:  {{token}}
 
-### Cancel Booking by Id with token
+### 9. get specific bookings by Host with token (status=CONFIRMED)
+GET http://localhost:8080/api/reservas/anfitrion?accommodationId=1&page=0&size=10&status=CONFIRMED
+content-Type: application/json
+Authorization:  {{token}}
+
+### 10. Cancel Booking by Id with token
 POST http://localhost:8080/api/reservas/1/cancelar
+content-Type: application/json
 Authorization: {{token}}
 

@@ -50,6 +50,7 @@ public class Booking {
     @JoinColumn(name = "accommodation_id", nullable = false)
     private Accommodation accommodation;
 
+
     @Column(name = "number_of_guests", nullable = false)
     private Integer numberOfGuests;
 

@@ -2,6 +2,7 @@ package com.labndbnb.landbnb.controller;
 
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
+import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationMetrics;
 import com.labndbnb.landbnb.dto.accommodation_dto.SearchCriteria;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
@@ -65,7 +66,6 @@ public class AccommodationController {
         }
     }
 
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> deleteAccommodation(@PathVariable Long id, HttpServletRequest request) throws Exception {
@@ -76,19 +76,21 @@ public class AccommodationController {
     @PostMapping("/search")
     public ResponseEntity<?> searchAccommodations(
             @RequestBody SearchCriteria criteria,
-            @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page) throws Exception {
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        Page<AccommodationDetailDto> results = accommodationService.searchAccommodations(criteria, page);
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/host/my-accommodations")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> getMyAccommodations(
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+            @RequestParam(defaultValue = "0") int page,
+            HttpServletRequest request) throws Exception {
 
-    //getAccommodationsByHostId
+        Page<AccommodationDetailDto> accommodations = accommodationService.getMyAccommodations(page, request);
+        return ResponseEntity.ok(accommodations);
+    }
 
     @GetMapping("/{id}/metrics")
     @PreAuthorize("hasRole('HOST')")
@@ -97,7 +99,11 @@ public class AccommodationController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.status(HttpStatus.OK).build();
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            HttpServletRequest request) throws Exception {
+
+        AccommodationMetrics metrics = accommodationService.getAccommodationMetrics(
+                id, startDate, endDate, request);
+        return ResponseEntity.ok(metrics);
     }
 }

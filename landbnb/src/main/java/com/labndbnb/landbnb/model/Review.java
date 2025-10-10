@@ -35,6 +35,10 @@ public class Review {
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
+    @OneToOne
+    @JoinColumn(name = "review_answer_id")
+    private ReviewAnswer reviewAnswer;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id", nullable = false)
     private Accommodation accommodation;

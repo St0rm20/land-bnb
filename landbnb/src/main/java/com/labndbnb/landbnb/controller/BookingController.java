@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reservas")
+@RequestMapping("/api/booking")
 public class BookingController {
 
     private final BookingService bookingService;
@@ -34,7 +34,7 @@ public class BookingController {
         }
     }
 
-    @GetMapping("/usuario")
+    @GetMapping("/user")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getBookingsUser(
             @RequestParam(required = false) String status,
@@ -50,7 +50,7 @@ public class BookingController {
         }
     }
 
-    @GetMapping("/anfitrion")
+    @GetMapping("/host")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> getBookingsHost(
             @RequestParam(required = false) Integer accommodationId,
@@ -67,7 +67,7 @@ public class BookingController {
         }
     }
 
-    @PostMapping("/{id}/cancelar")
+    @PostMapping("/{id}/cancel")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> cancelBooking(@PathVariable Long id, HttpServletRequest request) {
         try {
