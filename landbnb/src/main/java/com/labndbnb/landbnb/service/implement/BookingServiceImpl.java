@@ -3,6 +3,7 @@ package com.labndbnb.landbnb.service.implement;
 
 import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.Booking.BookingMapper;
 import com.labndbnb.landbnb.model.Accommodation;
 import com.labndbnb.landbnb.model.Booking;
@@ -41,18 +42,18 @@ public class BookingServiceImpl implements BookingService {
     static final Logger logger = Logger.getLogger(BookingServiceImpl.class.getName());
 
     @Override
-    public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws Exception {
+    public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws ExceptionAlert {
         User user = UserService.getUserFromRequest(request);
         logger.info("The user id is: " + user.getId());
         Accommodation accommodation = accommodationRepository.findById(bookingRequest.accommodationId().longValue())
-                .orElseThrow(() -> new Exception("Accommodation not found"));
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         if (bookingRequest.checkIn().isAfter(bookingRequest.checkOut())) {
-            throw new Exception("Check-in date must be before check-out date");
+            throw new ExceptionAlert("Check-in date must be before check-out date");
         }
 
         if (bookingRequest.checkIn().isBefore(LocalDate.now())){
-            throw new Exception("Cannot book dates in the past");
+            throw new ExceptionAlert("Cannot book dates in the past");
         }
 
         LocalDateTime checkInDateTime = bookingRequest.checkIn().atStartOfDay();
@@ -61,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
         boolean hasOverlap= bookingRepository.existsOverlappingBooking(accommodation.getId(), checkInDateTime, checkOutDateTime);
 
         if (hasOverlap) {
-            throw  new Exception("Accommodation is not available for the selected dates");
+            throw  new ExceptionAlert("Accommodation is not available for the selected dates");
         }
 
         List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(accommodation.getId(), checkInDateTime, checkOutDateTime);
@@ -76,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
                         .append(b.getBookingStatus())
                         .append(")");
             }
-            throw  new Exception (message.toString());
+            throw  new ExceptionAlert (message.toString());
 
         }
 
@@ -101,10 +102,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<BookingDto> getBookingsByUser(String estado, int page, int size, HttpServletRequest request) throws Exception {
+    public Page<BookingDto> getBookingsByUser(String estado, int page, int size, HttpServletRequest request) throws ExceptionAlert {
         User user = UserService.getUserFromRequest(request);
         if(user==null){
-            throw  new Exception("User not found");
+            throw  new ExceptionAlert("User not found");
         }
         logger.info("The user id is: " + user.getId());
         PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -125,11 +126,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<BookingDto> getBookingsByHost(Integer accommodationId, String status, int page, int size, HttpServletRequest request) throws Exception {
+    public Page<BookingDto> getBookingsByHost(Integer accommodationId, String status, int page, int size, HttpServletRequest request) throws ExceptionAlert {
         User host = UserService.getUserFromRequest(request);
 
         if (host.getRole() != UserRole.HOST) {
-            throw new Exception("User is not a host");
+            throw new ExceptionAlert("User is not a host");
         }
         PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Booking> bookings;
@@ -158,22 +159,22 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public void cancelBooking(Long id, HttpServletRequest request) throws Exception {
+    public void cancelBooking(Long id, HttpServletRequest request) throws ExceptionAlert {
         User user = UserService.getUserFromRequest(request);
 
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new Exception("Booking not found"));
+                .orElseThrow(() -> new ExceptionAlert("Booking not found"));
 
         if (booking.getBookingStatus() == BookingStatus.CANCELLED){
-            throw new Exception("Booking has already been cancelled");
+            throw new ExceptionAlert("Booking has already been cancelled");
         }
 
         if (booking.getBookingStatus() == BookingStatus.COMPLETED) {
-            throw new Exception("Completed bookings cannot be cancelled");
+            throw new ExceptionAlert("Completed bookings cannot be cancelled");
         }
 
         if (!booking.getGuest().getId().equals(user.getId())) {
-            throw new Exception("User is not the owner of the booking");
+            throw new ExceptionAlert("User is not the owner of the booking");
         }
 
         booking.setBookingStatus(BookingStatus.CANCELLED);
@@ -184,9 +185,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBookingById(Long id) throws Exception {
+    public Booking getBookingById(Long id) throws ExceptionAlert {
         return bookingRepository.findById(id)
-                .orElseThrow(() -> new Exception("Booking not found"));
+                .orElseThrow(() -> new ExceptionAlert("Booking not found"));
     }
 
     @Override

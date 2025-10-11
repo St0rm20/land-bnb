@@ -25,20 +25,20 @@ public class AuthServiceImpl implements AuthService {
     private final ResetPasswordServiceImpl  resetPasswordService;
 
     @Override
-    public InfoDto register(UserRegistration request) throws Exception {
+    public InfoDto register(UserRegistration request) throws ExceptionAlert {
         userService.create(request);
         return new InfoDto("Register successful", "The user has been created successfully");
     }
 
     @Override
-    public AuthResponse login(LoginRequest request) throws Exception {
+    public AuthResponse login(LoginRequest request) throws ExceptionAlert {
         UserDto userDto = userService.getByEmail(request.email());
         if (userDto == null) {
             throw new ExceptionAlert("Credenciales inválidas"); // Mensaje genérico por seguridad
         }
 
         if (!userService.isThePasswordCorrect(request.email(), request.password())) {
-            throw new Exception("Credenciales inválidas");
+            throw new ExceptionAlert("Credenciales inválidas");
         }
         Map<String, String> claims = new HashMap<>();
         claims.put("role", userDto.userRole().name());
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             resetPasswordService.sendResetPasswordEmail(email.email());
 
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             e.printStackTrace();
 
         }
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public InfoDto resetPassword(ResetPasswordRequest request) throws Exception {
+    public InfoDto resetPassword(ResetPasswordRequest request) throws ExceptionAlert {
         if( resetPasswordService.resetPassword(request.email(), request.token(), request.newPassword())){
             return new InfoDto("Password reset successful", "Your password has been updated successfully.");
         }

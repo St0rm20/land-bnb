@@ -4,6 +4,7 @@ import com.labndbnb.landbnb.dto.comment_dto.CommentAnswerDto;
 import com.labndbnb.landbnb.dto.comment_dto.CommentDTO;
 import com.labndbnb.landbnb.dto.comment_dto.ReviewRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class CommentController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createComment(@RequestBody ReviewRequest reviewRequest,
-    HttpServletRequest requestServlet) throws Exception {
+    HttpServletRequest requestServlet) throws ExceptionAlert {
         logger.info("createComment");
         InfoDto info =  commentService.createComment(reviewRequest, requestServlet);
         return ResponseEntity.status(HttpStatus.OK).body(info);
@@ -50,7 +51,7 @@ public class CommentController {
 
 
     @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<?> getCommentByBookingId(@PathVariable Long bookingId) throws Exception {
+    public ResponseEntity<?> getCommentByBookingId(@PathVariable Long bookingId) throws ExceptionAlert {
         logger.info("getCommentByBookingId");
         CommentDTO commentDTO = commentService.getCommentByBookingId(bookingId);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
@@ -60,7 +61,7 @@ public class CommentController {
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> answerComment(
             @RequestBody @Valid CommentAnswerDto answer,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws ExceptionAlert {
         logger.info("answerComment");
         CommentDTO commentDTO = commentService.replyToComment(answer, request);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
@@ -68,7 +69,7 @@ public class CommentController {
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteComment(@PathVariable Long id, HttpServletRequest request) throws Exception{
+    public ResponseEntity<?> deleteComment(@PathVariable Long id, HttpServletRequest request) throws ExceptionAlert{
         InfoDto info = commentService.deleteComment(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
@@ -79,7 +80,7 @@ public class CommentController {
     public ResponseEntity<?> deleteReplyComment(
             @PathVariable Long id,
             HttpServletRequest request
-    ) throws Exception {
+    ) throws ExceptionAlert {
 
         InfoDto info = commentService.deleteReplyComment(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(info);

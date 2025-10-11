@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public InfoDto createComment(ReviewRequest reviewRequest, HttpServletRequest request) throws Exception {
+    public InfoDto createComment(ReviewRequest reviewRequest, HttpServletRequest request) throws ExceptionAlert {
         Booking booking = bookingService.getBookingById(Long.valueOf(reviewRequest.bookingId()));
         User user = userService.getUserFromRequest(request);
 
@@ -103,7 +103,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentDTO replyToComment(CommentAnswerDto answerDto, HttpServletRequest request) throws Exception {
+    public CommentDTO replyToComment(CommentAnswerDto answerDto, HttpServletRequest request) throws ExceptionAlert {
         logger.info("replyToComment");
         Optional<Review> review = reviewRepository.findById(answerDto.commentId());
         if (review.isEmpty()) {
@@ -135,16 +135,16 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentDTO getCommentByBookingId(Long bookingId) throws Exception {
+    public CommentDTO getCommentByBookingId(Long bookingId) throws ExceptionAlert {
         Review review = reviewRepository.getByBookingId(bookingId);
         if(review==null){
-            throw new Exception("Review not found");
+            throw new ExceptionAlert("Review not found");
         }
         return reviewMapper.toDto(review);
     }
 
     @Override
-    public InfoDto deleteComment(Long id, HttpServletRequest request) throws Exception {
+    public InfoDto deleteComment(Long id, HttpServletRequest request) throws ExceptionAlert {
         User user = userService.getUserFromRequest(request);
         Review review = reviewRepository.findById(id).orElse(null);
 
@@ -153,7 +153,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (user == null || review.getUser() == null || !review.getUser().getId().equals(user.getId())) {
-            throw new Exception("User is not the owner of the review");
+            throw new ExceptionAlert("User is not the owner of the review");
         }
 
         Accommodation accommodation = review.getAccommodation();
@@ -186,7 +186,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws Exception {
+    public InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws ExceptionAlert {
         logger.info("deleteReplyComment");
         User user = userService.getUserFromRequest(request);
         ReviewAnswer reviewAnswer = reviewAnswerRepository.findById(id).orElse(null);

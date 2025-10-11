@@ -1,12 +1,14 @@
 package com.labndbnb.landbnb.controller;
 
 import com.labndbnb.landbnb.dto.util_dto.ResponseDTO;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -17,13 +19,13 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<ResponseDTO<Map>> upload(@RequestParam("file") MultipartFile image) throws Exception{
+    public ResponseEntity<ResponseDTO<Map>> upload(@RequestParam("file") MultipartFile image) throws IOException {
         Map response = imageService.upload(image);
         return ResponseEntity.ok( new ResponseDTO<>(false, response) );
     }
 
     @DeleteMapping
-    public ResponseEntity<ResponseDTO<String>> delete(@RequestParam("id") String id) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> delete(@RequestParam("id") String id) throws IOException{
         imageService.delete(id);
         return ResponseEntity.ok( new ResponseDTO<>(false, "Imagen eliminada exitosamente") );
     }

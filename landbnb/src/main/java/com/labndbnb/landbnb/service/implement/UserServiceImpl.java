@@ -6,6 +6,7 @@ import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.EmailAlreadyInUse;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.auth.UserRegistrationMapper;
 import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
 import com.labndbnb.landbnb.model.Accommodation;
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean create(UserRegistration userDto) throws Exception {
+    public Boolean create(UserRegistration userDto) throws ExceptionAlert {
         if (existsByEmail(userDto.email())) {
             throw new EmailAlreadyInUse("Email already in use");
         }
@@ -70,16 +71,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto get(String id) throws Exception {
+    public UserDto get(String id) throws ExceptionAlert {
         if (!userRepository.existsByIdAndStatus(Long.parseLong(id),UserStatus.ACTIVE)) {
-            throw new Exception("User with id " + id + " not found");
+            throw new ExceptionAlert("User with id " + id + " not found");
         }
         return userDtoMapper.toDto(userRepository
                 .getUsersByIdAndStatus(Long.parseLong(id), UserStatus.ACTIVE));
     }
 
     @Override
-    public void delete(String id) throws Exception {
+    public void delete(String id) throws ExceptionAlert {
         if (!userRepository.existsByIdAndStatus(Long.parseLong(id), UserStatus.ACTIVE)) {
             throw new RuntimeException("User with id " + id + " not found");
         }
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public InfoDto update(UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
+    public InfoDto update(UserUpdateDto userUpdateDto, HttpServletRequest request) throws ExceptionAlert {
         User user = getUserFromRequest(request);
         user.setName(userUpdateDto.name());
         user.setLastName(userUpdateDto.lastName());
@@ -107,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getByEmail(String email) throws Exception {
+    public UserDto getByEmail(String email) throws ExceptionAlert {
         if (!userRepository.existsByEmailAndStatus(email, UserStatus.ACTIVE)) {
             return null;
         }
@@ -117,11 +118,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean isThePasswordCorrect(String email, String password) throws Exception {
+    public Boolean isThePasswordCorrect(String email, String password) throws ExceptionAlert {
 
         User user = userRepository.findByEmailAndStatus(email,UserStatus.ACTIVE).orElse(null);
         if (user == null) {
-            throw new Exception("User with email " + email + " not found");
+            throw new ExceptionAlert("User with email " + email + " not found");
         }
         System.out.println(passwordEncoder.matches(password, user.getPassword()));
         return passwordEncoder.matches(password, user.getPassword());
@@ -146,19 +147,19 @@ public class UserServiceImpl implements UserService {
             return new InfoDto("Error", "Token expired");
         } catch (JwtException e) {
             return new InfoDto("Error", "Invalid token");
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             return new InfoDto("Error", "Unexpected error: " + e.getMessage());
         }
     }
 
     @Override
-    public UserDto getUser(HttpServletRequest request) throws Exception {
+    public UserDto getUser(HttpServletRequest request) throws ExceptionAlert {
         User user = getUserFromRequest(request);
         return userDtoMapper.toDto(user);
     }
 
     @Override
-    public InfoDto becomeHost(HttpServletRequest request) throws Exception {
+    public InfoDto becomeHost(HttpServletRequest request) throws ExceptionAlert {
         User user = getUserFromRequest(request);
         if (user.getRole() == UserRole.HOST) {
             return new InfoDto("Info", "You are already a host");
@@ -169,7 +170,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public InfoDto delete(HttpServletRequest request) throws Exception {
+    public InfoDto delete(HttpServletRequest request) throws ExceptionAlert {
         User user = getUserFromRequest(request);
         if (user.getRole() == UserRole.HOST) {
             return new InfoDto("Error", "Hosts cannot delete their accounts");
@@ -180,20 +181,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserFromRequest(HttpServletRequest request) throws Exception {
+    public User getUserFromRequest(HttpServletRequest request) throws ExceptionAlert {
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new Exception("Missing or invalid Authorization header");
+            throw new ExceptionAlert("Missing or invalid Authorization header");
         }
         String token = header.substring(7);
         Jws<Claims> jws = jwtutils.parseJwt(token);
 
         String userId = jws.getPayload().get("userId", String.class);
         if (userId == null) {
-            throw new Exception("Invalid token: userId missing");
+            throw new ExceptionAlert("Invalid token: userId missing");
         }
         return userRepository.findByIdAndStatus(Long.parseLong(userId), UserStatus.ACTIVE)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new ExceptionAlert("User not found"));
     }
 
     @Override

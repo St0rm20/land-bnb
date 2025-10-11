@@ -4,6 +4,7 @@ import com.labndbnb.landbnb.dto.aut_dto.ChangePasswordRequest;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -25,14 +26,14 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getProfile(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getProfile(HttpServletRequest request) throws ExceptionAlert {
         UserDto userDto = userService.getUser(request);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @PutMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateProfile(@RequestBody @Valid UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> updateProfile(@RequestBody @Valid UserUpdateDto userUpdateDto, HttpServletRequest request) throws ExceptionAlert {
         InfoDto info = userService.update(userUpdateDto, request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
@@ -45,7 +46,7 @@ public class UserController {
         try {
             InfoDto info = userService.changePassword(changePasswordRequest, request);
             return ResponseEntity.ok(info);
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", true, "message", e.getMessage()));
@@ -54,14 +55,14 @@ public class UserController {
 
     @PostMapping("/become-host")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> becomeHost(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> becomeHost(HttpServletRequest request) throws ExceptionAlert {
         InfoDto info = userService.becomeHost(request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
     @DeleteMapping("/delete-account")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteAccount(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> deleteAccount(HttpServletRequest request) throws ExceptionAlert {
         InfoDto info = userService.delete(request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }

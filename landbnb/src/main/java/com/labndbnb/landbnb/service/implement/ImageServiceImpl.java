@@ -31,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Map upload(MultipartFile image) throws Exception {
+    public Map upload(MultipartFile image) throws IOException {
         File file = convert(image);
         try {
             return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", "landbnb"));
@@ -43,7 +43,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Map delete(String imageId) throws Exception {
+    public Map delete(String imageId) throws IOException {
         return cloudinary.uploader().destroy(imageId, ObjectUtils.emptyMap());
     }
 

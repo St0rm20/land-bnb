@@ -5,6 +5,7 @@ import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationMetrics;
 import com.labndbnb.landbnb.dto.accommodation_dto.SearchCriteria;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.accommodation.AccommodationDetailDtoMapper;
 import com.labndbnb.landbnb.mappers.accommodation.AccommodationDtoMapper;
 import com.labndbnb.landbnb.model.Accommodation;
@@ -50,11 +51,11 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public InfoDto createAccommodation(AccommodationDetailDto accommodationDetailDto, HttpServletRequest request) throws Exception {
+    public InfoDto createAccommodation(AccommodationDetailDto accommodationDetailDto, HttpServletRequest request) throws ExceptionAlert {
 
         User user = userService.getUserFromRequest(request);
         if (user == null) {
-            throw new Exception("User not found");
+            throw new ExceptionAlert("User not found");
         }
 
         if (!user.getRole().toString().equals("HOST")) {
@@ -76,22 +77,22 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public AccommodationDetailDto getAccommodation(Long id) throws Exception {
+    public AccommodationDetailDto getAccommodation(Long id) throws ExceptionAlert {
 
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new Exception("Accommodation not found"));
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         return accommodationDetailDtoMapper.toDto(accommodation);
     }
 
 
     @Override
-    public void deleteAccommodation(Long id, HttpServletRequest request) throws Exception {
+    public void deleteAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert {
         User user = userService.getUserFromRequest(request);
         Accommodation accommodation = accommodationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Accommodation not found"));
         if (user == null || !Objects.equals(accommodation.getHost().getId(), user.getId())) {
-            throw new Exception("You are not the owner of this accommodation");
+            throw new ExceptionAlert("You are not the owner of this accommodation");
         }
 
         accommodationRepository.delete(accommodation);
@@ -99,17 +100,17 @@ public class AccommodationServiceImpl implements AccommodationService {
 
 
     @Override
-    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws Exception {
+    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws ExceptionAlert {
         User user = userService.getUserFromRequest(request);
         if (user == null || !user.getRole().toString().equals("HOST")) {
-            throw new Exception("User is not a host");
+            throw new ExceptionAlert("User is not a host");
         }
 
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new Exception("Accommodation not found"));
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
-            throw new Exception("You are not the owner of this accommodation");
+            throw new ExceptionAlert("You are not the owner of this accommodation");
         }
 
         accommodationDetailDtoMapper.updateEntityFromDto(accommodationDetailDto, accommodation);
@@ -121,7 +122,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public Page<AccommodationDetailDto> searchAccommodations(SearchCriteria criteria, int page) throws Exception {
+    public Page<AccommodationDetailDto> searchAccommodations(SearchCriteria criteria, int page) throws ExceptionAlert {
 
         Sort sort;
         if (criteria.sortBy() != null && !criteria.sortBy().isBlank()) {
@@ -155,10 +156,10 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public Page<AccommodationDetailDto> getMyAccommodations(int page, HttpServletRequest request) throws Exception {
+    public Page<AccommodationDetailDto> getMyAccommodations(int page, HttpServletRequest request) throws ExceptionAlert {
         User user = userService.getUserFromRequest(request);
         if (user == null || !user.getRole().toString().equals("HOST")) {
-            throw new Exception("User is not a host");
+            throw new ExceptionAlert("User is not a host");
         }
         PageRequest pageable = PageRequest.of(page, size);
 
@@ -173,19 +174,19 @@ public class AccommodationServiceImpl implements AccommodationService {
             Integer id,
             LocalDate startDate,
             LocalDate endDate,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) throws ExceptionAlert {
 
         User user = userService.getUserFromRequest(request);
 
         if (user == null || !user.getRole().toString().equals("HOST")) {
-            throw new Exception("User is not a host");
+            throw new ExceptionAlert("User is not a host");
         }
 
         Accommodation accommodation = accommodationRepository.findById(id.longValue())
-                .orElseThrow(() -> new Exception("Accommodation not found"));
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
-            throw new Exception("You are not the owner of this accommodation");
+            throw new ExceptionAlert("You are not the owner of this accommodation");
         }
 
         LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
@@ -253,7 +254,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws Exception {
+    public InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws ExceptionAlert {
         User user = userService.getUserFromRequest(request);
         if (user == null) {
             return new InfoDto("User not found", "The user could not be found from the request.");
@@ -291,17 +292,17 @@ public class AccommodationServiceImpl implements AccommodationService {
             user.getFavorites().remove(accommodation);
             userService.save(user);
             return new InfoDto("Removed from favorites", "The accommodation has been removed from the user's favorites.");
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             return new InfoDto("Error", "An error occurred while trying to remove the accommodation from favorites: " + e.getMessage());
         }
     }
 
     @Override
-    public Page<AccommodationDto> getFavoriteAccommodations(int page, HttpServletRequest request) throws Exception {
+    public Page<AccommodationDto> getFavoriteAccommodations(int page, HttpServletRequest request) throws ExceptionAlert {
         Pageable pageable = PageRequest.of(page, size);
         User user = userService.getUserFromRequest(request);
         if (user == null) {
-            throw new Exception("User not found");
+            throw new ExceptionAlert("User not found");
         }
         Page<Accommodation> accommodations = userService.findFavoritesByUserId(user.getId(), pageable);
         return accommodations.map(accommodationDtoMapper::toDto);
@@ -320,7 +321,7 @@ public class AccommodationServiceImpl implements AccommodationService {
                 return false;
             }
             return user.getFavorites().contains(accommodation);
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             return false;
         }
     }

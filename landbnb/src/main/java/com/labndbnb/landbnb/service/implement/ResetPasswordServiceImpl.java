@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.service.implement;
 
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.exceptions.TokenIncorrect;
 import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
 import com.labndbnb.landbnb.model.ResetPassword;
@@ -26,11 +27,11 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     Logger log = org.slf4j.LoggerFactory.getLogger(ResetPasswordServiceImpl.class);
 
     @Override
-    public Boolean sendResetPasswordEmail(String email) throws Exception {
+    public Boolean sendResetPasswordEmail(String email) throws ExceptionAlert {
 
         UserDto user = userService.getByEmail(email);
         if (user == null) {
-            throw new Exception("User not found with email: " + email);
+            throw new ExceptionAlert("User not found with email: " + email);
         }
 
 
@@ -52,7 +53,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     }
 
     @Override
-    public Boolean resetPassword(String email,String token, String newPassword) throws Exception {
+    public Boolean resetPassword(String email,String token, String newPassword) throws ExceptionAlert {
         UserDto user = userService.getByEmail(email);
         if (user == null) {
             return false;

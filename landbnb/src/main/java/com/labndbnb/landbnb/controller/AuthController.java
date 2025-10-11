@@ -3,6 +3,7 @@ package com.labndbnb.landbnb.controller;
 import com.labndbnb.landbnb.dto.aut_dto.*;
 import com.labndbnb.landbnb.dto.util_dto.ErrorResponse;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.AuthService;
 
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class AuthController {
             InfoDto info = authService.register(userRegistration);
             return ResponseEntity.status(HttpStatus.CREATED).body(info);
 
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             ErrorResponse errorResponse = ErrorResponse.of(
                     HttpStatus.BAD_REQUEST,
                     e.getMessage()
@@ -44,7 +45,7 @@ public class AuthController {
         try {
             AuthResponse authResponse = authService.login(loginRequest);
             return ResponseEntity.ok().body(authResponse);
-        } catch (Exception e) {
+        } catch (ExceptionAlert e) {
             ErrorResponse errorResponse = ErrorResponse.of(
                     HttpStatus.UNAUTHORIZED,
                     "Credenciales inválidas"
@@ -60,7 +61,7 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) throws Exception {
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) throws ExceptionAlert {
         InfoDto info = authService.resetPassword(resetPasswordRequest);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
