@@ -27,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public InfoDto register(UserRegistration request) throws ExceptionAlert {
         userService.create(request);
+        mailServiceImpl.sendSimpleEmail(request.email(), "Nuevo registro", "Hola, "+ request.name() + " Se ha registrado tu correo en Land bnb.");
         return new InfoDto("Register successful", "The user has been created successfully");
     }
 

@@ -110,9 +110,8 @@ public class BookingController {
     public ResponseEntity<?> confirmBooking(@PathVariable Long id, HttpServletRequest request) {
         try {
             logger.info("confirmBooking");
-            bookingService.completeBooking(id, request);
-            return ResponseEntity.ok(new InfoDto("Booking confirmed",
-                    "The booking was successfully confirmed."));
+             InfoDto info = bookingService.completeBooking(id, request);
+            return ResponseEntity.ok(info);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new InfoDto("Error", e.getMessage()));

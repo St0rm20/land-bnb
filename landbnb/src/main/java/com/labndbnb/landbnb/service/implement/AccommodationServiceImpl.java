@@ -4,6 +4,7 @@ import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationMetrics;
 import com.labndbnb.landbnb.dto.accommodation_dto.SearchCriteria;
+import com.labndbnb.landbnb.dto.booking_dto.BookingDatesDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.accommodation.AccommodationDetailDtoMapper;
@@ -15,6 +16,7 @@ import com.labndbnb.landbnb.model.enums.BookingStatus;
 import com.labndbnb.landbnb.repository.AccommodationRepository;
 import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
+import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final AccommodationDetailDtoMapper accommodationDetailDtoMapper;
     private final UserService userService;
     private final BookingRepository bookingRepository;
+    private final BookingService bookingService;
 
     private final Integer size = 10;
 
@@ -94,7 +97,9 @@ public class AccommodationServiceImpl implements AccommodationService {
         if (user == null || !Objects.equals(accommodation.getHost().getId(), user.getId())) {
             throw new ExceptionAlert("You are not the owner of this accommodation");
         }
-
+        if(bookingService.accommodationHasFutureBookings(id)){
+            throw new ExceptionAlert("Cannot delete accommodation with active bookings");
+        }
         accommodationRepository.delete(accommodation);
     }
 
@@ -324,6 +329,11 @@ public class AccommodationServiceImpl implements AccommodationService {
         } catch (ExceptionAlert e) {
             return false;
         }
+    }
+
+    @Override
+    public List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId) {
+        return bookingService.getFutureConfirmedBookingDates(accommodationId);
     }
 
 }

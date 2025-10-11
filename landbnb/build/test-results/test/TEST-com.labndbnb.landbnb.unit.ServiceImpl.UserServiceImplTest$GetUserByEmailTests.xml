@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Get User By Email" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-10-11T22:54:56.411Z" hostname="STORM" time="0.039">
+  <properties/>
+  <testcase name="Should return null when email does not exist" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$GetUserByEmailTests" time="0.009"/>
+  <testcase name="Should return user when email exists" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$GetUserByEmailTests" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

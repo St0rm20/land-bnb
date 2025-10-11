@@ -4,6 +4,7 @@ import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationMetrics;
 import com.labndbnb.landbnb.dto.accommodation_dto.SearchCriteria;
+import com.labndbnb.landbnb.dto.booking_dto.BookingDatesDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
@@ -146,5 +147,10 @@ public class AccommodationController {
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
+    @GetMapping("/dates-unavailable/{id}")
+    public ResponseEntity<?> getUnavailableDates(@PathVariable Long id) throws ExceptionAlert {
+        List<BookingDatesDto> dates = accommodationService.getFutureConfirmedBookingDates(id);
+        return ResponseEntity.status(HttpStatus.OK).body(dates);
+    }
 
 }

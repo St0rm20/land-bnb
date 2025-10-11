@@ -1,8 +1,10 @@
 package com.labndbnb.landbnb.service.implement;
 
 
+import com.labndbnb.landbnb.dto.booking_dto.BookingDatesDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
+import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.Booking.BookingMapper;
 import com.labndbnb.landbnb.model.Accommodation;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,6 +43,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserService UserService;
     private final BookingMapper bookingMapper;
     static final Logger logger = Logger.getLogger(BookingServiceImpl.class.getName());
+    private final MailServiceImpl mailServiceImpl;
 
     @Override
     public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws ExceptionAlert {
@@ -177,9 +181,30 @@ public class BookingServiceImpl implements BookingService {
             throw new ExceptionAlert("User is not the owner of the booking");
         }
 
+        if(LocalDateTime.now().isAfter(booking.getStartDate().minusHours(48))){
+            throw new ExceptionAlert("Bookings can only be cancelled up to 48 hours before the start date");
+        }
+
+        // CORREGIDO: Orden correcto de parámetros
+        mailServiceImpl.sendSimpleEmail(
+                booking.getGuest().getEmail(),  // to (PRIMERO)
+                "Booking Cancelled",            // subject (SEGUNDO)
+                "Your booking with code " + booking.getBookingCode() + " has been cancelled.\n" +
+                        "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                        "Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate()  // text (TERCERO)
+        );
+
+        mailServiceImpl.sendSimpleEmail(
+                booking.getAccommodation().getHost().getEmail(),  // to (PRIMERO)
+                "Booking Cancelled",                              // subject (SEGUNDO)
+                "The booking with code " + booking.getBookingCode() + " has been cancelled.\n" +
+                        "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                        "Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
+                        "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()  // text (TERCERO)
+        );
+
         booking.setBookingStatus(BookingStatus.CANCELLED);
         booking.setCancelledAt(LocalDateTime.now());
-
 
         bookingRepository.save(booking);
     }
@@ -191,32 +216,56 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void completeBooking(Long id, HttpServletRequest request) {
+    public InfoDto completeBooking(Long id, HttpServletRequest request) {
         try {
             User user = UserService.getUserFromRequest(request);
 
             Booking booking = bookingRepository.findById(id)
-                    .orElseThrow(() -> new Exception("Booking not found"));
+                    .orElseThrow(() -> new ExceptionAlert("Booking not found"));
 
             if (booking.getBookingStatus() == BookingStatus.COMPLETED) {
-                throw new Exception("Booking has already been completed");
+                return new InfoDto("Already completed", "Booking has already been completed");
             }
 
             if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
-                throw new Exception("Cancelled bookings cannot be completed");
+                return new InfoDto("Cannot complete", "Cancelled bookings cannot be completed");
             }
 
             if (!booking.getGuest().getId().equals(user.getId())) {
-                throw new Exception("User is not the owner of the booking");
-            }
-            if (LocalDateTime.now().isBefore(booking.getEndDate())) {
-                throw new Exception("Booking cannot be completed before the end date");
+                return new InfoDto("Unauthorized", "User is not the owner of the booking");
             }
 
-            booking.setBookingStatus(BookingStatus.COMPLETED);
+
+            mailServiceImpl.sendSimpleEmail(
+                    booking.getGuest().getEmail(),
+                    "Booking Completed",
+                    "Your booking with code " + booking.getBookingCode() + " has been marked as completed.\n" +
+                            "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                            "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
+                            "We hope you had a great stay!"
+            );
+
+            mailServiceImpl.sendSimpleEmail(booking.getAccommodation().getHost().getEmail(),
+                    "Booking Completed",
+                    "The booking with code " + booking.getBookingCode() + " has been marked as completed.\n" +
+                            "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                            "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
+                            "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()
+            );
+
+
+
+            booking.setBookingStatus(BookingStatus.CONFIRMED);
             bookingRepository.save(booking);
-        } catch (Exception e) {
+
+            return new InfoDto("Booking completed", "The booking has been marked as completed successfully");
+
+        } catch (ExceptionAlert e) {
             logger.severe("Error completing booking: " + e.getMessage());
+            return new InfoDto("Error", e.getMessage());
+        } catch (Exception e) {
+            logger.severe("Unexpected error completing booking: " + e.getMessage());
+            return new InfoDto("Error", "An unexpected error occurred");
         }
     }
 
@@ -244,6 +293,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new Exception("User is not the host of the accommodation for this booking");
             }
 
+
             booking.setBookingStatus(BookingStatus.CANCELLED);
             booking.setCancelledAt(LocalDateTime.now());
             bookingRepository.save(booking);
@@ -252,5 +302,38 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+@Override
+    public boolean accommodationHasFutureBookings(Long accommodationId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if(!accommodationRepository.existsById(accommodationId)){
+            return false;
+        }
+        if(!bookingRepository.existsByAccommodation_Id(accommodationId)){
+            return false;
+        }
+
+        return bookingRepository.existsByAccommodationIdAndEndDateAfterAndBookingStatusNot(
+                accommodationId,
+                now,
+                BookingStatus.CONFIRMED
+        );
+    }
+
+    @Override
+    public List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId) {
+
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        List<Booking> futureBookings = bookingRepository
+                .findFutureConfirmedBookingsByAccommodation(accommodationId, currentDate);
+
+        return futureBookings.stream()
+                .map(booking -> new BookingDatesDto(
+                        booking.getStartDate().toLocalDate(),
+                        booking.getEndDate().toLocalDate()
+                ))
+                .collect(Collectors.toList());
+    }
 
 }

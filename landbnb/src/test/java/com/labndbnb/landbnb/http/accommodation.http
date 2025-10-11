@@ -107,3 +107,9 @@ content-Type: application/json
 Authorization: {{token}}
 
 
+### 12. get dates unavailable for booking by accommodation id (Public)
+GET http://localhost:8080/api/accommodations/dates-unavailable/2
+content-Type: application/json
+
+
+

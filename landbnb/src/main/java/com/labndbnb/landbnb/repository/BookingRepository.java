@@ -127,4 +127,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             LocalDateTime start,
             LocalDateTime end
     );
+
+    boolean existsByAccommodationIdAndEndDateAfterAndBookingStatusNot(Long accommodationId, LocalDateTime now, BookingStatus bookingStatus);
+
+
+    /**
+     * Obtener reservas futuras confirmadas de un alojamiento
+     */
+    @Query("SELECT b FROM Booking b WHERE b.accommodation.id = :accommodationId " +
+            "AND b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.CONFIRMED " +
+            "AND b.endDate > :currentDate " +
+            "ORDER BY b.startDate")
+    List<Booking> findFutureConfirmedBookingsByAccommodation(@Param("accommodationId") Long accommodationId,
+                                                             @Param("currentDate") LocalDateTime currentDate);
+
+    boolean existsByAccommodation_Id(Long accommodationId);
 }

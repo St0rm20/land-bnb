@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.model;
 
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
 import jakarta.persistence.*;
@@ -103,8 +104,37 @@ public class User implements UserDetails {
     }
 
 
+    public void setPassword(String password) {
+        if( password.length() < 8 || password.length() > 255){
+            throw new ExceptionAlert("Password must be between 8 and 255 characters");
+        }
+        if(!haveMayusAndNumber()){
+            throw new ExceptionAlert("Password must contain at least one uppercase letter and one number");
+        }
+        this.password = password;
+    }
+
     @Override
     public boolean isEnabled() {
         return status == UserStatus.ACTIVE && emailVerified;
+    }
+
+
+    public boolean haveMayusAndNumber() {
+        boolean hasUppercase = false;
+        boolean hasDigit = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUppercase = true;
+            }
+            if (Character.isDigit(c)) {
+                hasDigit = true;
+            }
+            if (hasUppercase && hasDigit) {
+                return true;
+            }
+        }
+        return false;
     }
 }

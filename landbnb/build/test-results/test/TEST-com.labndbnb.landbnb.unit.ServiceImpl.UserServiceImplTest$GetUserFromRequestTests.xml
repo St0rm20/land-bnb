@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Get User From Request" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-10-11T22:54:56.053Z" hostname="STORM" time="0.239">
+  <properties/>
+  <testcase name="Should throw exception when user not found" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$GetUserFromRequestTests" time="0.219"/>
+  <testcase name="Should throw exception when authorization header is missing" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$GetUserFromRequestTests" time="0.008"/>
+  <testcase name="Should return user when valid token provided" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$GetUserFromRequestTests" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
