@@ -15,17 +15,17 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-"title": "Cozy Apartment in Downtown",
-"description": "A comfortable and modern apartment located in the heart of the city.",
-"city": "Medallo",
-"address": "123 Main St, Medallo",
-"latitude": 6.2429,
-"longitude": -75.5812,
-"pricePerNight": 500000.0,
-"maxCapacity": 4,
-"services": ["WiFi", "Air Conditioning", "Kitchen"],
-"mainImage": "www.example.com/photo1.jpg",
-"images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"]
+  "title": "Cozy Apartment in Downtown",
+  "description": "A comfortable and modern apartment located in the heart of the city.",
+  "city": "Medallo",
+  "address": "123 Main St, Medallo",
+  "latitude": 6.2429,
+  "longitude": -75.5812,
+  "pricePerNight": 500000.0,
+  "maxCapacity": 4,
+  "services": ["WiFi", "Air Conditioning", "Kitchen"],
+  "mainImage": "www.example.com/photo1.jpg",
+  "images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"]
 }
 
 ### 4. Update Accommodation (HOST only - owner)
@@ -55,7 +55,7 @@ Authorization: {{token}}
 
 
 ### 6. Search Accommodations (Public)
-GET http://localhost:8080/api/accommodations/search?page=0
+POST http://localhost:8080/api/accommodations/search?page=0
 Content-Type: application/json
 
 {
@@ -69,7 +69,7 @@ Content-Type: application/json
 }
 
 ### 7. Search Accommodations by City (Public)
-GET http://localhost:8080/api/accommodations/search?page=0
+POST http://localhost:8080/api/accommodations/search?page=0
 Content-Type: application/json
 
 {
@@ -77,7 +77,7 @@ Content-Type: application/json
 }
 
 ### 8. Search Accommodations by Price Range (Public)
-GET http://localhost:8080/api/accommodations/search?page=0
+POST http://localhost:8080/api/accommodations/search?page=0
 Content-Type: application/json
 
 {
@@ -86,7 +86,7 @@ Content-Type: application/json
 }
 
 ### 9. Search Accommodations by Services (Public)
-GET http://localhost:8080/api/accommodations/search?page=0
+POST http://localhost:8080/api/accommodations/search?page=0
 Content-Type: application/json
 
 {
@@ -94,18 +94,14 @@ Content-Type: application/json
 }
 
 ### 10. get MyAccommodations by Host (HOST only - owner)
-GET http://localhost:8080/api/accommodations/misAlojamientos?page=0
+GET http://localhost:8080/api/accommodations/host/my-accommodations?page=0
 Content-Type: application/json
 Authorization: {{token}}
 
 
 ### 11. get accommodations metrics by Host (HOST only - owner)
-GET http://localhost:8080/api/accommodations/metrics/accommodations/1/metrics?startDate=2025-01-01&endDate=2025-12-31
+GET http://localhost:8080/api/accommodations/2/metrics?startDate=2025-01-01&endDate=2025-12-31
 content-Type: application/json
 Authorization: {{token}}
 
 
-### 12. get all accommodations metrics (ADMIN only)
-GET http://localhost:8080/api/accommodations/metrics
-content-Type: application/json
-Authorization: {{token}}

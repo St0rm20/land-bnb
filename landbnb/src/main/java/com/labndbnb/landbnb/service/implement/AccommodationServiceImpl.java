@@ -123,19 +123,18 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public Page<AccommodationDetailDto> searchAccommodations(SearchCriteria criteria, int page) throws Exception {
 
-        PageRequest pageable = PageRequest.of(page, size);
-
-        if (criteria.sortBy() != null) {
-            Sort.Direction direction = "desc".equalsIgnoreCase(criteria.sortDirection()) ? Sort.Direction.DESC : Sort.Direction.ASC;
-            pageable = PageRequest.of(page, size, Sort.by(direction, criteria.sortBy()));
+        Sort sort;
+        if (criteria.sortBy() != null && !criteria.sortBy().isBlank()) {
+            Sort.Direction direction = "desc".equalsIgnoreCase(criteria.sortDirection())
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+            sort = Sort.by(direction, criteria.sortBy());
         } else {
-            pageable = PageRequest.of(page, size,
-                    Sort.by(Sort.Order.desc("averageRating"))
-                            .and(Sort.by(Sort.Order.desc("reviews.size")))
-                            .and(Sort.by(Sort.Order.desc("createdAt")))
-            );
+
+            sort = Sort.by(Sort.Order.desc("averageRating"), Sort.Order.desc("createdAt"));
         }
 
+        PageRequest pageable = PageRequest.of(page, size, sort);
 
         Page<Accommodation> accommodations = accommodationRepository.searchAccommodations(
                 criteria.city(),
@@ -151,7 +150,6 @@ public class AccommodationServiceImpl implements AccommodationService {
                 criteria.hasParking(),
                 pageable
         );
-
 
         return accommodations.map(accommodationDetailDtoMapper::toDto);
     }

@@ -14,21 +14,22 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     Page<Accommodation> findByHostId(Long hostId, Pageable pageable);
 
     @Query("SELECT DISTINCT a FROM Accommodation a " +
-            "WHERE (:city IS NULL OR LOWER(a.city) LIKE LOWER(CONCAT('%', :city, '%'))) " +
+            "WHERE a.active = true " +
+            "AND (:city IS NULL OR :city = '' OR LOWER(a.city) LIKE LOWER(CONCAT('%', :city, '%'))) " +
             "AND (:minPrice IS NULL OR a.pricePerNight >= :minPrice) " +
             "AND (:maxPrice IS NULL OR a.pricePerNight <= :maxPrice) " +
-            "AND (:hasWifi IS NULL OR (:hasWifi = true AND 'WIFI' MEMBER OF a.services)) " +
-            "AND (:hasPool IS NULL OR (:hasPool = true AND 'PISCINA' MEMBER OF a.services)) " +
-            "AND (:allowsPets IS NULL OR (:allowsPets = true AND 'MASCOTAS' MEMBER OF a.services)) " +
-            "AND (:hasAirConditioning IS NULL OR (:hasAirConditioning = true AND 'AIRE ACONDICIONADO' MEMBER OF a.services)) " +
-            "AND (:hasKitchen IS NULL OR (:hasKitchen = true AND 'COCINA' MEMBER OF a.services)) " +
-            "AND (:hasParking IS NULL OR (:hasParking = true AND 'PARKING' MEMBER OF a.services)) " +
-            "AND a.active = true " +
+            "AND (:hasWifi IS NULL OR :hasWifi = false OR 'WiFi' MEMBER OF a.services) " +
+            "AND (:hasPool IS NULL OR :hasPool = false OR 'Pool' MEMBER OF a.services) " +
+            "AND (:allowsPets IS NULL OR :allowsPets = false OR 'Pets Allowed' MEMBER OF a.services) " +
+            "AND (:hasAirConditioning IS NULL OR :hasAirConditioning = false OR 'Air Conditioning' MEMBER OF a.services) " +
+            "AND (:hasKitchen IS NULL OR :hasKitchen = false OR 'Kitchen' MEMBER OF a.services) " +
+            "AND (:hasParking IS NULL OR :hasParking = false OR 'Parking' MEMBER OF a.services) " +
             "AND (:checkIn IS NULL OR :checkOut IS NULL OR " +
             "     a.id NOT IN (" +
             "         SELECT b.accommodation.id FROM Booking b " +
-            "         WHERE b.bookingStatus IN (com.labndbnb.landbnb.model.enums.BookingStatus.CONFIRMED, com.labndbnb.landbnb.model.enums.BookingStatus.PENDING) " +
-            "         AND (b.startDate < :checkOut AND b.endDate > :checkIn)" +
+            "         WHERE b.bookingStatus IN ('CONFIRMED', 'PENDING') " +
+            "         AND FUNCTION('DATE', b.startDate) < :checkOut " +
+            "         AND FUNCTION('DATE', b.endDate) > :checkIn" +
             "     )" +
             ")")
     Page<Accommodation> searchAccommodations(
