@@ -6,6 +6,7 @@ import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UserController {
 
     @PutMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateProfile(@RequestBody UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> updateProfile(@RequestBody @Valid UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
         InfoDto info = userService.update(userUpdateDto, request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
@@ -39,7 +40,7 @@ public class UserController {
     @PostMapping("/change-password")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changePassword(
-            @RequestBody ChangePasswordRequest changePasswordRequest,
+            @RequestBody @Valid  ChangePasswordRequest changePasswordRequest,
             HttpServletRequest request) {
         try {
             InfoDto info = userService.changePassword(changePasswordRequest, request);
@@ -58,7 +59,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
-    @PostMapping("/delete-account")
+    @DeleteMapping("/delete-account")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteAccount(HttpServletRequest request) throws Exception {
         InfoDto info = userService.delete(request);

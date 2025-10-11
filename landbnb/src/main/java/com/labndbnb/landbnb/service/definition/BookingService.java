@@ -19,4 +19,7 @@ public interface BookingService {
 
     Booking getBookingById(Long id) throws Exception;
 
+    void completeBooking(Long id, HttpServletRequest request);
+
+    void cancelBookingByHost(Long id, HttpServletRequest request);
 }

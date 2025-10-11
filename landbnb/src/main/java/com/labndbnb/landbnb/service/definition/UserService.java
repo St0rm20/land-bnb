@@ -25,4 +25,6 @@ public interface UserService {
     InfoDto becomeHost(HttpServletRequest request) throws Exception;
     InfoDto delete(HttpServletRequest request) throws Exception;
     User getUserFromRequest(HttpServletRequest request) throws Exception;
+
+    void save(User user);
 }

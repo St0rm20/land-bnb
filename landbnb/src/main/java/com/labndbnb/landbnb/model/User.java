@@ -29,7 +29,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -77,6 +77,15 @@ public class User implements UserDetails {
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
+
+    @ManyToMany
+    @Column(name = "favorites")
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "accommodation_id")
+    )
+    private List<Accommodation> favorites;
 
 
     @Override

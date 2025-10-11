@@ -1,18 +1,21 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjEiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDEzODAzMCwiZXhwIjoxNzYwMTQxNjMwfQ.Qy5tDiKQ95o0sks_S0BS7YSvxVzqYx1JdQQmIqt4C1aG-hC8Ix2ASSJSxDZrOdMytgPdMgfL4qyCIUDtH7tweQ
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjQiLCJlbWFpbCI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDE1NTQwNywiZXhwIjoxNzYwMTU5MDA3fQ.VzpnOjVDlhldnkHFWbdnfm8dYyb9P-QLpm4xL3HmIAo9naBqQ5NPjDmuRKwfRI-XEBovRPSDY_sI1P3rj7-TuA
+
+
+
 ### 5. Get Profile to verify updates
 GET http://localhost:8080/api/users/profile
 Content-Type: application/json
 Authorization: {{token}}
 
 
-### 6. User Profile (requires valid JWT)
+### 6. Update Profile (requires valid JWT)
 PUT http://localhost:8080/api/users/profile
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "name": "Miguel Ángel",
-  "lastName": "Vargas",
+  "name": "Miguel Angel",
+  "lastName": "Vergas Peenez",
   "phoneNumber": "3208499853",
   "bio": "Anfitrión en Medellín",
   "dateBirth": "2005-11-16",
@@ -37,3 +40,7 @@ POST http://localhost:8080/api/users/become-host
 Content-Type: application/json
 Authorization: {{token}}
 
+### 10. Delete User Account (requires valid JWT)
+DELETE http://localhost:8080/api/users/delete-account
+Content-Type: application/json
+Authorization: {{token}}

@@ -28,4 +28,8 @@ public interface AccommodationService {
     Page<AccommodationDetailDto> getMyAccommodations(int page, HttpServletRequest request) throws Exception;
 
     AccommodationMetrics getAccommodationMetrics(Integer id, LocalDate startDate, LocalDate endDate, HttpServletRequest request) throws Exception;
+
+    InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws Exception;
+
+    InfoDto removeFavorite(Long accommodationId, HttpServletRequest request);
 }

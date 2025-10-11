@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
@@ -16,12 +16,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmailAndStatus(String email, UserStatus status);
 
-    boolean existsByIdAndStatus(Integer id, UserStatus status);
+    boolean existsByIdAndStatus(Long id, UserStatus status);
 
 
-    Optional<User> findByIdAndStatus(Integer id, UserStatus status);
+    Optional<User> findByIdAndStatus(Long id, UserStatus status);
 
     boolean existsByEmail(String email);
 
-    User getUsersByIdAndStatus(Integer id, UserStatus status);
+    User getUsersByIdAndStatus(Long id, UserStatus status);
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
+import com.labndbnb.landbnb.dto.user_dto.UserInfoDto;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -35,5 +36,5 @@ public record BookingDto(
         AccommodationDetailDto accommodation,
 
         @NotNull(message = "User is required")
-        UserDto user
+        UserInfoDto user
 ) {}

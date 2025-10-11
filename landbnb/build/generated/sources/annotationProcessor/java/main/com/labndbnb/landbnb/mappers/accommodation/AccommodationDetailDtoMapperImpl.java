@@ -1,26 +1,22 @@
 package com.labndbnb.landbnb.mappers.accommodation;
 
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
-import com.labndbnb.landbnb.dto.user_dto.UserDto;
-import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
+import com.labndbnb.landbnb.dto.user_dto.UserInfoDto;
 import com.labndbnb.landbnb.model.Accommodation;
+import com.labndbnb.landbnb.model.User;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-10T18:00:35-0500",
+    date = "2025-10-10T23:43:07-0500",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.14.3.jar, environment: Java 21.0.8 (BellSoft)"
 )
 @Component
 public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoMapper {
-
-    @Autowired
-    private UserDtoMapper userDtoMapper;
 
     @Override
     public AccommodationDetailDto toDto(Accommodation accommodation) {
@@ -36,7 +32,7 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
         Integer maxCapacity = null;
         String mainImage = null;
         Integer totalBookings = null;
-        UserDto host = null;
+        UserInfoDto host = null;
         String description = null;
         String city = null;
         String address = null;
@@ -52,7 +48,7 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
         maxCapacity = accommodation.getCapacity();
         mainImage = accommodation.getPrincipalImageUrl();
         totalBookings = countBookings( accommodation.getBookings() );
-        host = userDtoMapper.toDto( accommodation.getHost() );
+        host = userToUserInfoDto( accommodation.getHost() );
         description = accommodation.getDescription();
         city = accommodation.getCity();
         address = accommodation.getAddress();
@@ -98,7 +94,7 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
         if ( list1 != null ) {
             accommodation.images( new ArrayList<String>( list1 ) );
         }
-        accommodation.host( userDtoMapper.toEntity( dto.host() ) );
+        accommodation.host( userInfoDtoToUser( dto.host() ) );
 
         return accommodation.build();
     }
@@ -165,5 +161,36 @@ public class AccommodationDetailDtoMapperImpl implements AccommodationDetailDtoM
                 entity.setImages( new ArrayList<String>( list1 ) );
             }
         }
+    }
+
+    protected UserInfoDto userToUserInfoDto(User user) {
+        if ( user == null ) {
+            return null;
+        }
+
+        String name = null;
+        String lastName = null;
+
+        name = user.getName();
+        lastName = user.getLastName();
+
+        String photoProfile = null;
+
+        UserInfoDto userInfoDto = new UserInfoDto( name, lastName, photoProfile );
+
+        return userInfoDto;
+    }
+
+    protected User userInfoDtoToUser(UserInfoDto userInfoDto) {
+        if ( userInfoDto == null ) {
+            return null;
+        }
+
+        User.UserBuilder user = User.builder();
+
+        user.name( userInfoDto.name() );
+        user.lastName( userInfoDto.lastName() );
+
+        return user.build();
     }
 }

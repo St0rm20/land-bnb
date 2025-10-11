@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.dto.accommodation_dto;
 
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
+import com.labndbnb.landbnb.dto.user_dto.UserInfoDto;
 import com.labndbnb.landbnb.dto.util_dto.ImageDto;
 import jakarta.validation.constraints.*;
 
@@ -47,7 +48,7 @@ public record AccommodationDetailDto(
         List<@NotBlank(message = "Service cannot be blank")
                 String> services,
 
-        UserDto host,
+        UserInfoDto host,
 
         @DecimalMin(value = "0.0", message = "Average rating cannot be less than 0")
         @DecimalMax(value = "5.0", message = "Average rating cannot be greater than 5")

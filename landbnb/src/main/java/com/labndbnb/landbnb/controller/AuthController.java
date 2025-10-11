@@ -60,7 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) throws Exception {
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) throws Exception {
         InfoDto info = authService.resetPassword(resetPasswordRequest);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }

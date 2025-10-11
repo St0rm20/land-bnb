@@ -252,4 +252,48 @@ public class AccommodationServiceImpl implements AccommodationService {
         );
     }
 
+    @Override
+    public InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws Exception {
+        User user = userService.getUserFromRequest(request);
+        if (user == null) {
+            return new InfoDto("User not found", "The user could not be found from the request.");
+        }
+        Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                .orElse(null);
+        if (accommodation == null) {
+            return new InfoDto("Accommodation not found", "The accommodation with ID " + accommodationId
+                    + " could not be found.");
+        }
+        if (user.getFavorites().contains(accommodation)) {
+            return new InfoDto("Already in favorites", "The accommodation is already in the user's favorites.");
+        }
+        user.getFavorites().add(accommodation);
+        userService.save(user);
+        return new InfoDto("Added to favorites", "The accommodation has been added to the user's");
+    }
+
+    @Override
+    public InfoDto removeFavorite(Long accommodationId, HttpServletRequest request) {
+        try {
+            User user = userService.getUserFromRequest(request);
+            if (user == null) {
+                return new InfoDto("User not found", "The user could not be found from the request.");
+            }
+            Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                    .orElse(null);
+            if (accommodation == null) {
+                return new InfoDto("Accommodation not found", "The accommodation with ID " + accommodationId
+                        + " could not be found.");
+            }
+            if (!user.getFavorites().contains(accommodation)) {
+                return new InfoDto("Not in favorites", "The accommodation is not in the user's favorites.");
+            }
+            user.getFavorites().remove(accommodation);
+            userService.save(user);
+            return new InfoDto("Removed from favorites", "The accommodation has been removed from the user's favorites.");
+        } catch (Exception e) {
+            return new InfoDto("Error", "An error occurred while trying to remove the accommodation from favorites: " + e.getMessage());
+        }
+    }
+
 }

@@ -56,10 +56,7 @@ public class Booking {
 
     @Column(name = "special_requests", length = 1000)
     private String specialRequests;
-
-    @Column(name = "cancellation_reason", length = 500)
-    private String cancellationReason;
-
+    
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
@@ -68,4 +65,6 @@ public class Booking {
     private LocalDateTime updatedAt;
 
 
+    public void setCompletedAt(LocalDateTime now) {
+    }
 }

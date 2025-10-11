@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
         newUser.setRole(UserRole.USER);
         newUser.setCreatedAt(LocalDateTime.now());
         newUser.setPassword(encode(newUser.getPassword()));
+        newUser.setStatus(UserStatus.ACTIVE);
 
         userRepository.save(newUser);
         return true;
@@ -67,19 +68,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto get(String id) throws Exception {
-        if (!userRepository.existsByIdAndStatus(Integer.parseInt(id),UserStatus.ACTIVE)) {
+        if (!userRepository.existsByIdAndStatus(Long.parseLong(id),UserStatus.ACTIVE)) {
             throw new Exception("User with id " + id + " not found");
         }
         return userDtoMapper.toDto(userRepository
-                .getUsersByIdAndStatus(Integer.parseInt(id), UserStatus.ACTIVE));
+                .getUsersByIdAndStatus(Long.parseLong(id), UserStatus.ACTIVE));
     }
 
     @Override
     public void delete(String id) throws Exception {
-        if (!userRepository.existsByIdAndStatus(Integer.parseInt(id), UserStatus.ACTIVE)) {
+        if (!userRepository.existsByIdAndStatus(Long.parseLong(id), UserStatus.ACTIVE)) {
             throw new RuntimeException("User with id " + id + " not found");
         }
-        userRepository.deleteById(Integer.parseInt(id));
+        userRepository.deleteById(Long.parseLong(id));
     }
 
     @Override
@@ -91,8 +92,11 @@ public class UserServiceImpl implements UserService {
     public InfoDto update(UserUpdateDto userUpdateDto, HttpServletRequest request) throws Exception {
         User user = getUserFromRequest(request);
         user.setName(userUpdateDto.name());
+        user.setLastName(userUpdateDto.lastName());
         user.setPhoneNumber(userUpdateDto.phoneNumber());
-        user.setBio(userUpdateDto.bio());
+        if(user.getRole().equals(UserRole.HOST)){
+            user.setBio(userUpdateDto.bio());
+        }
         user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
         user.setProfilePictureUrl(userUpdateDto.photoProfile());
         userRepository.save(user);
@@ -164,7 +168,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public InfoDto delete(HttpServletRequest request) throws Exception {
         User user = getUserFromRequest(request);
-        userRepository.delete(user);
+        if (user.getRole() == UserRole.HOST) {
+            return new InfoDto("Error", "Hosts cannot delete their accounts");
+        }
+        user.setStatus(UserStatus.INACTIVE);
+        userRepository.save(user);
         return new InfoDto("Success", "Your account has been deleted");
     }
 
@@ -181,7 +189,12 @@ public class UserServiceImpl implements UserService {
         if (userId == null) {
             throw new Exception("Invalid token: userId missing");
         }
-        return userRepository.findByIdAndStatus(Integer.parseInt(userId), UserStatus.ACTIVE)
+        return userRepository.findByIdAndStatus(Long.parseLong(userId), UserStatus.ACTIVE)
                 .orElseThrow(() -> new Exception("User not found"));
+    }
+
+    @Override
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

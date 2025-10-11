@@ -23,18 +23,19 @@ import org.springframework.data.domain.Pageable;import org.springframework.stere
 
 import java.util.List;
 
-
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
+
 public class CommentServiceImpl implements CommentService {
 
-    BookingService bookingService;
-    UserService userService;
-    ReviewRequestMapper reviewRequestMapper;
-    ReviewMapper reviewMapper;
-    ReviewRepository reviewRepository;
-    ReviewAnswerRepository reviewAnswerRepository;
+    private final BookingService bookingService;
+    private final UserService userService;
+    private final ReviewRequestMapper reviewRequestMapper;
+    private final ReviewMapper reviewMapper;
+    private final ReviewRepository reviewRepository;
+    private final ReviewAnswerRepository reviewAnswerRepository;
     private final int SIZE = 10;
+    final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CommentServiceImpl.class);
 
 
     @Override
@@ -45,9 +46,16 @@ public class CommentServiceImpl implements CommentService {
         if(booking==null){
             throw new Exception("Booking not found");
         }
-        if(user==null || !booking.getGuest().getId().equals(user.getId())){
-            throw new Exception("User is not the guest of the booking");
+        if(user==null){
+            throw new Exception("User is null");
         }
+        logger.info("Booking ID: " + booking.getGuest().getId() + " User ID: " + user.getId());
+        if(!booking.getGuest().getId().equals(user.getId())){
+            throw new Exception("User is not the owner of the booking");
+        }
+
+
+        // Check if the booking is completed
 
         if(isBookingReviewed(booking.getId(), user)){
             throw new Exception("Booking already reviewed");

@@ -15,35 +15,56 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    // Consultas para huéspedes
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByGuestId(Long guestId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByGuestIdAndBookingStatus(Long guestId, BookingStatus status, Pageable pageable);
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.accommodation a " +
+            "JOIN FETCH a.host " +
+            "WHERE b.guest.id = :guestId")
+    Page<Booking> findByGuestId(@Param("guestId") Long guestId, Pageable pageable);
 
-    // Consultas para anfitriones
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByAccommodationHostId(Long hostId, Pageable pageable);
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.accommodation a " +
+            "JOIN FETCH a.host " +
+            "WHERE b.guest.id = :guestId AND b.bookingStatus = :bookingStatus")
+    Page<Booking> findByGuestIdAndBookingStatus(@Param("guestId") Long guestId,
+                                                @Param("bookingStatus") BookingStatus bookingStatus,
+                                                Pageable pageable);
 
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByAccommodationHostIdAndBookingStatus(Long hostId, BookingStatus status, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByAccommodationIdAndAccommodationHostId(Long accommodationId, Long hostId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"accommodation", "accommodation.images", "accommodation.services", "accommodation.host"})
-    Page<Booking> findByAccommodationIdAndAccommodationHostIdAndBookingStatus(Long accommodationId, Long hostId, BookingStatus status, Pageable pageable);
 
 
     @Query("SELECT b FROM Booking b " +
             "JOIN FETCH b.accommodation a " +
             "JOIN FETCH a.host " +
-            "JOIN FETCH b.guest g " +
-            "LEFT JOIN FETCH a.images " +
-            "LEFT JOIN FETCH a.services " +
+            "JOIN FETCH b.guest " +
+            "WHERE a.host.id = :hostId")
+    Page<Booking> findByAccommodationHostId(@Param("hostId") Long hostId, Pageable pageable);
+
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.accommodation a " +
+            "JOIN FETCH a.host " +
+            "JOIN FETCH b.guest " +
+            "WHERE a.host.id = :hostId AND b.bookingStatus = :status")
+    Page<Booking> findByAccommodationHostIdAndBookingStatus(
+            @Param("hostId") Long hostId,
+            @Param("status") BookingStatus status,
+            Pageable pageable);
+
+    @EntityGraph(attributePaths = {"accommodation", "accommodation.host"})
+    Page<Booking> findByAccommodationIdAndAccommodationHostId(Long accommodationId, Long hostId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"accommodation", "accommodation.host"})
+    Page<Booking> findByAccommodationIdAndAccommodationHostIdAndBookingStatus(Long accommodationId, Long hostId, BookingStatus status, Pageable pageable);
+
+
+
+    @Query("SELECT b FROM Booking b " +
+            "JOIN FETCH b.accommodation a " +
+            "JOIN FETCH a.host " +
+            "JOIN FETCH b.guest " +
             "WHERE b.id = :id")
     Optional<Booking> findByIdWithDetails(@Param("id") Long id);
+
+
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.accommodation.id = :accommodationId " +
             "AND b.bookingStatus = :status " +
@@ -76,11 +97,34 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endDate") LocalDateTime endDate
     );
 
+
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b " +
+            "WHERE b.accommodation.id = :accommodationId " +
+            "AND b.bookingStatus IN ('CONFIRMED', 'PENDING') " +
+            "AND (b.startDate < :checkOut AND b.endDate > :checkIn)")
+    boolean existsOverlappingBooking(
+            @Param("accommodationId") Long accommodationId,
+            @Param("checkIn") LocalDateTime checkIn,
+            @Param("checkOut") LocalDateTime checkOut
+    );
+
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.accommodation.id = :accommodationId " +
+            "AND b.bookingStatus IN ('CONFIRMED', 'PENDING') " +
+            "AND b.startDate < :checkOut " +
+            "AND b.endDate > :checkIn")
+    List<Booking> findOverlappingBookings(
+            @Param("accommodationId") Long accommodationId,
+            @Param("checkIn") LocalDateTime checkIn,
+            @Param("checkOut") LocalDateTime checkOut
+    );
+
+
+
     List<Booking> findByAccommodationIdAndStartDateBetween(
             Long accommodationId,
             LocalDateTime start,
             LocalDateTime end
     );
-
-
 }

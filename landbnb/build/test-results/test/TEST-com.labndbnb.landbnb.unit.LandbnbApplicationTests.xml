@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.labndbnb.landbnb.unit.LandbnbApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-10-10T15:52:19.176Z" hostname="192.168.1.4" time="0.268">
+<testsuite name="com.labndbnb.landbnb.unit.LandbnbApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-10-11T02:02:06.494Z" hostname="STORM" time="1.497">
   <properties/>
-  <testcase name="contextLoads()" classname="com.labndbnb.landbnb.unit.LandbnbApplicationTests" time="0.268"/>
-  <system-out><![CDATA[10:52:16.481 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.labndbnb.landbnb.unit.LandbnbApplicationTests]: LandbnbApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-10:52:16.535 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.labndbnb.landbnb.LandbnbApplication for test class com.labndbnb.landbnb.unit.LandbnbApplicationTests
+  <testcase name="contextLoads()" classname="com.labndbnb.landbnb.unit.LandbnbApplicationTests" time="1.497"/>
+  <system-out><![CDATA[21:01:38.175 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.labndbnb.landbnb.unit.LandbnbApplicationTests]: LandbnbApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:01:38.610 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.labndbnb.landbnb.LandbnbApplication for test class com.labndbnb.landbnb.unit.LandbnbApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,35 +14,35 @@
 
  :: Spring Boot ::                (v3.5.5)
 
-2025-10-10T10:52:16.771-05:00  INFO 3680 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : Starting LandbnbApplicationTests using Java 21.0.8 with PID 3680 (started by helen in /Users/helen/IdeaProjects/land-bnb/landbnb)
-2025-10-10T10:52:16.772-05:00  INFO 3680 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : No active profile set, falling back to 1 default profile: "default"
-2025-10-10T10:52:17.088-05:00  INFO 3680 --- [landbnb] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-10-10T10:52:17.127-05:00  INFO 3680 --- [landbnb] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 7 JPA repository interfaces.
-2025-10-10T10:52:17.402-05:00  INFO 3680 --- [landbnb] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-10-10T10:52:17.423-05:00  INFO 3680 --- [landbnb] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
-2025-10-10T10:52:17.435-05:00  INFO 3680 --- [landbnb] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-10-10T10:52:17.549-05:00  INFO 3680 --- [landbnb] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-10-10T10:52:17.562-05:00  INFO 3680 --- [landbnb] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-10-10T10:52:17.641-05:00  INFO 3680 --- [landbnb] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@795faad
-2025-10-10T10:52:17.642-05:00  INFO 3680 --- [landbnb] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-10-10T10:52:17.682-05:00  INFO 3680 --- [landbnb] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2025-10-10T21:01:39.867-05:00  INFO 18064 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : Starting LandbnbApplicationTests using Java 21.0.8 with PID 18064 (started by mavar in C:\Users\mavar\IdeaProjects\land-bnb\landbnb)
+2025-10-10T21:01:39.873-05:00  INFO 18064 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : No active profile set, falling back to 1 default profile: "default"
+2025-10-10T21:01:42.968-05:00  INFO 18064 --- [landbnb] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-10T21:01:43.244-05:00  INFO 18064 --- [landbnb] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 247 ms. Found 7 JPA repository interfaces.
+2025-10-10T21:01:45.157-05:00  INFO 18064 --- [landbnb] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-10T21:01:45.551-05:00  INFO 18064 --- [landbnb] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.26.Final
+2025-10-10T21:01:45.675-05:00  INFO 18064 --- [landbnb] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-10T21:01:47.686-05:00  INFO 18064 --- [landbnb] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-10T21:01:47.898-05:00  INFO 18064 --- [landbnb] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-10T21:01:48.565-05:00  INFO 18064 --- [landbnb] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@23ec63af
+2025-10-10T21:01:48.575-05:00  INFO 18064 --- [landbnb] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-10T21:01:48.862-05:00  INFO 18064 --- [landbnb] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
-	Database version: 9.4
+	Database version: 8.0.43
 	Autocommit mode: undefined/unknown
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2025-10-10T10:52:18.245-05:00  INFO 3680 --- [landbnb] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-10-10T10:52:18.363-05:00  INFO 3680 --- [landbnb] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-10-10T10:52:18.548-05:00  INFO 3680 --- [landbnb] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-10-10T10:52:18.853-05:00  WARN 3680 --- [landbnb] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-10-10T10:52:18.982-05:00  INFO 3680 --- [landbnb] [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
-2025-10-10T10:52:19.006-05:00  WARN 3680 --- [landbnb] [    Test worker] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/accommodations/] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
-2025-10-10T10:52:19.170-05:00  INFO 3680 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : Started LandbnbApplicationTests in 2.536 seconds (process running for 3.127)
+2025-10-10T21:01:51.696-05:00  INFO 18064 --- [landbnb] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-10-10T21:01:52.072-05:00  INFO 18064 --- [landbnb] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-10T21:01:52.853-05:00  INFO 18064 --- [landbnb] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-10T21:02:01.996-05:00  WARN 18064 --- [landbnb] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-10T21:02:03.642-05:00  INFO 18064 --- [landbnb] [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailsServiceImpl
+2025-10-10T21:02:04.057-05:00  WARN 18064 --- [landbnb] [    Test worker] thorizationManagerRequestMatcherRegistry : One of the patterns in [api/accommodations/] is missing a leading slash. This is discouraged; please include the leading slash in all your request matcher patterns. In future versions of Spring Security, leaving out the leading slash will result in an exception.
+2025-10-10T21:02:06.399-05:00  INFO 18064 --- [landbnb] [    Test worker] c.l.l.unit.LandbnbApplicationTests       : Started LandbnbApplicationTests in 27.219 seconds (process running for 30.561)
 ]]></system-out>
   <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
-WARNING: A Java agent has been loaded dynamically (/Users/helen/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.17.7/fbf3d6d649ed37fc9e9c59480a05be0a26e3c2da/byte-buddy-agent-1.17.7.jar)
+WARNING: A Java agent has been loaded dynamically (C:\Users\mavar\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.17.7\fbf3d6d649ed37fc9e9c59480a05be0a26e3c2da\byte-buddy-agent-1.17.7.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
 WARNING: Dynamic loading of agents will be disallowed by default in a future release

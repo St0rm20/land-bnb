@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.dto.comment_dto;
 
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
+import com.labndbnb.landbnb.dto.user_dto.UserInfoDto;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
@@ -25,5 +26,5 @@ public record CommentDTO(
         LocalDateTime fechaCreacion,
 
         @NotNull(message = "User is required")
-        UserDto usuario
+        UserInfoDto usuario
 ) {}

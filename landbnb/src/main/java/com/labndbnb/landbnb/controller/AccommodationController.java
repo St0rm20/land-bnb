@@ -106,4 +106,25 @@ public class AccommodationController {
                 id, startDate, endDate, request);
         return ResponseEntity.ok(metrics);
     }
+
+
+    @PostMapping("/add-favorite/{accommodationId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> addFavorite(
+            @PathVariable Long accommodationId,
+            HttpServletRequest request) throws Exception {
+        InfoDto info = accommodationService.addFavorite(accommodationId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
+    @DeleteMapping("/remove-favorite/{accommodationId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> removeFavorite(
+            @PathVariable Long accommodationId,
+            HttpServletRequest request) throws Exception {
+        InfoDto info = accommodationService.removeFavorite(accommodationId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
+
 }
