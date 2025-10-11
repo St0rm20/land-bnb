@@ -296,4 +296,33 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
     }
 
+    @Override
+    public Page<AccommodationDto> getFavoriteAccommodations(int page, HttpServletRequest request) throws Exception {
+        Pageable pageable = PageRequest.of(page, size);
+        User user = userService.getUserFromRequest(request);
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+        Page<Accommodation> accommodations = userService.findFavoritesByUserId(user.getId(), pageable);
+        return accommodations.map(accommodationDtoMapper::toDto);
+    }
+
+    @Override
+    public boolean isFavorite(Long accommodationId, HttpServletRequest request) {
+        try {
+            User user = userService.getUserFromRequest(request);
+            if (user == null) {
+                return false;
+            }
+            Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                    .orElse(null);
+            if (accommodation == null) {
+                return false;
+            }
+            return user.getFavorites().contains(accommodation);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

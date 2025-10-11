@@ -36,10 +36,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/accommodations").permitAll()
-                        .requestMatchers("api/accommodations/").permitAll()
+                        .requestMatchers("/api/accommodations/").permitAll()
                         .requestMatchers("/api/accommodations/{id}").permitAll()
                         .requestMatchers("/api/accommodations/search").permitAll()
-                        .requestMatchers("/api/comments/accommodation/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))

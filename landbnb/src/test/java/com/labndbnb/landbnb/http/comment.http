@@ -1,0 +1,47 @@
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDE2MzQ3OCwiZXhwIjoxNzYwMTY3MDc4fQ.w7u9GdDZt4GTPhCgRW7krOO0RPwp2b35DyRXhyLYCY3HT8WjqBfFLXyk77qoJT9lUfDvGuGgUc_biEbAvjL2nQ
+
+
+
+
+### 1. Create Comment for an accommodation
+POST http://localhost:8080/api/comments
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "bookingId": 2,
+  "rating": 4,
+  "text": "Great place to stay!"
+}
+
+### 2. Get Comments for an accommodation
+GET http://localhost:8080/api/comments/accommodation/2?page=0&size=
+Content-Type: application/json
+
+
+### 3. Get Comments by booking ID
+GET http://localhost:8080/api/comments/booking/8
+Content-Type: application/json
+
+
+### 4. Delete Comment by ID
+DELETE http://localhost:8080/api/comments/delete/3
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### 5. Reply to a Comment
+POST http://localhost:8080/api/comments/reply
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+
+  "message": "Thank you for your feedback!",
+  "commentId": 1
+}
+
+### 6. Delete a Reply
+DELETE http://localhost:8080/api/comments/host/delete/1
+Content-Type: application/json
+Authorization: {{token}}

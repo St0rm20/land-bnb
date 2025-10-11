@@ -11,7 +11,6 @@ public record CommentAnswerDto(
         @NotNull(message = "Text cannot be null")
         String message,
 
-        @NotBlank(message = "Comment ID is required")
         @NotNull(message = "Comment ID cannot be null")
         Long commentId
 ) {

@@ -18,4 +18,8 @@ public interface CommentService {
     CommentDTO replyToComment(CommentAnswerDto respuesta, HttpServletRequest request) throws Exception;
 
     CommentDTO getCommentByBookingId(Long bookingId) throws Exception;
+
+    InfoDto deleteComment(Long id, HttpServletRequest request) throws Exception;
+
+    InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws Exception;
 }

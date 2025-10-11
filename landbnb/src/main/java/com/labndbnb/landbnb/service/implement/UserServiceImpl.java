@@ -8,6 +8,7 @@ import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.EmailAlreadyInUse;
 import com.labndbnb.landbnb.mappers.auth.UserRegistrationMapper;
 import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
+import com.labndbnb.landbnb.model.Accommodation;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
@@ -20,6 +21,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -196,5 +199,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public Page<Accommodation> findFavoritesByUserId(Long userId, Pageable pageable) {
+        return userRepository.findFavoritesByUserId(userId, pageable);
     }
 }

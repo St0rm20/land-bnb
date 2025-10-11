@@ -17,6 +17,7 @@ import java.time.LocalDate;
 public class ReviewAnswer {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 1000)

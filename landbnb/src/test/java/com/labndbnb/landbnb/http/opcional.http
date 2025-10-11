@@ -1,0 +1,25 @@
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDE2MjQ0MSwiZXhwIjoxNzYwMTY2MDQxfQ.5G6i41C7QlNDaJSqBVCUwZ4wUjjFTDtZY2zJ4y1egWJFgys4U_IhlUPQzXCpGVDGiVER69jlGQC3OAjHy1viEA
+
+
+
+### 1. Get Favorite Accommodations
+GET http://localhost:8080/api/accommodations/favorites?page=0
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### 2. Check if Accommodation is Favorite
+GET http://localhost:8080/api/accommodations/is-favorite/2
+Content-Type: application/json
+Authorization: {{token}}
+
+### 3. Add Favorite Accommodation
+POST http://localhost:8080/api/accommodations/add-favorite/2
+Content-Type: application/json
+Authorization: {{token}}
+
+
+### 4. Remove Favorite Accommodation
+DELETE http://localhost:8080/api/accommodations/remove-favorite/2
+Content-Type: application/json
+Authorization: {{token}}

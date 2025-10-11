@@ -108,6 +108,24 @@ public class AccommodationController {
     }
 
 
+    @GetMapping("/favorites")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getFavoriteAccommodations(
+            @RequestParam(defaultValue = "0") int page,
+            HttpServletRequest request) throws Exception {
+        Page<AccommodationDto> favorites = accommodationService.getFavoriteAccommodations(page, request);
+        return ResponseEntity.status(HttpStatus.OK).body(favorites);
+    }
+
+    @GetMapping("/is-favorite/{accommodationId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> isFavorite(
+            @PathVariable Long accommodationId,
+            HttpServletRequest request) throws Exception {
+        boolean isFav = accommodationService.isFavorite(accommodationId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(isFav);
+    }
+
     @PostMapping("/add-favorite/{accommodationId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> addFavorite(

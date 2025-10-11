@@ -33,7 +33,7 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.CREATED).body(booking);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error creating booking", e.getMessage()));
+                    .body(new InfoDto("Error","Error creating booking"));
         }
     }
 
@@ -50,7 +50,7 @@ public class BookingController {
             return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error fetching bookings", e.getMessage()));
+                    .body(new InfoDto("Error","Error fetching bookings"));
         }
     }
 
@@ -67,7 +67,7 @@ public class BookingController {
             return ResponseEntity.ok(bookings);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error fetching host bookings", e.getMessage()));
+                    .body(new InfoDto("Error","Error fetching host bookings"));
         }
     }
 
@@ -79,7 +79,7 @@ public class BookingController {
             return ResponseEntity.ok(new InfoDto("Booking cancelled", "The booking was successfully cancelled."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error cancelling booking", e.getMessage()));
+                    .body(new InfoDto("Error", "Error cancelling booking"));
         }
     }
 
@@ -93,20 +93,20 @@ public class BookingController {
             return ResponseEntity.ok(new InfoDto("Booking cancelled by host", "The booking was successfully cancelled by the host."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error cancelling booking by host", e.getMessage()));
+                    .body(new InfoDto("Error","Error cancelling booking by host"));
         }
     }
 
-    @PostMapping("/{id}/complete")
+    @PostMapping("/{id}/confirm")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> completeBooking(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> confirmBooking(@PathVariable Long id, HttpServletRequest request) {
         try {
-            logger.info("Completing booking with ID: " + id);
+            logger.info("confirmBooking");
             bookingService.completeBooking(id, request);
-            return ResponseEntity.ok(new InfoDto("Booking completed", "The booking was successfully completed."));
+            return ResponseEntity.ok(new InfoDto("Booking confirm", "The booking was successfully confirm."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error completing booking", e.getMessage()));
+                    .body(new InfoDto("Error", "Error confirming booking"));
         }
     }
 

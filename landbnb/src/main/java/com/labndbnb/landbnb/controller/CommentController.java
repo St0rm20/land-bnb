@@ -6,6 +6,7 @@ import com.labndbnb.landbnb.dto.comment_dto.ReviewRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.service.definition.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +56,33 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
     }
 
-    @PostMapping("/{id}/responder")
-    @PreAuthorize("hasRole('ANFITRION')")
+    @PostMapping("/reply")
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> answerComment(
-            @RequestBody CommentAnswerDto answer,
+            @RequestBody @Valid CommentAnswerDto answer,
             HttpServletRequest request) throws Exception {
         logger.info("answerComment");
         CommentDTO commentDTO = commentService.replyToComment(answer, request);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteComment(@PathVariable Long id, HttpServletRequest request) throws Exception{
+        InfoDto info = commentService.deleteComment(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
+
+    @DeleteMapping("/host/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteReplyComment(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ) throws Exception {
+
+        InfoDto info = commentService.deleteReplyComment(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 }
 

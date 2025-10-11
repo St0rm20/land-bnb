@@ -32,4 +32,8 @@ public interface AccommodationService {
     InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws Exception;
 
     InfoDto removeFavorite(Long accommodationId, HttpServletRequest request);
+
+    Page<AccommodationDto> getFavoriteAccommodations(int page, HttpServletRequest request) throws Exception;
+
+    boolean isFavorite(Long accommodationId, HttpServletRequest request);
 }

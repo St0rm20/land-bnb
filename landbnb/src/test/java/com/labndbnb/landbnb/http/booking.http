@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjQiLCJlbWFpbCI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDE1NTQwNywiZXhwIjoxNzYwMTU5MDA3fQ.VzpnOjVDlhldnkHFWbdnfm8dYyb9P-QLpm4xL3HmIAo9naBqQ5NPjDmuRKwfRI-XEBovRPSDY_sI1P3rj7-TuA
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDE2NjE1NSwiZXhwIjoxNzYwMTY5NzU1fQ.2sw-GFexa3XpZHMte6Vo0H3nNzuUDbIhGYRcQft8KiovM9a84xS0jVIKn9IpNWZIY9WpHxS-XQ21RwtNc_fl1A
 
 
 
@@ -11,8 +11,8 @@ Authorization: {{token}}
 
 {
   "accommodationId": 2,
-  "checkIn": "2025-11-11",
-  "checkOut": "2025-11-12",
+  "checkIn": "2025-11-13",
+  "checkOut": "2025-11-14",
   "numberOfGuests": 2
 }
 
@@ -61,13 +61,13 @@ content-Type: application/json
 Authorization:  {{token}}
 
 ### 10. Cancel Booking by Id with token
-POST http://localhost:8080/api/booking/3/cancel
+POST http://localhost:8080/api/booking/1/cancel
 content-Type: application/json
 Authorization: {{token}}
 
 ### 11. Confirm Booking by Id with token
-POST http://localhost:8080/api/booking/4/complete
+POST http://localhost:8080/api/booking/1/confirm
 content-Type: application/json
-Authorization: :{{token}}
+Authorization: {{token}}
 
 

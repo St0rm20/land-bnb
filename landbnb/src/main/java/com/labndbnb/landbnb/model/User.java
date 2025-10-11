@@ -79,7 +79,6 @@ public class User implements UserDetails {
     private LocalDateTime lastLoginAt;
 
     @ManyToMany
-    @Column(name = "favorites")
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -91,4 +91,13 @@ public class Accommodation {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+
+    @Column(name = "number_of_reviews", nullable = false)
+    private Integer numberOfReviews = 0;
+
+
+    @ManyToMany(mappedBy = "favorites")
+    private List<User> usersWhoFavorited;
+
 }
