@@ -3,6 +3,7 @@ package com.labndbnb.landbnb.service.implement;
 import com.labndbnb.landbnb.dto.aut_dto.*;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
+import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.security.JWTutils;
 import com.labndbnb.landbnb.service.definition.AuthService;
 import com.labndbnb.landbnb.service.definition.UserService;
@@ -33,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse login(LoginRequest request) throws Exception {
         UserDto userDto = userService.getByEmail(request.email());
         if (userDto == null) {
-            throw new Exception("Credenciales inválidas"); // Mensaje genérico por seguridad
+            throw new ExceptionAlert("Credenciales inválidas"); // Mensaje genérico por seguridad
         }
 
         if (!userService.isThePasswordCorrect(request.email(), request.password())) {
