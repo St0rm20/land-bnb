@@ -27,7 +27,6 @@ public class CommentController {
     private final CommentService commentService;
 
 
-    static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
 
 
@@ -35,7 +34,6 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createComment(@RequestBody ReviewRequest reviewRequest,
     HttpServletRequest requestServlet) throws ExceptionAlert {
-        logger.info("createComment");
         InfoDto info =  commentService.createComment(reviewRequest, requestServlet);
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
@@ -44,7 +42,6 @@ public class CommentController {
     public ResponseEntity<?> getAccommodationsComments(
             @PathVariable Integer AccommodationsId,
             @RequestParam(defaultValue = "0")  int page){
-        logger.info("getAccommodationsComments");
         Page<CommentDTO>  commentDTOS= commentService.getCommentsByAccommodation(AccommodationsId, page);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTOS);
     }
@@ -52,7 +49,6 @@ public class CommentController {
 
     @GetMapping("/booking/{bookingId}")
     public ResponseEntity<?> getCommentByBookingId(@PathVariable Long bookingId) throws ExceptionAlert {
-        logger.info("getCommentByBookingId");
         CommentDTO commentDTO = commentService.getCommentByBookingId(bookingId);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
     }
@@ -62,7 +58,6 @@ public class CommentController {
     public ResponseEntity<?> answerComment(
             @RequestBody @Valid CommentAnswerDto answer,
             HttpServletRequest request) throws ExceptionAlert {
-        logger.info("answerComment");
         CommentDTO commentDTO = commentService.replyToComment(answer, request);
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
     }

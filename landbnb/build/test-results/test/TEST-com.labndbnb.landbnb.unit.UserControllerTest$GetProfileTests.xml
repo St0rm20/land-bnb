@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="GET /api/users/profile - Obtener perfil" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-10-12T00:41:04.143Z" hostname="STORM" time="0.013">
+  <properties/>
+  <testcase name="Debe retornar el perfil del usuario" classname="com.labndbnb.landbnb.unit.UserControllerTest$GetProfileTests" time="0.013"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

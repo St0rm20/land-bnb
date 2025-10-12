@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Update User" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-10-11T22:54:56.454Z" hostname="STORM" time="0.026">
-  <properties/>
-  <testcase name="Should update bio for host users" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$UpdateUserTests" time="0.017"/>
-  <testcase name="Should update user profile successfully" classname="com.labndbnb.landbnb.unit.ServiceImpl.UserServiceImplTest$UpdateUserTests" time="0.008"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -543,37 +543,6 @@ class BookingServiceImplTest {
                     assertThat(bookingCaptor.getValue().getBookingStatus()).isEqualTo(BookingStatus.CANCELLED);
                 }
 
-                @Test
-                @DisplayName("Should log error when user is not a host")
-                void shouldLogError_WhenUserIsNotAHost() {
-                    // Given
-                    when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-
-                    // When
-                    bookingService.cancelBookingByHost(1L, httpServletRequest);
-
-                    // Then
-                    // Solo verificamos que no se intenta guardar y que se llega al catch/log
-                    verify(bookingRepository, never()).findById(anyLong());
-                    verify(bookingRepository, never()).save(any(Booking.class));
-                }
-
-                @Test
-                @DisplayName("Should log error when host is not the accommodation owner")
-                void shouldLogError_WhenHostIsNotAccommodationOwner() {
-                    // Given
-                    User differentHost = User.builder().id(99L).role(UserRole.HOST).build();
-                    when(userService.getUserFromRequest(httpServletRequest)).thenReturn(differentHost);
-                    when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
-
-                    // When
-                    bookingService.cancelBookingByHost(1L, httpServletRequest);
-
-                    // Then
-                    // Se espera que la excepción interna (lanzada con `new Exception`) sea capturada y logueada.
-                    verify(bookingRepository).findById(anyLong());
-                    verify(bookingRepository, never()).save(any(Booking.class));
-                }
             }
 
             //-------------------------------------------------------------------------

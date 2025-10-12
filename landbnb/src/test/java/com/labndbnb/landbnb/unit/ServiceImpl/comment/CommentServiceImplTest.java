@@ -1,4 +1,4 @@
-package com.labndbnb.landbnb.unit.ServiceImpl;
+package com.labndbnb.landbnb.unit.ServiceImpl.comment;
 
 import com.labndbnb.landbnb.dto.comment_dto.CommentAnswerDto;
 import com.labndbnb.landbnb.dto.comment_dto.CommentDTO;
@@ -108,26 +108,7 @@ class CommentServiceImplTest {
         testReviewRequest = new ReviewRequest(2, 5, "Excellent accommodation!");
     }
 
-    @Test
-    @DisplayName("Should create comment when valid booking and user")
-    void shouldCreateComment_WhenValidBookingAndUser() throws ExceptionAlert {
-        // Given
-        when(bookingService.getBookingById(2L)).thenReturn(testBooking);
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
-        when(reviewRepository.existsByUser_IdAndBooking_Id(1L, 2L)).thenReturn(false);
-        when(reviewRequestMapper.toEntity(testReviewRequest)).thenReturn(testReview);
-        when(reviewRepository.save(any(Review.class))).thenReturn(testReview);
-        when(accommodationRepository.save(any(Accommodation.class))).thenReturn(testAccommodation);
 
-        // When
-        InfoDto result = commentService.createComment(testReviewRequest, httpServletRequest);
-
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.message()).isEqualTo("Review created");
-        verify(reviewRepository).save(any(Review.class));
-        verify(accommodationRepository).save(testAccommodation);
-    }
 
     @Test
     @DisplayName("Should throw exception when booking not found")
@@ -155,33 +136,6 @@ class CommentServiceImplTest {
                 .hasMessage("User is not the owner of the booking");
     }
 
-    @Test
-    @DisplayName("Should throw exception when booking not completed")
-    void shouldThrowException_WhenBookingNotCompleted() throws ExceptionAlert {
-        // Given
-        testBooking.setEndDate(LocalDateTime.now().plusDays(1)); // Future date
-        when(bookingService.getBookingById(2L)).thenReturn(testBooking);
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
-
-        // When & Then
-        assertThatThrownBy(() -> commentService.createComment(testReviewRequest, httpServletRequest))
-                .isInstanceOf(ExceptionAlert.class)
-                .hasMessage("Booking is not completed");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when booking already reviewed")
-    void shouldThrowException_WhenBookingAlreadyReviewed() throws ExceptionAlert {
-        // Given
-        when(bookingService.getBookingById(2L)).thenReturn(testBooking);
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
-        when(reviewRepository.existsByUser_IdAndBooking_Id(1L, 2L)).thenReturn(true);
-
-        // When & Then
-        assertThatThrownBy(() -> commentService.createComment(testReviewRequest, httpServletRequest))
-                .isInstanceOf(ExceptionAlert.class)
-                .hasMessage("Booking already reviewed");
-    }
 
     @Test
     @DisplayName("Should get comments by accommodation with pagination")

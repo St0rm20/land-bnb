@@ -42,13 +42,11 @@ public class BookingServiceImpl implements BookingService {
     private final AccommodationRepository accommodationRepository;
     private final UserService UserService;
     private final BookingMapper bookingMapper;
-    static final Logger logger = Logger.getLogger(BookingServiceImpl.class.getName());
     private final MailServiceImpl mailServiceImpl;
 
     @Override
     public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws ExceptionAlert {
         User user = UserService.getUserFromRequest(request);
-        logger.info("The user id is: " + user.getId());
         Accommodation accommodation = accommodationRepository.findById(bookingRequest.accommodationId().longValue())
                 .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
@@ -100,7 +98,6 @@ public class BookingServiceImpl implements BookingService {
                 .bookingStatus(BookingStatus.PENDING)
                 .build();
 
-        logger.info("User id: " + booking.getGuest().getId()+ "user: " + user.getId());
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.toDto(savedBooking);
     }
@@ -111,21 +108,16 @@ public class BookingServiceImpl implements BookingService {
         if(user==null){
             throw  new ExceptionAlert("User not found");
         }
-        logger.info("The user id is: " + user.getId());
         PageRequest pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Page<Booking> bookings;
-        logger.info("se pageo");
+
         if (estado == null || estado.isBlank()) {
-            logger.info("estado is blank");
-            bookings = bookingRepository.findByGuestId(Long.valueOf(user.getId()), pageable);
+            bookings = bookingRepository.findByGuestId(user.getId(), pageable);
         }else{
-            logger.info("estado is: " + estado);
             BookingStatus status = BookingStatus.valueOf(estado.toUpperCase());
-            logger.info("status is 2 : " + status);
-            bookings = bookingRepository.findByGuestIdAndBookingStatus(Long.valueOf(user.getId()), status, pageable);
+            bookings = bookingRepository.findByGuestIdAndBookingStatus(user.getId(), status, pageable);
         }
-        logger.info("bookings size: " + bookings.getSize());
         return bookings.map(bookingMapper::toDto);
     }
 
@@ -261,10 +253,8 @@ public class BookingServiceImpl implements BookingService {
             return new InfoDto("Booking completed", "The booking has been marked as completed successfully");
 
         } catch (ExceptionAlert e) {
-            logger.severe("Error completing booking: " + e.getMessage());
             return new InfoDto("Error", e.getMessage());
         } catch (Exception e) {
-            logger.severe("Unexpected error completing booking: " + e.getMessage());
             return new InfoDto("Error", "An unexpected error occurred");
         }
     }
@@ -298,7 +288,7 @@ public class BookingServiceImpl implements BookingService {
             booking.setCancelledAt(LocalDateTime.now());
             bookingRepository.save(booking);
         } catch (Exception e) {
-            logger.severe("Error cancelling booking by host: " + e.getMessage());
+            throw new ExceptionAlert("Error al cancelar");
         }
     }
 

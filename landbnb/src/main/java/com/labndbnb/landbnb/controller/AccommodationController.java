@@ -153,4 +153,14 @@ public class AccommodationController {
         return ResponseEntity.status(HttpStatus.OK).body(dates);
     }
 
+
+    @GetMapping("/host/accommodation-favorites/{id_accommodation}")
+    @PreAuthorize("hasRole('HOST')")
+    public ResponseEntity<?> getUsersWhoFavoritedAccommodation(
+            @PathVariable Long id_accommodation,
+            HttpServletRequest request) throws ExceptionAlert {
+        int users = accommodationService.getUsersWhoFavoritedAccommodation(id_accommodation, request);
+        return ResponseEntity.status(HttpStatus.OK).body(users);
+    }
+
 }

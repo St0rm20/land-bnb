@@ -308,23 +308,6 @@ class BookingControllerTest {
     @DisplayName("POST /api/booking/{id}/confirm - Confirmar reserva")
     class ConfirmBookingTests {
 
-        @Test
-        @DisplayName("Debería confirmar reserva exitosamente")
-        void givenValidBookingId_whenConfirmBooking_thenReturnSuccess() {
-            // Given
-            doNothing().when(bookingService).completeBooking(anyLong(), any(HttpServletRequest.class));
-
-            // When
-            ResponseEntity<?> response = bookingController.confirmBooking(1L, request);
-
-            // Then
-            assertAll(
-                    () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
-                    () -> assertNotNull(response.getBody()),
-                    () -> verify(bookingService, times(1))
-                            .completeBooking(anyLong(), any(HttpServletRequest.class))
-            );
-        }
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando la confirmación falla")

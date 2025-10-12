@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="DELETE /api/users/delete-account - Eliminar cuenta" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-10-12T00:41:02.422Z" hostname="STORM" time="1.677">
+  <properties/>
+  <testcase name="Debe eliminar la cuenta correctamente" classname="com.labndbnb.landbnb.unit.UserControllerTest$DeleteAccountTests" time="1.677"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

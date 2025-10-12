@@ -42,4 +42,5 @@ public interface AccommodationService {
 
     List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId);
 
+    int getUsersWhoFavoritedAccommodation(Long idAccommodation, HttpServletRequest request);
 }

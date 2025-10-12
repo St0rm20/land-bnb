@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDIxODY5NiwiZXhwIjoxNzYwMjIyMjk2fQ.D7da4v29Sh0bkTcdE5QS0dlW6MLcYwztXhKZHa8Eh_irjluATeRX5j4kCg0x9YkrNHThVC4Wc7kFwJMEmz6Tvg
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDIyNjM0NiwiZXhwIjoxNzYwMjI5OTQ2fQ.9kmvmmn-M1n7GgltymKiyeLEyEviZ9DOIgtR9FfuPuE9T8iLRB2cTtWxvaFO8G-Q2D2osbxa7JQJ42xeUXyfIg
 
 
 
@@ -11,8 +11,8 @@ Authorization: {{token}}
 
 {
   "accommodationId": 2,
-  "checkIn": "2025-11-15",
-  "checkOut": "2025-11-16",
+  "checkIn": "2025-11-17",
+  "checkOut": "2025-11-18",
   "numberOfGuests": 2
 }
 
@@ -34,39 +34,46 @@ content-Type: application/json
 Authorization: {{token}}
 
 
-### 5. Get User Booking (All statues)
+### 5. Get User Bookings by Status (COMPLETED)with token
+GET http://localhost:8080/api/booking/user?status=COMPLETED&page=0&size=10
+content-Type: application/json
+Authorization: {{token}}
+
+
+
+### 6. Get User Booking (All statues)
 GET http://localhost:8080/api/booking/user?page=0&size=10
 content-Type: application/json
 Authorization: {{token}}
 
 
-### 6. Get all Bookings by Host with token
+### 7. Get all Bookings by Host with token
 GET http://localhost:8080/api/booking/host
 content-Type: application/json
 Authorization:  {{token}}
 
-### 7. get specific bookings by Host with token
+### 8. get specific bookings by Host with token
 GET http://localhost:8080/api/booking/host?accommodationId=1&page=0&size=10
 content-Type: application/json
 Authorization:  {{token}}
 
-### 8. get specific bookings by Host with token (status=PENDING)
+### 9. get specific bookings by Host with token (status=PENDING)
 GET http://localhost:8080/api/booking/host?accommodationId=1&page=0&size=10&status=PENDING
 content-Type: application/json
 Authorization:  {{token}}
 
-### 9. get specific bookings by Host with token (status=CONFIRMED)
+### 10. get specific bookings by Host with token (status=CONFIRMED)
 GET http://localhost:8080/api/booking/host?accommodationId=1&page=0&size=10&status=CONFIRMED
 content-Type: application/json
 Authorization:  {{token}}
 
-### 10. Cancel Booking by Id with token
+### 11. Cancel Booking by Id with token
 POST http://localhost:8080/api/booking/1/cancel
 content-Type: application/json
 Authorization: {{token}}
 
-### 11. Confirm Booking by Id with token
-POST http://localhost:8080/api/booking/3/confirm
+### 12. Confirm Booking by Id with token
+POST http://localhost:8080/api/booking/4/confirm
 content-Type: application/json
 Authorization: {{token}}
 

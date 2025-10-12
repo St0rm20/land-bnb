@@ -1,6 +1,7 @@
 package com.labndbnb.landbnb.repository;
 
 import com.labndbnb.landbnb.model.Accommodation;
+import com.labndbnb.landbnb.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
 
@@ -46,4 +48,10 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("hasParking") Boolean hasParking,
             Pageable pageable
     );
+
+    @Query(
+            value = "SELECT COUNT(u) FROM User u JOIN u.favorites a WHERE a.id = :accommodationId"
+    )
+    Long countUsersWhoFavoritedAccommodation(@Param("accommodationId") Long accommodationId);
+
 }

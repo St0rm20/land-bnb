@@ -24,7 +24,6 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     private final UserService userService;
     private final UserDtoMapper userDtoMapper;
     private final BCryptPasswordEncoder passwordEncoder;
-    Logger log = org.slf4j.LoggerFactory.getLogger(ResetPasswordServiceImpl.class);
 
     @Override
     public Boolean sendResetPasswordEmail(String email) throws ExceptionAlert {
@@ -45,7 +44,6 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
 
         passwordRepository.deleteAllByUserId(user.id());
         passwordRepository.save(resetToken);
-        log.info("user {}" , user.id());
         String subject = "Password Reset Request";
         String message = "Use this code to reset your password: " + token;
         emailServiceImpl.sendSimpleEmail(email, subject, message);
@@ -59,6 +57,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
             return false;
         }
         ResetPassword resetToken = passwordRepository.findByUserId(user.id());
+// ... (omitted token validation)
         if (resetToken == null || resetToken.getExpiresAt().isBefore(java.time.LocalDateTime.now()) || resetToken.isUsed() || !passwordEncoder.matches(token, resetToken.getToken())) {
             throw new TokenIncorrect();
         }
@@ -67,8 +66,14 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
         if (!isTokenValid) {
             throw new TokenIncorrect();
         }
+
         User userEntity = userDtoMapper.toEntity(user);
         userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userService.save(userEntity);
+
+        resetToken.setUsed(true);
+        passwordRepository.save(resetToken);
+
         return true;
     }
 }

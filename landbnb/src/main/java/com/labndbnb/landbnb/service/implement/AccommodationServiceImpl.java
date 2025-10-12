@@ -72,6 +72,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         accommodation.setActive(true);
         accommodation.setCreatedAt(LocalDateTime.now());
         accommodation.setUpdatedAt(LocalDateTime.now());
+        accommodation.setNumberOfReviews(0);
 
         Accommodation savedAccommodation = accommodationRepository.save(accommodation);
 
@@ -334,6 +335,29 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId) {
         return bookingService.getFutureConfirmedBookingDates(accommodationId);
+    }
+
+    @Override
+    public int getUsersWhoFavoritedAccommodation(Long idAccommodation, HttpServletRequest request) {
+        try {
+            User user = userService.getUserFromRequest(request);
+            if (user == null || !user.getRole().toString().equals("HOST")) {
+                throw new ExceptionAlert("User is not a host");
+            }
+
+            Accommodation accommodation = accommodationRepository.findById(idAccommodation)
+                    .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
+
+            if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
+                throw new ExceptionAlert("You are not the owner of this accommodation");
+            }
+
+            Long users = accommodationRepository.countUsersWhoFavoritedAccommodation(idAccommodation);
+
+            return Math.toIntExact(users);
+        } catch (ExceptionAlert e) {
+            return 0;
+        }
     }
 
 }

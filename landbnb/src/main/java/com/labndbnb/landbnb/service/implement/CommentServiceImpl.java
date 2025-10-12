@@ -8,6 +8,7 @@ import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.mappers.review.ReviewMapper;
 import com.labndbnb.landbnb.mappers.review.ReviewRequestMapper;
 import com.labndbnb.landbnb.model.*;
+import com.labndbnb.landbnb.model.enums.BookingStatus;
 import com.labndbnb.landbnb.repository.AccommodationRepository;
 import com.labndbnb.landbnb.repository.ReviewAnswerRepository;
 import com.labndbnb.landbnb.repository.ReviewRepository;
@@ -41,7 +42,6 @@ public class CommentServiceImpl implements CommentService {
     private final AccommodationRepository accommodationRepository;
 
     private final int SIZE = 10;
-    final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CommentServiceImpl.class);
 
 
     @Override
@@ -55,13 +55,12 @@ public class CommentServiceImpl implements CommentService {
         if(user==null){
             throw new ExceptionAlert("User is null");
         }
-        logger.info("Booking ID: " + booking.getGuest().getId() + " User ID: " + user.getId());
         if(!booking.getGuest().getId().equals(user.getId())){
             throw new ExceptionAlert("User is not the owner of the booking");
         }
 
 
-        if(booking.getEndDate().isAfter(LocalDateTime.now())){
+        if(!booking.getBookingStatus().equals(BookingStatus.COMPLETED)){
             throw new ExceptionAlert("Booking is not completed");
         }
 
@@ -104,30 +103,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDTO replyToComment(CommentAnswerDto answerDto, HttpServletRequest request) throws ExceptionAlert {
-        logger.info("replyToComment");
         Optional<Review> review = reviewRepository.findById(answerDto.commentId());
         if (review.isEmpty()) {
-            logger.info("Review not found");
             throw new ExceptionAlert("Review not found");
         }
-        logger.info("Review found: " + review.get().getId());
         User user = userService.getUserFromRequest(request);
         if (user == null || !review.get().getAccommodation().getHost().getId().equals(user.getId())) {
             throw new ExceptionAlert("User is not the host of the booking");
         }
 
-        logger.info("Review found 2: " + review.get().getId());
         ReviewAnswer answer = new ReviewAnswer();
         answer.setAnswer(answerDto.message());
         answer.setReview(review.get());
         answer.setCreatedAt(LocalDate.now());
 
         reviewAnswerRepository.save(answer);
-        logger.info("ayudaaa");
         review.get().setReviewAnswer(answer);
-        logger.info("por fvot");
         reviewRepository.save(review.get());
-    logger.info("return");
         return reviewMapper.toDto(review.get());
     }
 
@@ -187,7 +179,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws ExceptionAlert {
-        logger.info("deleteReplyComment");
         User user = userService.getUserFromRequest(request);
         ReviewAnswer reviewAnswer = reviewAnswerRepository.findById(id).orElse(null);
 

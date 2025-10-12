@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 public class BookingController {
 
     private final BookingService bookingService;
-    static final Logger logger = Logger.getLogger(BookingServiceImpl.class.getName());
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -46,7 +45,6 @@ public class BookingController {
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
         try {
-            logger.info("getBookingsUser");
             Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, request);
             return ResponseEntity.ok(bookings);
         } catch (ExceptionAlert e) {
@@ -109,7 +107,6 @@ public class BookingController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> confirmBooking(@PathVariable Long id, HttpServletRequest request) {
         try {
-            logger.info("confirmBooking");
              InfoDto info = bookingService.completeBooking(id, request);
             return ResponseEntity.ok(info);
         } catch (ExceptionAlert e) {
