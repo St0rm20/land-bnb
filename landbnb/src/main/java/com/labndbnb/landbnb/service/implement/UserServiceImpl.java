@@ -101,7 +101,9 @@ public class UserServiceImpl implements UserService {
         if(user.getRole().equals(UserRole.HOST)){
             user.setBio(userUpdateDto.bio());
         }
-        user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
+        if(userUpdateDto.dateBirth() != null){
+            user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
+        }
         user.setProfilePictureUrl(userUpdateDto.photoProfile());
         userRepository.save(user);
         return new InfoDto("Success update info", "Profile updated successfully");
