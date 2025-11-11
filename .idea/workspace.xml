@@ -6,30 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="cambios">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/JWTFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/JWTFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewRequestMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewRequestMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/JWTFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/JWTFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/AccommodationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/AccommodationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AccommodationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AccommodationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" afterDir="false" />
     </list>
     <list id="f0afdf4b-aec1-4883-82cf-bca4753402e4" name="Changes by Helen" comment="" />
     <list id="75971b72-613c-4339-97df-99939e3ac70a" name="Changes by mavar" comment="Changes by mavar" />
@@ -130,6 +107,7 @@
     "HTTP Request.All in app.executor": "Run",
     "HTTP Request.accommodation | 1. Create Accommodation with token.executor": "Run",
     "HTTP Request.accommodation | 1. Get All Accommodations (Public).executor": "Run",
+    "HTTP Request.accommodation | 15. getOneAcommodation by Host (HOST only - owner).executor": "Run",
     "HTTP Request.auth | 1. New User Registration.executor": "Run",
     "HTTP Request.auth | 2. User Login.executor": "Run",
     "HTTP Request.booking | 1. Create Booking with token.executor": "Run",
@@ -142,6 +120,7 @@
     "HTTP Request.user | 7. Get Profile to verify updates.executor": "Run",
     "HTTP Request.user | 8. Become host User Account (requires valid JWT).executor": "Run",
     "HTTP Request.user | 8. Change Password (requires valid JWT).executor": "Run",
+    "HTTP Request.user | 9. Become host User Account (requires valid JWT).executor": "Run",
     "JUnit.AccommodationControllerTest.executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
@@ -183,6 +162,9 @@
           <value>
             <map>
               <entry key="accommodation | 1. Get All Accommodations (Public)" value="STOPPED" />
+              <entry key="accommodation | 15. getOneAcommodation by Host (HOST only - owner)" value="STOPPED" />
+              <entry key="auth | 2. User Login" value="STOPPED" />
+              <entry key="user | 9. Become host User Account (requires valid JWT)" value="STOPPED" />
             </map>
           </value>
         </entry>
@@ -298,7 +280,7 @@
       <workItem from="1762823684564" duration="5329000" />
       <workItem from="1762836930828" duration="684000" />
       <workItem from="1762873339958" duration="3763000" />
-      <workItem from="1762887288415" duration="3615000" />
+      <workItem from="1762887288415" duration="4463000" />
     </task>
     <task id="LOCAL-00001" summary="fix notifications">
       <option name="closed" value="true" />
@@ -396,7 +378,23 @@
       <option name="project" value="LOCAL" />
       <updated>1762833540995</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1762891990407</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1762891990407</updated>
+    </task>
+    <task id="LOCAL-00014" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1762892001111</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1762892001111</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
