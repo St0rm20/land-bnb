@@ -43,4 +43,7 @@ public interface AccommodationService {
     List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId);
 
     int getUsersWhoFavoritedAccommodation(Long idAccommodation, HttpServletRequest request);
+
+
+    AccommodationDetailDto getHostAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert;
 }

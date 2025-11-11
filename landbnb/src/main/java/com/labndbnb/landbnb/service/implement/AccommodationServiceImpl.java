@@ -89,6 +89,23 @@ public class AccommodationServiceImpl implements AccommodationService {
         return accommodationDetailDtoMapper.toDto(accommodation);
     }
 
+    @Override
+    public AccommodationDetailDto getHostAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert {
+        User user = userService.getUserFromRequest(request);
+        if (user == null || !user.getRole().toString().equals("HOST")) {
+            throw new ExceptionAlert("User is not a host");
+        }
+
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
+
+        // Esta es la validación clave
+        if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
+            throw new ExceptionAlert("You are not the owner of this accommodation");
+        }
+
+        return accommodationDetailDtoMapper.toDto(accommodation);
+    }
 
     @Override
     public void deleteAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert {

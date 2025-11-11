@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="Services Booking">
+    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="cambios">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" afterDir="false" />
@@ -13,8 +13,7 @@
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/JWTFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/security/JWTFilter.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" afterDir="false" />
@@ -25,19 +24,12 @@
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/AuthController.class.uniqueId1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/AuthServiceImpl.class.uniqueId3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/BookingController.class.uniqueId0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/BookingServiceImpl.class.uniqueId6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/CommentController.class.uniqueId2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/CommentServiceImpl.class.uniqueId5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/ResetPasswordServiceImpl.class.uniqueId4" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/AccommodationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/JWTFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/JWTFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/AccommodationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/AccommodationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AccommodationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AccommodationServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/AuthServiceImpl.java" afterDir="false" />
     </list>
     <list id="f0afdf4b-aec1-4883-82cf-bca4753402e4" name="Changes by Helen" comment="" />
     <list id="75971b72-613c-4339-97df-99939e3ac70a" name="Changes by mavar" comment="Changes by mavar" />
@@ -118,71 +110,85 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.AccommodationControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.BookingControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build landbnb.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.CancelBookingByHostTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.CommentControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.CommentControllerTest.testCreateComment_Success.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ConfirmBookingTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ConfirmBookingTests.givenInvalidBookingId_whenConfirmBooking_thenReturnBadRequest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ConfirmBookingTests.givenValidBookingId_whenConfirmBooking_thenReturnSuccess.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.GetProfileTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.LoginTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.UpdateProfileTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.UserControllerIntegrationTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.UserControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.All in app.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.accommodation | 1. Create Accommodation with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.auth | 1. New User Registration.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.auth | 2. User Login.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | 1. Create Booking with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | Cancel Booking by Id with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | List Bookings by User with token and optional status filter.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 5. Get Profile to verify updates.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 5. User Registration.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 6. User Profile (requires valid JWT).executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 7. Change Password (requires valid JWT).executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 7. Get Profile to verify updates.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 8. Become host User Account (requires valid JWT).executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 8. Change Password (requires valid JWT).executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AccommodationControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.LandbnbApplication.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.AccommodationControllerTest.executor": "Run",
+    "Gradle.BookingControllerTest.executor": "Run",
+    "Gradle.Build landbnb.executor": "Run",
+    "Gradle.CancelBookingByHostTests.executor": "Run",
+    "Gradle.CommentControllerTest.executor": "Run",
+    "Gradle.CommentControllerTest.testCreateComment_Success.executor": "Run",
+    "Gradle.ConfirmBookingTests.executor": "Run",
+    "Gradle.ConfirmBookingTests.givenInvalidBookingId_whenConfirmBooking_thenReturnBadRequest.executor": "Run",
+    "Gradle.ConfirmBookingTests.givenValidBookingId_whenConfirmBooking_thenReturnSuccess.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.GetProfileTests.executor": "Run",
+    "Gradle.LoginTests.executor": "Run",
+    "Gradle.UpdateProfileTests.executor": "Run",
+    "Gradle.UserControllerIntegrationTest.executor": "Run",
+    "Gradle.UserControllerTest.executor": "Run",
+    "HTTP Request.All in app.executor": "Run",
+    "HTTP Request.accommodation | 1. Create Accommodation with token.executor": "Run",
+    "HTTP Request.accommodation | 1. Get All Accommodations (Public).executor": "Run",
+    "HTTP Request.auth | 1. New User Registration.executor": "Run",
+    "HTTP Request.auth | 2. User Login.executor": "Run",
+    "HTTP Request.booking | 1. Create Booking with token.executor": "Run",
+    "HTTP Request.booking | Cancel Booking by Id with token.executor": "Run",
+    "HTTP Request.booking | List Bookings by User with token and optional status filter.executor": "Run",
+    "HTTP Request.user | 5. Get Profile to verify updates.executor": "Run",
+    "HTTP Request.user | 5. User Registration.executor": "Run",
+    "HTTP Request.user | 6. User Profile (requires valid JWT).executor": "Run",
+    "HTTP Request.user | 7. Change Password (requires valid JWT).executor": "Run",
+    "HTTP Request.user | 7. Get Profile to verify updates.executor": "Run",
+    "HTTP Request.user | 8. Become host User Account (requires valid JWT).executor": "Run",
+    "HTTP Request.user | 8. Change Password (requires valid JWT).executor": "Run",
+    "JUnit.AccommodationControllerTest.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.LandbnbApplication.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
+  <component name="RunDashboard">
+    <option name="configurationStatuses">
+      <map>
+        <entry key="HttpClient.HttpRequestRunConfigurationType">
+          <value>
+            <map>
+              <entry key="accommodation | 1. Get All Accommodations (Public)" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="RunManager" selected="Spring Boot.LandbnbApplication">
     <configuration name="CommentControllerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -208,100 +214,16 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="CommentControllerTest.testCreateComment_Success" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/landbnb" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.labndbnb.landbnb.unit.CommentControllerTest.testCreateComment_Success&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+    <configuration name="accommodation | 15. getOneAcommodation by Host (HOST only - owner)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" executionIdentifier="15. getOneAcommodation by Host (HOST only - owner)" index="14" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="GetProfileTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/landbnb" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.labndbnb.landbnb.integration.UserControllerIntegrationTest$GetProfileTests&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+    <configuration name="accommodation | 1. Get All Accommodations (Public)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" executionIdentifier="1. Get All Accommodations (Public)" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="UpdateProfileTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/landbnb" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.labndbnb.landbnb.integration.UserControllerIntegrationTest$UpdateProfileTests&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+    <configuration name="auth | 2. User Login" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" executionIdentifier="2. User Login" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="UserControllerIntegrationTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/landbnb" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.labndbnb.landbnb.integration.UserControllerIntegrationTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
+    <configuration name="user | 9. Become host User Account (requires valid JWT)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/user.http" executionIdentifier="9. Become host User Account (requires valid JWT)" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="LandbnbApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -314,11 +236,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.accommodation | 15. getOneAcommodation by Host (HOST only - owner)" />
+        <item itemvalue="HTTP Request.user | 9. Become host User Account (requires valid JWT)" />
+        <item itemvalue="HTTP Request.auth | 2. User Login" />
+        <item itemvalue="HTTP Request.accommodation | 1. Get All Accommodations (Public)" />
         <item itemvalue="Gradle.CommentControllerTest" />
-        <item itemvalue="Gradle.UserControllerIntegrationTest" />
-        <item itemvalue="Gradle.CommentControllerTest.testCreateComment_Success" />
-        <item itemvalue="Gradle.UpdateProfileTests" />
-        <item itemvalue="Gradle.GetProfileTests" />
       </list>
     </recent_temporary>
   </component>
@@ -373,7 +295,10 @@
       <workItem from="1760215096439" duration="297000" />
       <workItem from="1762808255928" duration="33000" />
       <workItem from="1762808296939" duration="3491000" />
-      <workItem from="1762823684564" duration="3840000" />
+      <workItem from="1762823684564" duration="5329000" />
+      <workItem from="1762836930828" duration="684000" />
+      <workItem from="1762873339958" duration="3763000" />
+      <workItem from="1762887288415" duration="3615000" />
     </task>
     <task id="LOCAL-00001" summary="fix notifications">
       <option name="closed" value="true" />
@@ -463,7 +388,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760069712744</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1762833540995</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1762833540995</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -499,7 +432,8 @@
     <MESSAGE value="Services Accommodation" />
     <MESSAGE value="Changes by mavar" />
     <MESSAGE value="Services Booking" />
-    <option name="LAST_COMMIT_MESSAGE" value="Services Booking" />
+    <MESSAGE value="cambios" />
+    <option name="LAST_COMMIT_MESSAGE" value="cambios" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -508,11 +442,6 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/security/JWTFilter.java</url>
-          <line>68</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/unit/UserControllerTest.java</url>
           <line>43</line>

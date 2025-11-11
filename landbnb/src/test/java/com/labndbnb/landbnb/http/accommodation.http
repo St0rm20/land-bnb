@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjEiLCJlbWFpbCI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDIyNTczMCwiZXhwIjoxNzYwMjI5MzMwfQ.VjUeoeuUkvyQcMnRZ3oJhFPGHhEvENX1XSnqSbx5EiKYhVbt7WjyS61k6KlilMIJKmZTeOzY8BPhe2NTxeF-YQ
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2Mjg5MTgzMywiZXhwIjoxNzYyODk1NDMzfQ.xnUBU6Ev7LTlgCbDCD8XZnMftCDUvzg5ljj3FQF6VU60dk-X3LhMkCK1BDsBDRiB5PqvFF4bvgX1zzrOjnsITg
 
 
 
@@ -115,6 +115,11 @@ content-Type: application/json
 
 ### 14. how much user mark an accommodation as favorite
 GET http://localhost:8080/api/accommodations/host/accommodation-favorites/2
+Content-Type: application/json
+Authorization: {{token}}
+
+### 15. getOneAcommodation by Host (HOST only - owner)
+GET http://localhost:8080/api/accommodations/host/2
 Content-Type: application/json
 Authorization: {{token}}
 

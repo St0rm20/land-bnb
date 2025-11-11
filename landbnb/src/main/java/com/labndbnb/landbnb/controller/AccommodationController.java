@@ -163,4 +163,28 @@ public class AccommodationController {
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
+    @PreAuthorize("hasRole('HOST')")
+    @GetMapping("/host/{id}")
+    public ResponseEntity<com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>> getAccommodationForHost(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+        try {
+            AccommodationDetailDto dto = accommodationService.getHostAccommodation(id, request);
+            if (dto == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+
+                        .body(new com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>(true, null));
+
+            }
+            return ResponseEntity.ok(new com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>(false, dto));
+        } catch (ExceptionAlert e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>(true, null));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>(true, null));
+        }
+    }
+
 }
