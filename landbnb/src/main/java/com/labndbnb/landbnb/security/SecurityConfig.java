@@ -3,6 +3,7 @@ package com.labndbnb.landbnb.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // 👈 IMPORTA ESTO
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,13 +35,17 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
+
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/accommodations").permitAll()
-                        .requestMatchers("/api/accommodations/").permitAll()
-                        .requestMatchers("/api/accommodations/{id}").permitAll()
-                        .requestMatchers("/api/accommodations/search").permitAll()
-                        .requestMatchers("/api/accommodations/dates-unavailable/**").permitAll()
-                        .requestMatchers("/api/comments/accommodation/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accommodations/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/dates-unavailable/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/comments/accommodation/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -53,13 +58,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
+
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+
+        source.registerCorsConfiguration("/api/**", config);
         return source;
     }
 
