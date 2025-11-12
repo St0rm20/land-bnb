@@ -45,6 +45,8 @@ public class AccommodationController {
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
+
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getAccommodationById(@PathVariable Long id) throws ExceptionAlert{
         AccommodationDetailDto accommodationDetailDto = accommodationService.getAccommodation(id);
