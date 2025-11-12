@@ -34,6 +34,7 @@ public class MailServiceImpl implements MailService {
     @Override
     // Email simple
     public void sendSimpleEmail(String to, String subject, String text) {
+        return;/*
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
                 .to(to)
@@ -42,11 +43,14 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
+        */
     }
 
     @Override
     // Email HTML personalizado
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
+        return;/*
+
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
                 .to(to)
@@ -55,11 +59,14 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
+        */
     }
+
 
     @Override
     // Email con nombre personalizado del destinatario
     public void sendPersonalizedEmail(String toName, String toEmail, String subject, String htmlContent) {
+        /*
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
                 .to(toName, toEmail)
@@ -68,5 +75,7 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
+
+         */
     }
 }

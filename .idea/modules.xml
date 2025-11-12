@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/land-bnb.iml" filepath="$PROJECT_DIR$/.idea/land-bnb.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/landbnb.main.iml" filepath="$PROJECT_DIR$/.idea/modules/landbnb.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/landbnb.test.iml" filepath="$PROJECT_DIR$/.idea/modules/landbnb.test.iml" />
     </modules>
   </component>
 </project>

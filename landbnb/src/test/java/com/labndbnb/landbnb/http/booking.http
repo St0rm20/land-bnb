@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDIyNjM0NiwiZXhwIjoxNzYwMjI5OTQ2fQ.9kmvmmn-M1n7GgltymKiyeLEyEviZ9DOIgtR9FfuPuE9T8iLRB2cTtWxvaFO8G-Q2D2osbxa7JQJ42xeUXyfIg
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MjkyOTQ2OCwiZXhwIjoxNzYyOTMzMDY4fQ.w9DHmWsP7DFKr4rDhzgeewI16eEMB2X3MqO2jS4khix4U_1dXDsEWptuGhomVE24yqC2qAiyTrn-dn3_wJRAXQ
 
 
 
@@ -73,7 +73,7 @@ content-Type: application/json
 Authorization: {{token}}
 
 ### 12. Confirm Booking by Id with token
-POST http://localhost:8080/api/booking/4/confirm
+POST http://localhost:8080/api/booking/8/confirm
 content-Type: application/json
 Authorization: {{token}}
 

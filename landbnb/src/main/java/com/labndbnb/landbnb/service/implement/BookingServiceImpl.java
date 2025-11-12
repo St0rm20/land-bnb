@@ -226,8 +226,15 @@ public class BookingServiceImpl implements BookingService {
             if (!booking.getGuest().getId().equals(user.getId())) {
                 return new InfoDto("Unauthorized", "User is not the owner of the booking");
             }
+            Accommodation accommodation = accommodationRepository.findById(booking.getAccommodation().getId())
+                    .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
+            LocalDateTime checkInDateTime = booking.getStartDate();
+            LocalDateTime checkOutDateTime = booking.getEndDate();
+            boolean hasOverlap= bookingRepository.existsOverlappingBooking(accommodation.getId(), checkInDateTime, checkOutDateTime);
 
-
+            if (hasOverlap) {
+                throw  new ExceptionAlert("Accommodation is not available for the selected dates");
+            }
             mailServiceImpl.sendSimpleEmail(
                     booking.getGuest().getEmail(),
                     "Booking Completed",

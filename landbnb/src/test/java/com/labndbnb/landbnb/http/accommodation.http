@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2Mjg5MTgzMywiZXhwIjoxNzYyODk1NDMzfQ.xnUBU6Ev7LTlgCbDCD8XZnMftCDUvzg5ljj3FQF6VU60dk-X3LhMkCK1BDsBDRiB5PqvFF4bvgX1zzrOjnsITg
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjIiLCJlbWFpbCI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1hdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MjkxNDM4MiwiZXhwIjoxNzYyOTE3OTgyfQ.ZqMCa8Dak30SZZH5J8J2PiVQeOJ8ymdCWozW2BS6AZ3QsWMw7wLH9RnUtigBLflqZvVLo3Sden-zkoabz5_wqQ
 
 
 
@@ -25,7 +25,7 @@ Authorization: {{token}}
   "longitude": -75.5812,
   "pricePerNight": 500000.0,
   "maxCapacity": 4,
-  "services": ["WiFi", "Air Conditioning", "Kitchen"],
+  "services": ["Parking"],
   "mainImage": "www.example.com/photo1.jpg",
   "images": ["www.example.com/photo1.jpg", "www.example.com/photo2.jpg"]
 }
@@ -36,7 +36,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "title": "Finca en medellin - Actualizada",
+  "title": "Prueba 2",
   "description": "An upgraded comfortable and modern apartment located in the heart of the city.",
   "city": "Medellín",
   "address": "123 Main St, Medellín",
@@ -44,7 +44,7 @@ Authorization: {{token}}
   "longitude": -75.5812,
   "pricePerNight": 600000.0,
   "maxCapacity": 4,
-  "services": ["WiFi", "Air Conditioning", "Kitchen", "Pool"],
+  "services": ["WiFi", "Kitchen", "Pool"],
   "mainImage": "https://example.com/photo1.jpg",
   "images": ["https://example.com/photo1.jpg", "https://example.com/photo2.jpg", "https://example.com/photo3.jpg"]
 }
@@ -119,7 +119,7 @@ Content-Type: application/json
 Authorization: {{token}}
 
 ### 15. getOneAcommodation by Host (HOST only - owner)
-GET http://localhost:8080/api/accommodations/host/2
+GET http://localhost:8080/api/accommodations/host/5
 Content-Type: application/json
 Authorization: {{token}}
 
