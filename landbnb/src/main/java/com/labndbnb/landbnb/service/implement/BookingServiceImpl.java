@@ -1,6 +1,5 @@
 package com.labndbnb.landbnb.service.implement;
 
-
 import com.labndbnb.landbnb.dto.booking_dto.BookingDatesDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
@@ -19,19 +18,18 @@ import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +41,9 @@ public class BookingServiceImpl implements BookingService {
     private final UserService UserService;
     private final BookingMapper bookingMapper;
     private final MailServiceImpl mailServiceImpl;
+
+
+    private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     @Override
     public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws ExceptionAlert {
@@ -331,6 +332,81 @@ public class BookingServiceImpl implements BookingService {
                         booking.getEndDate().toLocalDate()
                 ))
                 .collect(Collectors.toList());
+    }
+
+
+    @Override
+    @Transactional
+    public void autoCompletePastBookings() {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Booking> pastBookings = bookingRepository.findByEndDateBeforeAndBookingStatus(
+                now, BookingStatus.CONFIRMED);
+
+        if (pastBookings.isEmpty()) {
+            log.info("No bookings to auto-complete");
+            return;
+        }
+
+        int completedCount = 0;
+
+        for (Booking booking : pastBookings) {
+            try {
+                booking.setBookingStatus(BookingStatus.COMPLETED);
+                booking.setCompletedAt(now);
+                bookingRepository.save(booking);
+
+                // Opcional: Enviar emails de notificación
+                sendAutoCompletionEmails(booking);
+
+                completedCount++;
+                log.info("Auto-completed booking: {}", booking.getBookingCode());
+
+            } catch (Exception e) {
+                log.error("Error auto-completing booking {}: {}",
+                        booking.getBookingCode(), e.getMessage());
+            }
+        }
+
+        log.info("Auto-completed {} bookings out of {} eligible", completedCount, pastBookings.size());
+    }
+
+    private void sendAutoCompletionEmails(Booking booking) {
+        try {
+            // Email al huésped
+            mailServiceImpl.sendSimpleEmail(
+                    booking.getGuest().getEmail(),
+                    "Stay Completed - " + booking.getBookingCode(),
+                    "Hello " + booking.getGuest().getName() + ",\n\n" +
+                            "Your stay at \"" + booking.getAccommodation().getName() + "\" has been automatically completed.\n\n" +
+                            "Stay details:\n" +
+                            "• Check-in: " + booking.getStartDate().toLocalDate() + "\n" +
+                            "• Check-out: " + booking.getEndDate().toLocalDate() + "\n" +
+                            "• Total: $" + booking.getTotalPrice() + "\n" +
+                            "• Booking code: " + booking.getBookingCode() + "\n\n" +
+                            "We hope you had a wonderful experience! Please consider leaving a review to help other travelers.\n\n" +
+                            "Best regards,\nThe Landbnb Team"
+            );
+
+            // Email al host
+            mailServiceImpl.sendSimpleEmail(
+                    booking.getAccommodation().getHost().getEmail(),
+                    "Booking Completed - " + booking.getBookingCode(),
+                    "Hello " + booking.getAccommodation().getHost().getName() + ",\n\n" +
+                            "The booking for your accommodation \"" + booking.getAccommodation().getName() + "\" has been automatically marked as completed.\n\n" +
+                            "Booking details:\n" +
+                            "• Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName() + "\n" +
+                            "• Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
+                            "• Total earnings: $" + booking.getTotalPrice() + "\n" +
+                            "• Booking code: " + booking.getBookingCode() + "\n\n" +
+                            "We encourage you to request a review from your guest to build your reputation.\n\n" +
+                            "Best regards,\nThe Landbnb Team"
+            );
+
+        } catch (Exception e) {
+            log.warn("Failed to send completion emails for booking {}: {}",
+                    booking.getBookingCode(), e.getMessage());
+        }
     }
 
 }

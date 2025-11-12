@@ -31,4 +31,9 @@ public interface BookingService {
     public boolean accommodationHasFutureBookings(Long accommodationId);
 
     List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId);
+
+    void autoCompletePastBookings();
+
     }
+
+

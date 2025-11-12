@@ -142,4 +142,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                              @Param("currentDate") LocalDateTime currentDate);
 
     boolean existsByAccommodation_Id(Long accommodationId);
+
+
+    List<Booking> findByEndDateBeforeAndBookingStatus(
+            @Param("endDate") LocalDateTime endDate,
+            @Param("bookingStatus") BookingStatus bookingStatus
+    );
 }

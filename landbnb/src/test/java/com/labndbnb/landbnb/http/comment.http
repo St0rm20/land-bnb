@@ -1,4 +1,4 @@
-@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiSE9TVCIsInVzZXJJZCI6IjEiLCJlbWFpbCI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsInN1YiI6Im1pdmFyZ2FzcGVsYWV6QGdtYWlsLmNvbSIsImlhdCI6MTc2MDIyNTczMCwiZXhwIjoxNzYwMjI5MzMwfQ.VjUeoeuUkvyQcMnRZ3oJhFPGHhEvENX1XSnqSbx5EiKYhVbt7WjyS61k6KlilMIJKmZTeOzY8BPhe2NTxeF-YQ
+@token = Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjMiLCJlbWFpbCI6Imh1ZXNwZWQxQGdtYWlsLmNvbSIsInN1YiI6Imh1ZXNwZWQxQGdtYWlsLmNvbSIsImlhdCI6MTc2Mjk3NzY0MCwiZXhwIjoxNzYyOTgxMjQwfQ.creShhurg61camc2RH2RI3SAVSTYSd_OoMhEEMSr3Ir6EcBKu-3M7nJt4ZjuCQN3Nctqrt5RJ_a8rawz5ZVLQQ
 
 
 
@@ -9,8 +9,8 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "bookingId": 2,
-  "rating": 4,
+  "bookingId": 4,
+  "rating": 5,
   "text": "Great place to stay!"
 }
 
