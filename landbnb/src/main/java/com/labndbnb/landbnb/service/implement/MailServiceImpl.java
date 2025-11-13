@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl implements MailService {
-
+    private final boolean enableEmail = true;
     @Value("${mail.smtp.host}")
     private String host;
 
@@ -34,7 +34,7 @@ public class MailServiceImpl implements MailService {
     @Override
     // Email simple
     public void sendSimpleEmail(String to, String subject, String text) {
-        return;/*
+        if(!enableEmail) return;
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
                 .to(to)
@@ -43,13 +43,12 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
-        */
     }
 
     @Override
     // Email HTML personalizado
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
-        return;/*
+        if(!enableEmail) return;
 
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
@@ -59,14 +58,13 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
-        */
     }
 
 
     @Override
     // Email con nombre personalizado del destinatario
     public void sendPersonalizedEmail(String toName, String toEmail, String subject, String htmlContent) {
-        /*
+        if(!enableEmail) return;
         var email = EmailBuilder.startingBlank()
                 .from("land-bnb", username)
                 .to(toName, toEmail)
@@ -75,7 +73,5 @@ public class MailServiceImpl implements MailService {
                 .buildEmail();
 
         getMailer().sendMail(email);
-
-         */
     }
 }
