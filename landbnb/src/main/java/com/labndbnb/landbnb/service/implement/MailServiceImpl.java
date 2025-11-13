@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl implements MailService {
-    private final boolean enableEmail = true;
+    private final boolean enableEmail = false;
     @Value("${mail.smtp.host}")
     private String host;
 
