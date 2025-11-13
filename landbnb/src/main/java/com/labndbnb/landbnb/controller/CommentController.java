@@ -28,8 +28,6 @@ public class CommentController {
     private final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
 
-
-
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createComment(@RequestBody ReviewRequest reviewRequest,

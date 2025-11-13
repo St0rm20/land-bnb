@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
@@ -150,15 +149,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("bookingStatus") BookingStatus bookingStatus
     );
 
-    boolean existsByGuest_IdAndAccommodation_IdAndBookingStatusIn(
-            Long guestId,
-            Long accommodationId,
-            Set<BookingStatus> statuses
-    );
 
-    List<Booking> findByGuest_IdAndAccommodation_IdAndBookingStatusIn(Long id, Long accommodationId, Set<BookingStatus> validBookingStatuses);
-
-    boolean existsByGuest_Id(Long guestId);
-
-    Booking findTopByGuest_IdOrderByCreatedAtDesc(Long guestId);
 }

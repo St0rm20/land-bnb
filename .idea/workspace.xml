@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="cambios">
+    <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/executionHistory/executionHistory.lock" afterDir="false" />
@@ -13,20 +13,20 @@
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/8.14.3/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/BookingRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/repository/BookingRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/BookingServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/service/implement/BookingServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/resources/main/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/compileTransaction/stash-dir/BookingController.class.uniqueId0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/CommentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/classes/java/main/com/labndbnb/landbnb/controller/CommentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/Booking/BookingMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDetailDtoMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/accommodation/AccommodationDtoMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/auth/UserRegistrationMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewRequestMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/review/ReviewRequestMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserDtoMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/user/UserUpdateMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/generated/sources/annotationProcessor/java/main/com/labndbnb/landbnb/mappers/util/ImageDtoMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/reports/problems/problems-report.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/controller/CommentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/comment_dto/CommentAnswerDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/dto/comment_dto/CommentAnswerDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/BookingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/BookingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/ReviewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/repository/ReviewRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/BookingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/CommentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/definition/CommentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/BookingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/BookingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/CommentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/java/com/labndbnb/landbnb/service/implement/CommentServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" afterDir="false" />
     </list>
     <list id="f0afdf4b-aec1-4883-82cf-bca4753402e4" name="Changes by Helen" comment="" />
     <list id="75971b72-613c-4339-97df-99939e3ac70a" name="Changes by mavar" comment="Changes by mavar" />
@@ -135,10 +135,6 @@
     &quot;HTTP Request.auth | 2. User Login.executor&quot;: &quot;Run&quot;,
     &quot;HTTP Request.booking | 1. Create Booking with token.executor&quot;: &quot;Run&quot;,
     &quot;HTTP Request.booking | 12. Confirm Booking by Id with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | 13. Booking by Id with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | 13. Complete Booking by Id with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | 2. Get User Bookings by Status (PENDING)with token.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.booking | 8. get specific bookings by Host with token.executor&quot;: &quot;Run&quot;,
     &quot;HTTP Request.booking | Cancel Booking by Id with token.executor&quot;: &quot;Run&quot;,
     &quot;HTTP Request.booking | List Bookings by User with token and optional status filter.executor&quot;: &quot;Run&quot;,
     &quot;HTTP Request.comment | 1. Create Comment for an accommodation.executor&quot;: &quot;Run&quot;,
@@ -186,19 +182,19 @@
   }
 }</component>
   <component name="RunManager" selected="Spring Boot.LandbnbApplication">
-    <configuration name="booking | 12. Confirm Booking by Id with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/booking.http" executionIdentifier="12. Confirm Booking by Id with token" index="12" runType="Run single request">
+    <configuration name="accommodation | 1. Get All Accommodations (Public)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" executionIdentifier="1. Get All Accommodations (Public)" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="booking | 13. Booking by Id with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/booking.http" executionIdentifier="13. Booking by Id with token" index="13" runType="Run single request">
+    <configuration name="accommodation | 2. Get Accommodation by ID (Public)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/accommodation.http" executionIdentifier="2. Get Accommodation by ID (Public)" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="booking | 13. Complete Booking by Id with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/booking.http" executionIdentifier="13. Complete Booking by Id with token" index="13" runType="Run single request">
+    <configuration name="auth | 2. User Login" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/auth.http" executionIdentifier="2. User Login" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="booking | 1. Create Booking with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/booking.http" executionIdentifier="1. Create Booking with token" runType="Run single request">
+    <configuration name="comment | 1. Create Comment for an accommodation" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/comment.http" executionIdentifier="1. Create Comment for an accommodation" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="booking | 8. get specific bookings by Host with token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/booking.http" executionIdentifier="8. get specific bookings by Host with token" index="8" runType="Run single request">
+    <configuration name="opcional | 1. Get Favorite Accommodations" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/landbnb/src/test/java/com/labndbnb/landbnb/http/opcional.http" executionIdentifier="1. Get Favorite Accommodations" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="LandbnbApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -211,11 +207,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.booking | 1. Create Booking with token" />
-        <item itemvalue="HTTP Request.booking | 13. Booking by Id with token" />
-        <item itemvalue="HTTP Request.booking | 13. Complete Booking by Id with token" />
-        <item itemvalue="HTTP Request.booking | 12. Confirm Booking by Id with token" />
-        <item itemvalue="HTTP Request.booking | 8. get specific bookings by Host with token" />
+        <item itemvalue="HTTP Request.accommodation | 1. Get All Accommodations (Public)" />
+        <item itemvalue="HTTP Request.accommodation | 2. Get Accommodation by ID (Public)" />
+        <item itemvalue="HTTP Request.opcional | 1. Get Favorite Accommodations" />
+        <item itemvalue="HTTP Request.auth | 2. User Login" />
+        <item itemvalue="HTTP Request.comment | 1. Create Comment for an accommodation" />
       </list>
     </recent_temporary>
   </component>
@@ -277,7 +273,8 @@
       <workItem from="1762899659804" duration="1917000" />
       <workItem from="1762903743583" duration="3132000" />
       <workItem from="1762972648242" duration="2487000" />
-      <workItem from="1763038965183" duration="20598000" />
+      <workItem from="1763038965183" duration="3302000" />
+      <workItem from="1763050343404" duration="1827000" />
     </task>
     <task id="LOCAL-00001" summary="fix notifications">
       <option name="closed" value="true" />
@@ -415,23 +412,7 @@
       <option name="project" value="LOCAL" />
       <updated>1762992924793</updated>
     </task>
-    <task id="LOCAL-00018" summary="cambios">
-      <option name="closed" value="true" />
-      <created>1763045978703</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1763045978703</updated>
-    </task>
-    <task id="LOCAL-00019" summary="cambios">
-      <option name="closed" value="true" />
-      <created>1763054620003</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1763054620003</updated>
-    </task>
-    <option name="localTasksCounter" value="20" />
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
