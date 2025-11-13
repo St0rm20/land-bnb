@@ -209,6 +209,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDto getBookingById(Long id, HttpServletRequest request) throws ExceptionAlert {
+        User user = UserService.getUserFromRequest(request);
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ExceptionAlert("Booking not found"));
+
+        if (!booking.getGuest().getId().equals(user.getId()) &&
+                !booking.getAccommodation().getHost().getId().equals(user.getId())) {
+            throw new ExceptionAlert("User is not authorized to view this booking");
+        }
+
+        return bookingMapper.toDto(booking);
+    }
+
+    @Override
     public InfoDto completeBooking(Long id, HttpServletRequest request) {
         try {
             User user = UserService.getUserFromRequest(request);

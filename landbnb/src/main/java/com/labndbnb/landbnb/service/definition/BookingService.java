@@ -24,6 +24,9 @@ public interface BookingService {
 
     Booking getBookingById(Long id) throws ExceptionAlert;
 
+    BookingDto getBookingById(Long id, HttpServletRequest request) throws ExceptionAlert;
+
+
     InfoDto completeBooking(Long id, HttpServletRequest request);
 
     void cancelBookingByHost(Long id, HttpServletRequest request);

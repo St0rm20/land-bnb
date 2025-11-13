@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final Logger logger = Logger.getLogger(BookingController.class.getName());
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -117,5 +118,24 @@ public class BookingController {
                     .body(new InfoDto("Error", e.getMessage()));
         }
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getBookingById(
+            @PathVariable Long id, HttpServletRequest request) {
+        try {
+            logger.info("iniciando getBookingById en controller con id: " + id);
+            BookingDto booking = bookingService.getBookingById(id, request);
+            logger.info(booking.toString());
+            return ResponseEntity.ok(booking);
+        } catch (ExceptionAlert e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new InfoDto("Error", e.getMessage()));
+        }
+    }
+
 
 }
