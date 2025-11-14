@@ -37,6 +37,6 @@ public interface BookingService {
 
     void autoCompletePastBookings();
 
-    }
+}
 
 

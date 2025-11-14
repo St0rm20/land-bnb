@@ -5,13 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CommentAnswerDto(
-
-        @Size(max = 1000, message = "Text cannot exceed 1000 characters")
-        @NotBlank(message = "Text is required")
-        @NotNull(message = "Text cannot be null")
         String message,
-
-        @NotNull(message = "Comment ID cannot be null")
         Long commentId
-) {
-}
+) {}

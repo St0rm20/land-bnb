@@ -59,6 +59,11 @@ public class BookingServiceImpl implements BookingService {
             throw new ExceptionAlert("Cannot book dates in the past");
         }
 
+        if(user.getId().equals(accommodation.getHost().getId())){
+            throw new ExceptionAlert("Hosts cannot book their own accommodations");
+
+        }
+
         LocalDateTime checkInDateTime = bookingRequest.checkIn().atStartOfDay();
         LocalDateTime checkOutDateTime = bookingRequest.checkOut().atStartOfDay();
 

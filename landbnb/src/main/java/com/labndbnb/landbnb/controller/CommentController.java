@@ -25,7 +25,7 @@ import javax.xml.stream.events.Comment;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-
+    private final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
 
 
@@ -79,6 +79,27 @@ public class CommentController {
 
         InfoDto info = commentService.deleteReplyComment(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
+    @GetMapping("/can-comment/{accommodationId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> canUserCommentAccommodation(
+            @PathVariable Long accommodationId,
+            HttpServletRequest request) throws ExceptionAlert {
+        boolean canComment = commentService.canUserCommentAccommodation(accommodationId, request);
+        logger.info("Te user can comment: " + canComment);
+        return ResponseEntity.status(HttpStatus.OK).body(canComment);
+
+    }
+
+    @GetMapping("/can-reply/{commentId}")
+    @PreAuthorize("hasRole('HOST')")
+    public ResponseEntity<?> canUserReplyComment(
+            @PathVariable Long commentId,
+            HttpServletRequest request) throws ExceptionAlert {
+        boolean canReply = commentService.canUserReplyComment(commentId, request);
+        logger.info("The user can reply: " + canReply);
+        return ResponseEntity.status(HttpStatus.OK).body(canReply);
     }
 }
 

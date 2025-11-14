@@ -23,4 +23,8 @@ public interface CommentService {
     InfoDto deleteComment(Long id, HttpServletRequest request) throws ExceptionAlert;
 
     InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws ExceptionAlert;
+
+    boolean canUserCommentAccommodation(Long accommodationId, HttpServletRequest request) throws ExceptionAlert;
+
+    boolean canUserReplyComment(Long commentId, HttpServletRequest request) throws ExceptionAlert;
 }
