@@ -88,7 +88,7 @@ public class CommentController {
             HttpServletRequest request) throws ExceptionAlert {
         boolean canComment = commentService.canUserCommentAccommodation(accommodationId, request);
         logger.info("Te user can comment: " + canComment);
-        return ResponseEntity.status(HttpStatus.OK).body(canComment);
+        return ResponseEntity.status(HttpStatus.OK).body(false);
 
     }
 
