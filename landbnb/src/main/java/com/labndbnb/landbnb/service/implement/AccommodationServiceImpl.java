@@ -215,6 +215,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
         LocalDateTime end = endDate != null ? endDate.atTime(23, 59, 59) : null;
 
+        // ✅ CONTAR TODAS LAS RESERVAS POR ESTADO
         Long totalBookings = bookingRepository.countByAccommodationAndStatus(
                 id.longValue(), null, start, end);
         Long confirmedBookings = bookingRepository.countByAccommodationAndStatus(
@@ -224,18 +225,27 @@ public class AccommodationServiceImpl implements AccommodationService {
         Long pendingBookings = bookingRepository.countByAccommodationAndStatus(
                 id.longValue(), BookingStatus.PENDING, start, end);
 
+        // ✅ AGREGAR CONTEO DE RESERVAS COMPLETADAS
+        Long completedBookings = bookingRepository.countByAccommodationAndStatus(
+                id.longValue(), BookingStatus.COMPLETED, start, end);
+
+        // ✅ CALCULAR INGRESOS TOTALES
         Double totalRevenue = bookingRepository.sumRevenueByAccommodation(
                 id.longValue(), start, end);
         totalRevenue = totalRevenue != null ? totalRevenue : 0.0;
 
+        // ✅ CALCULAR TOTAL DE HUÉSPEDES
         Integer totalGuests = bookingRepository.sumGuestsByAccommodation(
                 id.longValue(), start, end);
         totalGuests = totalGuests != null ? totalGuests : 0;
 
-        Double averageBookingValue = confirmedBookings > 0
-                ? totalRevenue / confirmedBookings
+        // ✅ CALCULAR VALOR PROMEDIO INCLUYENDO CONFIRMED Y COMPLETED
+        Long totalSuccessfulBookings = confirmedBookings + completedBookings;
+        Double averageBookingValue = totalSuccessfulBookings > 0
+                ? totalRevenue / totalSuccessfulBookings
                 : 0.0;
 
+        // ✅ CALCULAR TASA DE OCUPACIÓN INCLUYENDO CONFIRMED Y COMPLETED
         Double occupancyRate = 0.0;
         if (startDate != null && endDate != null) {
             long totalDays = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate);
@@ -246,7 +256,8 @@ public class AccommodationServiceImpl implements AccommodationService {
             );
 
             long bookedDays = bookings.stream()
-                    .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED)
+                    .filter(b -> b.getBookingStatus() == BookingStatus.CONFIRMED
+                            || b.getBookingStatus() == BookingStatus.COMPLETED)
                     .mapToLong(b -> java.time.temporal.ChronoUnit.DAYS.between(
                             b.getStartDate().toLocalDate(),
                             b.getEndDate().toLocalDate()
@@ -256,6 +267,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             occupancyRate = totalDays > 0 ? (bookedDays * 100.0) / totalDays : 0.0;
         }
 
+        // ✅ RETORNAR MÉTRICAS CON COMPLETEDBOOKINGS
         return new AccommodationMetrics(
                 id,
                 accommodation.getName(),
@@ -263,6 +275,7 @@ public class AccommodationServiceImpl implements AccommodationService {
                 confirmedBookings.intValue(),
                 cancelledBookings.intValue(),
                 pendingBookings.intValue(),
+                completedBookings.intValue(), // ✅ AGREGAR COMPLETED BOOKINGS
                 totalRevenue,
                 averageBookingValue,
                 occupancyRate,

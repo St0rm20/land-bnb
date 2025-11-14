@@ -24,6 +24,10 @@ public record AccommodationMetrics(
         @Min(value = 0, message = "Cancelled bookings cannot be negative")
         Integer cancelledBookings,
 
+        @NotNull(message = "Completed bookings is required")
+        @Min(value = 0, message = "Completed bookings cannot be negative")
+        Integer completedBookings,  
+
         @NotNull(message = "Pending bookings is required")
         @Min(value = 0, message = "Pending bookings cannot be negative")
         Integer pendingBookings,
@@ -53,5 +57,7 @@ public record AccommodationMetrics(
         @NotNull(message = "Total reviews is required")
         @Min(value = 0, message = "Total reviews cannot be negative")
         Integer totalReviews
+
+
 
 ) {}
