@@ -77,8 +77,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endDate") LocalDateTime endDate
     );
 
-    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.accommodation.id = :accommodationId " +
-            "AND b.bookingStatus = 'CONFIRMED' " +
+    // ✅ CORREGIDO: Incluye CONFIRMED y COMPLETED, usa COALESCE para evitar null
+    @Query("SELECT COALESCE(SUM(b.totalPrice), 0.0) FROM Booking b " +
+            "WHERE b.accommodation.id = :accommodationId " +
+            "AND (b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.CONFIRMED " +
+            "     OR b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.COMPLETED) " +
             "AND (:startDate IS NULL OR b.createdAt >= :startDate) " +
             "AND (:endDate IS NULL OR b.createdAt <= :endDate)")
     Double sumRevenueByAccommodation(
@@ -87,8 +90,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endDate") LocalDateTime endDate
     );
 
-    @Query("SELECT SUM(b.numberOfGuests) FROM Booking b WHERE b.accommodation.id = :accommodationId " +
-            "AND b.bookingStatus = 'CONFIRMED' " +
+    // ✅ CORREGIDO: Incluye CONFIRMED y COMPLETED, usa COALESCE para evitar null
+    @Query("SELECT COALESCE(SUM(b.numberOfGuests), 0) FROM Booking b " +
+            "WHERE b.accommodation.id = :accommodationId " +
+            "AND (b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.CONFIRMED " +
+            "     OR b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.COMPLETED) " +
             "AND (:startDate IS NULL OR b.createdAt >= :startDate) " +
             "AND (:endDate IS NULL OR b.createdAt <= :endDate)")
     Integer sumGuestsByAccommodation(
