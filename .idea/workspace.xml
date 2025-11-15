@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b84cee1b-22df-400c-aa72-c039f6bcec41" name="Changes" comment="cambios">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/landbnb/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/landbnb/src/main/resources/application.properties" afterDir="false" />
     </list>
     <list id="f0afdf4b-aec1-4883-82cf-bca4753402e4" name="Changes by Helen" comment="" />
     <list id="75971b72-613c-4339-97df-99939e3ac70a" name="Changes by mavar" comment="Changes by mavar" />
@@ -259,7 +259,7 @@
       <workItem from="1763038965183" duration="3302000" />
       <workItem from="1763050343404" duration="1827000" />
       <workItem from="1763179391026" duration="14000" />
-      <workItem from="1763179424368" duration="1388000" />
+      <workItem from="1763179424368" duration="2372000" />
     </task>
     <task id="LOCAL-00001" summary="fix notifications">
       <option name="closed" value="true" />
@@ -445,7 +445,31 @@
       <option name="project" value="LOCAL" />
       <updated>1763163953751</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1763181220579</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1763181220579</updated>
+    </task>
+    <task id="LOCAL-00025" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1763181483768</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1763181483768</updated>
+    </task>
+    <task id="LOCAL-00026" summary="cambios">
+      <option name="closed" value="true" />
+      <created>1763181808003</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1763181808003</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
