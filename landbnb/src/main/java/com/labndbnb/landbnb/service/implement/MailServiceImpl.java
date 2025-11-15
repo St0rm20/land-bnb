@@ -5,6 +5,8 @@ import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class MailServiceImpl implements MailService {
     @Value("${mail.smtp.password}")
     private String password;
 
+    Logger log = LoggerFactory.getLogger(MailServiceImpl.class);
+
     private Mailer getMailer() {
         return MailerBuilder
                 .withSMTPServer(host, port, username, password)
@@ -35,14 +39,20 @@ public class MailServiceImpl implements MailService {
     // Email simple
     public void sendSimpleEmail(String to, String subject, String text) {
         if(!enableEmail) return;
-        var email = EmailBuilder.startingBlank()
-                .from("land-bnb", username)
-                .to(to)
-                .withSubject(subject)
-                .withPlainText(text)
-                .buildEmail();
+        try{
+            log.info("Enviando email a: {} con asunto: {}", to, subject);
+            var email = EmailBuilder.startingBlank()
+                    .from("land-bnb", username)
+                    .to(to)
+                    .withSubject(subject)
+                    .withPlainText(text)
+                    .buildEmail();
 
-        getMailer().sendMail(email);
+            getMailer().sendMail(email);
+        }catch (Exception e){
+            log.error("Error al registrar el envío de email: {}", e.getMessage());
+        }
+
     }
 
     @Override

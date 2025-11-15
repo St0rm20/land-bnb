@@ -47,8 +47,11 @@ public class AuthServiceImpl implements AuthService {
         claims.put("userId", userDto.id().toString());
 
         String token = jwtUtil.generateToken(userDto.email(), claims);
-
-        mailServiceImpl.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, "+ userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
+try {
+    mailServiceImpl.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, " + userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
+}catch (ExceptionAlert e){
+    e.printStackTrace();
+}
         return new AuthResponse(
                 token
         );

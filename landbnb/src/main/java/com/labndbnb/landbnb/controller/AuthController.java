@@ -22,10 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final AuthService authService;
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid UserRegistration userRegistration) {
@@ -45,6 +45,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
+            logger.info("hola");
             AuthResponse authResponse = authService.login(loginRequest);
             return ResponseEntity.ok().body(authResponse);
         } catch (ExceptionAlert e) {
@@ -52,6 +53,7 @@ public class AuthController {
                     HttpStatus.UNAUTHORIZED,
                     "Credenciales inválidas"
             );
+            logger.info("Login failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
