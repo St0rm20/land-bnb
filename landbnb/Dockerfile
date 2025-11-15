@@ -3,7 +3,7 @@ FROM gradle:8.7-jdk21 AS build
 USER gradle
 WORKDIR /home/gradle/project
 
-RUN gradle --no-daemon build -x test || return 0
+RUN gradle --no-daemon build -x test
 # Construir el archivo JAR
 RUN gradle --no-daemon bootJar
 ## Etapa de empaquetado
