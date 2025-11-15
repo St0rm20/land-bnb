@@ -6,8 +6,6 @@ WORKDIR /home/gradle/project
 COPY --chown=gradle:gradle build.gradle settings.gradle ./
 COPY --chown=gradle:gradle gradle gradle
 RUN gradle --no-daemon build -x test || return 0
-# Copiar el resto del código fuente
-COPY --chown=gradle:gradle . .
 # Construir el archivo JAR
 RUN gradle --no-daemon bootJar
 ## Etapa de empaquetado
