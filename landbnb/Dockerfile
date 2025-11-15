@@ -4,7 +4,6 @@ USER gradle
 WORKDIR /home/gradle/project
 # Copiar solo archivos necesarios primero para aprovechar el cache de dependencias
 COPY --chown=gradle:gradle build.gradle settings.gradle ./
-COPY --chown=gradle:gradle gradle gradle
 RUN gradle --no-daemon build -x test || return 0
 # Construir el archivo JAR
 RUN gradle --no-daemon bootJar
