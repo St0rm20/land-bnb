@@ -5,8 +5,9 @@ import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.BookingService;
-import com.labndbnb.landbnb.service.implement.BookingServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import com.labndbnb.landbnb.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,14 +28,14 @@ public class BookingController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createBooking(
-            @RequestBody BookingRequest reservaRequest,
-            HttpServletRequest request) {
+            @RequestBody @Valid BookingRequest reservaRequest,
+            @AuthenticationPrincipal User currentUser) {
         try {
-            BookingDto booking = bookingService.createBooking(reservaRequest, request);
+            BookingDto booking = bookingService.createBooking(reservaRequest, currentUser.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(booking);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error","Error creating booking"));
+                    .body(new InfoDto("Error", e.getMessage()));
         }
     }
 
@@ -44,13 +45,13 @@ public class BookingController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal User currentUser) {
         try {
-            Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, request);
+            Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, currentUser.getId());
             return ResponseEntity.ok(bookings);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error","Error fetching bookings"));
+                    .body(new InfoDto("Error", e.getMessage()));
         }
     }
 
@@ -61,21 +62,21 @@ public class BookingController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal User currentUser) {
         try {
-            Page<BookingDto> bookings = bookingService.getBookingsByHost(accommodationId, status, page, size, request);
+            Page<BookingDto> bookings = bookingService.getBookingsByHost(accommodationId, status, page, size, currentUser.getId());
             return ResponseEntity.ok(bookings);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error","Error fetching host bookings"));
+                    .body(new InfoDto("Error", e.getMessage()));
         }
     }
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            bookingService.cancelBooking(id, request);
+            bookingService.cancelBooking(id, currentUser.getId());
             return ResponseEntity.ok(new InfoDto("Booking cancelled",
                     "The booking was successfully cancelled."));
         } catch (ExceptionAlert e) {
@@ -90,9 +91,9 @@ public class BookingController {
 
     @PostMapping("/host/{id}/cancel")
     @PreAuthorize("hasRole('HOST')")
-    public ResponseEntity<?> cancelBookingByHost(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity<?> cancelBookingByHost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            bookingService.cancelBookingByHost(id, request);
+            bookingService.cancelBookingByHost(id, currentUser.getId());
             return ResponseEntity.ok(new InfoDto("Booking cancelled by host",
                     "The booking was successfully cancelled by the host."));
         } catch (ExceptionAlert e) {
@@ -105,10 +106,10 @@ public class BookingController {
     }
 
     @PostMapping("/{id}/confirm")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> confirmBooking(@PathVariable Long id, HttpServletRequest request) {
+    @PreAuthorize("hasRole('HOST')")
+    public ResponseEntity<?> confirmBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-             InfoDto info = bookingService.completeBooking(id, request);
+             InfoDto info = bookingService.confirmBooking(id, currentUser.getId());
             return ResponseEntity.ok(info);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -122,11 +123,9 @@ public class BookingController {
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getBookingById(
-            @PathVariable Long id, HttpServletRequest request) {
+            @PathVariable Long id, @AuthenticationPrincipal User currentUser) {
         try {
-            logger.info("iniciando getBookingById en controller con id: " + id);
-            BookingDto booking = bookingService.getBookingById(id, request);
-            logger.info(booking.toString());
+            BookingDto booking = bookingService.getBookingById(id, currentUser.getId());
             return ResponseEntity.ok(booking);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -16,7 +16,6 @@ import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.UserService;
 import com.labndbnb.landbnb.service.implement.BookingServiceImpl;
 import com.labndbnb.landbnb.service.implement.MailServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,8 +62,7 @@ class BookingServiceImplTest {
     @Mock
     private MailServiceImpl mailServiceImpl;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
+    private final Long httpServletRequest = 1L;
 
     @InjectMocks
     private BookingServiceImpl bookingService;
@@ -97,7 +95,8 @@ class BookingServiceImplTest {
         testAccommodation = Accommodation.builder()
                 .id(10L)
                 .name("Test Accommodation")
-                .pricePerNight(100.0)
+                .pricePerNight(new java.math.BigDecimal("100.00"))
+                .capacity(4)
                 .host(testHost)
                 .build();
 
@@ -114,7 +113,7 @@ class BookingServiceImplTest {
                 .accommodation(testAccommodation)
                 .startDate(checkIn.atStartOfDay())
                 .endDate(checkOut.atStartOfDay())
-                .totalPrice(500.0) // 5 days * 100.0
+                .totalPrice(new java.math.BigDecimal("500.00")) // 5 days * 100.0
                 .numberOfGuests(2)
                 .bookingCode(UUID.randomUUID().toString().substring(0, 12).toUpperCase())
                 .createdAt(LocalDateTime.now())
@@ -135,9 +134,8 @@ class BookingServiceImplTest {
         @DisplayName("Should create and return booking when dates are valid and available")
         void shouldCreateAndReturnBooking_WhenDatesValidAndAvailable() throws ExceptionAlert {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-            when(accommodationRepository.findById(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
-            when(bookingRepository.existsOverlappingBooking(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(false);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
+            when(accommodationRepository.findByIdForUpdate(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
             when(bookingRepository.findOverlappingBookings(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(Collections.emptyList());
             when(bookingRepository.save(any(Booking.class))).thenReturn(testBooking);
             when(bookingMapper.toDto(testBooking)).thenReturn(testBookingDto);
@@ -153,18 +151,18 @@ class BookingServiceImplTest {
 
             Booking capturedBooking = bookingCaptor.getValue();
             assertThat(capturedBooking.getGuest().getId()).isEqualTo(testGuest.getId());
-            assertThat(capturedBooking.getTotalPrice()).isEqualTo(500.0); // 5 days * 100.0
+            assertThat(capturedBooking.getTotalPrice()).isEqualByComparingTo(new java.math.BigDecimal("500")); // 5 days * 100.0
             assertThat(capturedBooking.getBookingStatus()).isEqualTo(BookingStatus.PENDING);
 
-            verify(accommodationRepository).findById(testAccommodation.getId());
+            verify(accommodationRepository).findByIdForUpdate(testAccommodation.getId());
         }
 
         @Test
         @DisplayName("Should throw exception when accommodation not found")
         void shouldThrowException_WhenAccommodationNotFound() {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-            when(accommodationRepository.findById(anyLong())).thenReturn(Optional.empty());
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
+            when(accommodationRepository.findByIdForUpdate(anyLong())).thenReturn(Optional.empty());
 
             // When & Then
             assertThatThrownBy(() -> bookingService.createBooking(testBookingRequest, httpServletRequest))
@@ -180,8 +178,8 @@ class BookingServiceImplTest {
             BookingRequest invalidRequest = new BookingRequest(
                     10, LocalDate.now().plusDays(10), LocalDate.now().plusDays(5), 2
             );
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-            when(accommodationRepository.findById(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
+            when(accommodationRepository.findByIdForUpdate(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
 
             // When & Then
             assertThatThrownBy(() -> bookingService.createBooking(invalidRequest, httpServletRequest))
@@ -196,8 +194,8 @@ class BookingServiceImplTest {
             BookingRequest pastRequest = new BookingRequest(
                     10, LocalDate.now().minusDays(5), LocalDate.now().plusDays(5), 2
             );
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-            when(accommodationRepository.findById(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
+            when(accommodationRepository.findByIdForUpdate(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
 
             // When & Then
             assertThatThrownBy(() -> bookingService.createBooking(pastRequest, httpServletRequest))
@@ -209,12 +207,8 @@ class BookingServiceImplTest {
         @DisplayName("Should throw exception when dates overlap (with details)")
         void shouldThrowException_WhenDatesOverlap() {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
-            when(accommodationRepository.findById(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
-
-            // 1. MOCK CORREGIDO: Simula que NO existe solapamiento simple (para evitar la Línea 69 del servicio)
-            when(bookingRepository.existsOverlappingBooking(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
-                    .thenReturn(false);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
+            when(accommodationRepository.findByIdForUpdate(testAccommodation.getId())).thenReturn(Optional.of(testAccommodation));
 
             // 2. MOCK MANTENIDO: Simula que SÍ se encuentran reservas solapadas (para activar la Línea 72 del servicio)
             when(bookingRepository.findOverlappingBookings(anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -225,7 +219,7 @@ class BookingServiceImplTest {
             assertThatThrownBy(() -> bookingService.createBooking(testBookingRequest, httpServletRequest))
                     .isInstanceOf(ExceptionAlert.class)
                     // Asegúrate de que el mensaje a buscar coincida exactamente con el patrón que construye el servicio
-                    .hasMessageContaining("Accommodation is not avaliable for the selected dates. Overlapping bookings:");
+                    .hasMessage("Accommodation is not available for the selected dates");
 
             verify(bookingRepository, never()).save(any(Booking.class));
         }
@@ -244,7 +238,7 @@ class BookingServiceImplTest {
             void shouldReturnAllBookings_WhenStatusIsNull() throws ExceptionAlert {
                 // Given
                 Page<Booking> bookingPage = new PageImpl<>(List.of(testBooking));
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findByGuestId(testGuest.getId(), pageable)).thenReturn(bookingPage);
                 when(bookingMapper.toDto(testBooking)).thenReturn(testBookingDto);
 
@@ -263,7 +257,7 @@ class BookingServiceImplTest {
             void shouldReturnFilteredBookings_WhenStatusIsProvided() throws ExceptionAlert {
                 // Given
                 Page<Booking> bookingPage = new PageImpl<>(List.of(testBooking));
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findByGuestIdAndBookingStatus(testGuest.getId(), BookingStatus.PENDING, pageable)).thenReturn(bookingPage);
                 when(bookingMapper.toDto(testBooking)).thenReturn(testBookingDto);
 
@@ -280,7 +274,7 @@ class BookingServiceImplTest {
             @DisplayName("Should throw exception when user not found")
             void shouldThrowException_WhenUserNotFound() {
                 // Given
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(null);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(null);
 
                 // When & Then
                 assertThatThrownBy(() -> bookingService.getBookingsByUser(null, 0, 10, httpServletRequest))
@@ -303,7 +297,7 @@ class BookingServiceImplTest {
             void shouldReturnAllHostBookings_WhenNoFiltersProvided() throws ExceptionAlert {
                 // Given
                 Page<Booking> bookingPage = new PageImpl<>(List.of(testBooking));
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                 when(bookingRepository.findByAccommodationHostId(testHost.getId(), pageable)).thenReturn(bookingPage);
                 when(bookingMapper.toDto(testBooking)).thenReturn(testBookingDto);
 
@@ -320,7 +314,7 @@ class BookingServiceImplTest {
             void shouldReturnHostBookings_FilteredByAccommodationIdAndStatus() throws ExceptionAlert {
                 // Given
                 Page<Booking> bookingPage = new PageImpl<>(List.of(testBooking));
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                 when(bookingRepository.findByAccommodationIdAndAccommodationHostIdAndBookingStatus(
                         testAccommodation.getId(), testHost.getId(), BookingStatus.PENDING, pageable
                 )).thenReturn(bookingPage);
@@ -340,7 +334,7 @@ class BookingServiceImplTest {
             @DisplayName("Should throw exception when user is not a host")
             void shouldThrowException_WhenUserIsNotAHost() {
                 // Given
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
 
                 // When & Then
                 assertThatThrownBy(() -> bookingService.getBookingsByHost(null, null, 0, 10, httpServletRequest))
@@ -366,7 +360,7 @@ class BookingServiceImplTest {
                 Booking cancelableBooking = testBooking; // Start date is 5 days from now
                 cancelableBooking.setBookingStatus(BookingStatus.CONFIRMED);
 
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(cancelableBooking));
 
                 // When
@@ -385,7 +379,7 @@ class BookingServiceImplTest {
             @DisplayName("Should throw exception when booking not found")
             void shouldThrowException_WhenBookingNotFound() {
                 // Given
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
                 // When & Then
@@ -399,7 +393,7 @@ class BookingServiceImplTest {
             void shouldThrowException_WhenAlreadyCancelled() {
                 // Given
                 testBooking.setBookingStatus(BookingStatus.CANCELLED);
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                 // When & Then
@@ -414,7 +408,7 @@ class BookingServiceImplTest {
                 // Given
                 testBooking.setStartDate(LocalDateTime.now().plusHours(24));
                 testBooking.setBookingStatus(BookingStatus.CONFIRMED);
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                 // When & Then
@@ -429,7 +423,7 @@ class BookingServiceImplTest {
             void shouldThrowException_WhenUserIsNotTheBookingOwner() {
                 // Given
                 User stranger = User.builder().id(99L).build();
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(stranger);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(stranger);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                 // When & Then
@@ -449,18 +443,18 @@ class BookingServiceImplTest {
 
             @Test
             @DisplayName("Should complete booking successfully when valid")
-            void shouldCompleteBookingSuccessfully_WhenValid() {
+            void shouldCompleteBookingSuccessfully_WhenValid() throws ExceptionAlert {
                 // Given
                 testBooking.setBookingStatus(BookingStatus.PENDING);
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                 // When
-                InfoDto result = bookingService.completeBooking(1L, httpServletRequest);
+                InfoDto result = bookingService.confirmBooking(1L, httpServletRequest);
 
                 // Then
-                assertThat(result.message()).isEqualTo("The booking has been marked as completed successfully");
-                assertThat(result.title()).isEqualTo("Booking completed");
+                assertThat(result.message()).isEqualTo("The booking has been confirmed successfully");
+                assertThat(result.title()).isEqualTo("Booking confirmed");
 
                 ArgumentCaptor<Booking> bookingCaptor = ArgumentCaptor.forClass(Booking.class);
                 verify(bookingRepository).save(bookingCaptor.capture());
@@ -471,49 +465,47 @@ class BookingServiceImplTest {
 
             @Test
             @DisplayName("Should return info when already completed")
-            void shouldReturnInfo_WhenAlreadyCompleted() {
+            void shouldReturnInfo_WhenAlreadyCompleted() throws ExceptionAlert {
                 // Given
                 testBooking.setBookingStatus(BookingStatus.COMPLETED);
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                 // When
-                InfoDto result = bookingService.completeBooking(1L, httpServletRequest);
+                InfoDto result = bookingService.confirmBooking(1L, httpServletRequest);
 
                 // Then
-                assertThat(result.title()).isEqualTo("Already completed");
+                assertThat(result.title()).isEqualTo("Already confirmed");
                 verify(bookingRepository, never()).save(any(Booking.class));
             }
 
             @Test
             @DisplayName("Should return info when cancelled")
-            void shouldReturnInfo_WhenCancelled() {
+            void shouldThrow_WhenCancelled() {
                 // Given
                 testBooking.setBookingStatus(BookingStatus.CANCELLED);
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
-                // When
-                InfoDto result = bookingService.completeBooking(1L, httpServletRequest);
-
-                // Then
-                assertThat(result.title()).isEqualTo("Cannot complete");
+                // When & Then
+                assertThatThrownBy(() -> bookingService.confirmBooking(1L, httpServletRequest))
+                        .isInstanceOf(ExceptionAlert.class)
+                        .hasMessage("Cancelled bookings cannot be confirmed");
                 verify(bookingRepository, never()).save(any(Booking.class));
             }
 
             @Test
-            @DisplayName("Should return info when user is not the booking owner")
-            void shouldReturnInfo_WhenUserIsNotTheBookingOwner() {
+            @DisplayName("Should throw when user is not the accommodation host")
+            void shouldThrow_WhenUserIsNotTheAccommodationHost() {
                 // Given
-                User stranger = User.builder().id(99L).build();
-                when(userService.getUserFromRequest(httpServletRequest)).thenReturn(stranger);
+                User stranger = User.builder().id(99L).role(UserRole.HOST).build();
+                when(userService.getActiveUser(httpServletRequest)).thenReturn(stranger);
                 when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
-                // When
-                InfoDto result = bookingService.completeBooking(1L, httpServletRequest);
-
-                // Then
-                assertThat(result.title()).isEqualTo("Unauthorized");
+                // When & Then
+                assertThatThrownBy(() -> bookingService.confirmBooking(1L, httpServletRequest))
+                        .isInstanceOf(ExceptionAlert.class)
+                        .hasMessage("User is not the host of the accommodation for this booking");
                 verify(bookingRepository, never()).save(any(Booking.class));
             }
 
@@ -531,7 +523,7 @@ class BookingServiceImplTest {
                 void shouldCancelBookingSuccessfully_WhenHostIsOwner() {
                     // Given
                     testBooking.setBookingStatus(BookingStatus.PENDING);
-                    when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+                    when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
                     when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(testBooking));
 
                     // When
@@ -560,8 +552,8 @@ class BookingServiceImplTest {
                     Long accId = 10L;
                     when(accommodationRepository.existsById(accId)).thenReturn(true);
                     when(bookingRepository.existsByAccommodation_Id(accId)).thenReturn(true);
-                    when(bookingRepository.existsByAccommodationIdAndEndDateAfterAndBookingStatusNot(
-                            eq(accId), any(LocalDateTime.class), eq(BookingStatus.CONFIRMED)
+                    when(bookingRepository.existsByAccommodationIdAndEndDateAfterAndBookingStatusIn(
+                            eq(accId), any(LocalDateTime.class), any()
                     )).thenReturn(true);
 
                     // When

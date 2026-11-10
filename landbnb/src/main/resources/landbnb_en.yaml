@@ -1,15 +1,29 @@
 openapi: 3.0.3
 info:
   title: Land BnB
-  description: API for managing accommodations, bookings, and reviews for Land BnB.
-  version: 1.0.0
+  description: "API for managing accommodations, bookings and reviews on Land BnB."
+  version: 1.1.0
   contact:
     name: Land BnB
     url: https://landbnb-mockup.netlify.app/
 
 servers:
   - url: http://localhost:8080/api
-    description: Local Land BnB server
+    description: "Land BnB local server"
+
+tags:
+  - name: "Authentication"
+    description: "Registration, login and password recovery (public endpoints)"
+  - name: "Users"
+    description: "Profile, password and account of the authenticated user"
+  - name: "Accommodations"
+    description: "Property management, search and favorites"
+  - name: "Bookings"
+    description: "Creating, confirming and cancelling bookings"
+  - name: "Reviews"
+    description: "Reviews, ratings and host replies"
+  - name: "Images"
+    description: "Image upload and deletion (Cloudinary)"
 
 components:
   securitySchemes:
@@ -17,1120 +31,1116 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: "JWT obtained from /auth/login. Lasts 1 hour and stops being valid after the password is changed or reset, or the account is deleted."
 
   schemas:
     ErrorResponse:
       type: object
+      description: "Error returned by the /auth endpoints"
       properties:
-        timestamp:
-          type: string
-          format: date-time
-        status:
-          type: integer
-        error:
-          type: string
-        message:
-          type: string
-        path:
-          type: string
+        timestamp: { type: string, format: date-time }
+        status: { type: integer }
+        error: { type: string }
+        message: { type: string }
       example:
-        timestamp: "2024-01-15T10:30:00Z"
+        timestamp: "2025-01-15T10:30:00"
         status: 401
         error: "Unauthorized"
-        message: "Unauthorized access"
-        path: "/api/accommodations"
+        message: "Credenciales inválidas"
+
+    ErrorBody:
+      type: object
+      description: "Standard error format for the rest of the API. For business errors content is a string; for validation errors it is a list of ValidationItem."
+      properties:
+        error: { type: boolean, example: true }
+        content:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                $ref: '#/components/schemas/ValidationItem'
+      example:
+        error: true
+        content: "Accommodation not found"
+
+    ValidationItem:
+      type: object
+      properties:
+        field: { type: string }
+        message: { type: string }
+
+    InfoDto:
+      type: object
+      properties:
+        title: { type: string }
+        message: { type: string }
+      example:
+        title: "Success"
+        message: "Operation completed"
 
     AuthResponse:
       type: object
       properties:
-        token:
-          type: string
-        userId:
-          type: integer
-        email:
-          type: string
-        role:
-          type: string
+        token: { type: string }
       example:
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-        userId: 1
-        email: "user@example.com"
-        role: "USER"
+        token: "eyJhbGciOiJIUzUxMiJ9..."
 
     LoginRequest:
       type: object
-      required:
-        - email
-        - password
+      required: [email, password]
       properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-          format: password
+        email: { type: string, format: email }
+        password: { type: string, format: password }
       example:
-        email: "user@example.com"
+        email: "usuario@ejemplo.com"
         password: "Password123"
 
     UserRegistration:
       type: object
-      required:
-        - email
-        - password
-        - name
-        - phone
-        - role
-        - birthDate
+      required: [email, password, name, phoneNumber]
       properties:
-        email:
-          type: string
-          format: email
+        email: { type: string, format: email }
         password:
           type: string
           format: password
-        name:
-          type: string
-        phone:
-          type: string
-        role:
-          type: string
-        birthDate:
-          type: string
-          format: date
+          description: "At least 8 characters with an uppercase letter, a lowercase letter and a number"
+        name: { type: string }
+        lastName: { type: string }
+        phoneNumber: { type: string, description: "7-15 digits, optional +" }
+        birthDate: { type: string, format: date }
       example:
-        email: "new@user.com"
+        email: "nuevo@usuario.com"
         password: "Password123"
-        name: "John Doe"
-        phone: "+573001234567"
-        role: "USER"
+        name: "Juan"
+        lastName: "Pérez"
+        phoneNumber: "+573001234567"
         birthDate: "1990-01-01"
+
+    ForgotPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email }
 
     ResetPasswordRequest:
       type: object
-      required:
-        - token
-        - newPassword
+      required: [email, token, newPassword]
       properties:
-        token:
-          type: string
-        newPassword:
-          type: string
-          format: password
+        email: { type: string, format: email }
+        token: { type: string, description: "6-digit code received by email (valid 15 min, max 5 attempts)" }
+        newPassword: { type: string, format: password }
       example:
-        token: "abc123def456"
-        newPassword: "NewPassword123"
+        email: "usuario@ejemplo.com"
+        token: "123456"
+        newPassword: "NuevaPassword123"
 
     ChangePasswordRequest:
       type: object
-      required:
-        - currentPassword
-        - newPassword
+      required: [currentPassword, newPassword]
       properties:
-        currentPassword:
+        currentPassword: { type: string, format: password }
+        newPassword: { type: string, format: password }
+
+    UserDto:
+      type: object
+      properties:
+        id: { type: integer }
+        email: { type: string }
+        name: { type: string }
+        lastName: { type: string }
+        phoneNumber: { type: string }
+        userRole: { type: string, enum: [USER, HOST] }
+        profilePictureUrl: { type: string }
+        dateOfBirth: { type: string, format: date }
+        userStatus: { type: string, enum: [ACTIVE, INACTIVE] }
+        bio: { type: string }
+
+    UserInfoDto:
+      type: object
+      properties:
+        name: { type: string }
+        lastName: { type: string }
+        photoProfile: { type: string }
+
+    UserUpdateDto:
+      type: object
+      properties:
+        name: { type: string }
+        lastName: { type: string }
+        phoneNumber: { type: string }
+        photoProfile:
           type: string
-          format: password
-        newPassword:
-          type: string
-          format: password
-      example:
-        currentPassword: "Password123"
-        newPassword: "NewPassword123"
+          description: "Must be the URL of an image uploaded through the platform (https://res.cloudinary.com/...). Empty to remove it."
+        description: { type: string }
+        bio: { type: string, description: "Only stored if the user is a HOST" }
+        dateBirth: { type: string, format: date, description: "yyyy-MM-dd" }
 
     AccommodationDto:
       type: object
-      required:
-        - title
-        - description
-        - city
-        - address
-        - pricePerNight
-        - maxCapacity
       properties:
-        title:
-          type: string
-        description:
-          type: string
-        city:
-          type: string
-        address:
-          type: string
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-        pricePerNight:
-          type: number
-          format: double
-        maxCapacity:
-          type: integer
-        amenities:
-          type: array
-          items:
-            type: string
-      example:
-        title: "Beautiful apartment in the city center"
-        description: "Spacious apartment with mountain view..."
-        city: "Bogotá"
-        address: "Street 123 #45-67"
-        latitude: 4.7110
-        longitude: -74.0721
-        pricePerNight: 120000
-        maxCapacity: 4
-        amenities: ["WIFI", "KITCHEN", "TV"]
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        city: { type: string }
+        address: { type: string }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        pricePerNight: { type: number, example: 120000.00, description: "Exact decimal (2 decimal places)" }
+        maxCapacity: { type: integer }
+        mainImage: { type: string }
 
     AccommodationDetailDto:
       type: object
+      required: [title, description, city, address, pricePerNight, maxCapacity]
       properties:
-        id:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        city:
-          type: string
-        address:
-          type: string
-        latitude:
-          type: number
-          format: double
-        longitude:
-          type: number
-          format: double
-        pricePerNight:
-          type: number
-          format: double
-        maxCapacity:
-          type: integer
-        amenities:
-          type: array
-          items:
-            type: string
-        host:
-          $ref: '#/components/schemas/UserDto'
-        averageRating:
-          type: number
-          format: double
-        totalBookings:
-          type: integer
-        mainImage:
-          type: string
-          description: URL of the accommodation's main image
-        images:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImageDto'
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string }
+        city: { type: string }
+        address: { type: string }
+        latitude: { type: number, format: double }
+        longitude: { type: number, format: double }
+        pricePerNight: { type: number, example: 250000.00, description: "Exact decimal (2 decimal places)" }
+        maxCapacity: { type: integer }
+        services: { type: array, items: { type: string } }
+        host: { $ref: '#/components/schemas/UserInfoDto' }
+        averageRating: { type: number, format: double }
+        totalBookings: { type: integer }
+        mainImage: { type: string }
+        images: { type: array, items: { type: string } }
       example:
         id: 1
-        title: "Beach house"
-        description: "Beautiful house by the sea"
+        title: "Casa de playa"
+        description: "Hermosa casa frente al mar"
         city: "Cartagena"
-        address: "Street 123"
+        address: "Calle 123"
         latitude: 10.3910
         longitude: -75.4795
-        pricePerNight: 250000
+        pricePerNight: 250000.00
         maxCapacity: 6
-        amenities: ["WIFI", "POOL", "AIR_CONDITIONING"]
-        host:
-          id: 1
-          email: "host@example.com"
-          name: "Carlos Rodríguez"
-          phone: "+573001234567"
-          role: "HOST"
+        services: ["WiFi", "Pool", "Air Conditioning"]
+        host: { name: "Carlos", lastName: "Rodríguez", photoProfile: "https://res.cloudinary.com/demo/image/upload/v1/c.jpg" }
         averageRating: 4.8
         totalBookings: 15
-        mainImage: "https://cdn.landbnb.com/accommodations/1/main.jpg"
-        images:
-          - url: "https://cdn.landbnb.com/accommodations/1/1.jpg"
-            isMain: false
-          - url: "https://cdn.landbnb.com/accommodations/1/2.jpg"
-            isMain: false
+        mainImage: "https://res.cloudinary.com/demo/image/upload/v1/main.jpg"
+        images: ["https://res.cloudinary.com/demo/image/upload/v1/1.jpg"]
 
     SearchCriteria:
       type: object
       properties:
-        city:
-          type: string
-        checkIn:
-          type: string
-          format: date
-        checkOut:
-          type: string
-          format: date
-        guests:
-          type: integer
-        minPrice:
-          type: number
-          format: double
-        maxPrice:
-          type: number
-          format: double
-        amenities:
-          type: array
-          items:
-            type: string
+        city: { type: string }
+        checkIn: { type: string, format: date }
+        checkOut: { type: string, format: date }
+        minPrice: { type: number }
+        maxPrice: { type: number }
+        sortBy: { type: string, enum: [price, rating, name, createdDate] }
+        sortDirection: { type: string, enum: [asc, desc] }
+        hasWifi: { type: boolean }
+        hasPool: { type: boolean }
+        allowsPets: { type: boolean }
+        hasAirConditioning: { type: boolean }
+        hasKitchen: { type: boolean }
+        hasParking: { type: boolean }
       example:
         city: "Bogotá"
-        checkIn: "2024-02-01"
-        checkOut: "2024-02-05"
-        guests: 2
-        minPrice: 50000
-        maxPrice: 200000
-        amenities: ["WIFI", "POOL"]
+        checkIn: "2026-02-01"
+        checkOut: "2026-02-05"
+        minPrice: 50000.00
+        maxPrice: 200000.00
+        sortBy: "price"
+        sortDirection: "asc"
+        hasWifi: true
+
+    AccommodationMetrics:
+      type: object
+      properties:
+        accommodationId: { type: integer }
+        accommodationName: { type: string }
+        totalBookings: { type: integer }
+        confirmedBookings: { type: integer }
+        cancelledBookings: { type: integer }
+        completedBookings: { type: integer }
+        pendingBookings: { type: integer }
+        totalRevenue: { type: number, description: "Exact decimal" }
+        averageBookingValue: { type: number, description: "Exact decimal" }
+        occupancyRate: { type: number, format: double }
+        totalGuests: { type: integer }
+        averageRating: { type: number, format: double }
+        totalReviews: { type: integer }
 
     BookingRequest:
       type: object
-      required:
-        - accommodationId
-        - checkIn
-        - checkOut
-        - numberOfGuests
+      required: [accommodationId, checkIn, checkOut, numberOfGuests]
       properties:
-        accommodationId:
-          type: integer
-        checkIn:
-          type: string
-          format: date
-        checkOut:
-          type: string
-          format: date
-        numberOfGuests:
-          type: integer
+        accommodationId: { type: integer }
+        checkIn: { type: string, format: date }
+        checkOut: { type: string, format: date }
+        numberOfGuests: { type: integer, description: "Cannot exceed the accommodation capacity" }
       example:
         accommodationId: 1
-        checkIn: "2024-02-01"
-        checkOut: "2024-02-05"
+        checkIn: "2026-02-01"
+        checkOut: "2026-02-05"
         numberOfGuests: 2
 
     BookingDto:
       type: object
       properties:
-        id:
-          type: integer
-        checkInDate:
-          type: string
-          format: date
-        checkOutDate:
-          type: string
-          format: date
-        numberOfGuests:
-          type: integer
-        totalPrice:
-          type: number
-          format: double
-        status:
-          type: string
-        accommodation:
-          $ref: '#/components/schemas/AccommodationDto'
-        user:
-          $ref: '#/components/schemas/UserDto'
+        id: { type: integer }
+        checkInDate: { type: string, format: date }
+        checkOutDate: { type: string, format: date }
+        numberOfGuests: { type: integer }
+        totalPrice: { type: number, example: 500000.00, description: "Exact decimal (2 decimal places)" }
+        status: { type: string, enum: [PENDING, CONFIRMED, COMPLETED, CANCELLED] }
+        accommodation: { $ref: '#/components/schemas/AccommodationDetailDto' }
+        user: { $ref: '#/components/schemas/UserInfoDto' }
+
+    BookingDates:
+      type: object
+      properties:
+        checkInDate: { type: string, format: date }
+        checkOutDate: { type: string, format: date }
 
     ReviewRequest:
       type: object
-      required:
-        - bookingId
-        - rating
+      required: [bookingId, rating, text]
       properties:
-        bookingId:
-          type: integer
-        rating:
-          type: integer
-        text:
-          type: string
-          maxLength: 500
-      example:
-        bookingId: 1
-        rating: 5
-        text: "Excellent experience, highly recommended"
+        bookingId: { type: integer }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        text: { type: string, maxLength: 1000 }
 
-    ReviewDto:
+    CommentAnswer:
+      type: object
+      required: [message, commentId]
+      properties:
+        message: { type: string }
+        commentId: { type: integer }
+
+    CommentDTO:
       type: object
       properties:
-        id:
-          type: integer
-        rating:
-          type: integer
-        text:
-          type: string
-        hostResponse:
-          type: string
-        creationDate:
-          type: string
-          format: date-time
-        user:
-          $ref: '#/components/schemas/UserDto'
+        id: { type: integer }
+        calificacion: { type: integer }
+        texto: { type: string }
+        respuestaAnfitrion: { type: string }
+        fechaCreacion: { type: string, format: date-time }
+        usuario: { $ref: '#/components/schemas/UserInfoDto' }
 
-    UserDto:
+    AccommodationPage:
       type: object
       properties:
-        id:
-          type: integer
-        email:
-          type: string
-        name:
-          type: string
-        phone:
-          type: string
-        role:
-          type: string
-        profilePicture:
-          type: string
+        content: { type: array, items: { $ref: '#/components/schemas/AccommodationDto' } }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+        size: { type: integer }
+        number: { type: integer }
 
-    UserUpdateDto:
+    AccommodationDetailPage:
       type: object
       properties:
-        name:
-          type: string
-        phone:
-          type: string
-        profilePicture:
-          type: string
-        description:
-          type: string
-      example:
-        name: "John Doe Updated"
-        phone: "+573009876543"
-        profilePicture: "https://cloudinary.com/profile.jpg"
+        content: { type: array, items: { $ref: '#/components/schemas/AccommodationDetailDto' } }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+        size: { type: integer }
+        number: { type: integer }
 
-    AccommodationMetrics:
+    BookingPage:
       type: object
       properties:
-        totalBookings:
-          type: integer
-        averageRating:
-          type: number
-          format: double
-        totalRevenue:
-          type: number
-          format: double
+        content: { type: array, items: { $ref: '#/components/schemas/BookingDto' } }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+        size: { type: integer }
+        number: { type: integer }
 
-    ImageDto:
+    CommentPage:
       type: object
       properties:
-        id:
-          type: integer
-        url:
-          type: string
-        isMain:
-          type: boolean
+        content: { type: array, items: { $ref: '#/components/schemas/CommentDTO' } }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+        size: { type: integer }
+        number: { type: integer }
 
   parameters:
     pageParam:
       name: page
       in: query
-      description: Page number (0-based)
-      required: false
-      schema:
-        type: integer
-        default: 0
+      description: "Page number (0-based). Page size is 10."
+      schema: { type: integer, default: 0 }
     sizeParam:
       name: size
       in: query
-      description: Page size
-      required: false
-      schema:
-        type: integer
-        default: 10
+      description: "Page size"
+      schema: { type: integer, default: 10 }
     idPathParam:
       name: id
       in: path
-      description: Resource ID
       required: true
-      schema:
-        type: integer
+      schema: { type: integer, format: int64 }
 
   responses:
-    UnauthorizedError:
-      description: Invalid or missing token
+    Unauthorized:
+      description: "Not authenticated: missing, invalid or expired token, or invalidated by a password change"
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    ForbiddenError:
-      description: Insufficient permissions to access the resource
+          schema: { $ref: '#/components/schemas/ErrorBody' }
+    Forbidden:
+      description: "Forbidden (insufficient role)"
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    NotFoundError:
-      description: Resource not found
+          schema: { $ref: '#/components/schemas/ErrorBody' }
+    BadRequest:
+      description: "Invalid request or business rule violated (message in content). Validation errors return a list of ValidationItem."
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    ValidationError:
-      description: Input data validation error
+          schema: { $ref: '#/components/schemas/ErrorBody' }
+    BookingError:
+      description: "Booking business error (message in message)"
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+          schema: { $ref: '#/components/schemas/InfoDto' }
+    Conflict:
+      description: "Conflict, e.g. the email is already registered"
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorBody' }
     InternalServerError:
-      description: Internal server error
+      description: "Internal server error"
       content:
         application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    ConflictError:
-      description: Conflict with the current resource state
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
+          schema: { $ref: '#/components/schemas/ErrorBody' }
 
 paths:
+  # ------------------------------------------------------------------ AUTH
   /auth/register:
     post:
-      tags: [Authentication]
-      summary: Register new user
-      description: Creates a new user or host account
+      tags: ["Authentication"]
+      summary: "Register a new user"
+      description: "Creates an account with the USER role. Use /users/become-host to become a host."
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
+            schema: { $ref: '#/components/schemas/UserRegistration' }
       responses:
         '201':
-          description: User registered successfully
+          description: "User created"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '409':
-          $ref: '#/components/responses/ConflictError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
 
   /auth/login:
     post:
-      tags: [Authentication]
-      summary: Login
-      description: Authenticates a user and returns a JWT token
+      tags: ["Authentication"]
+      summary: "Log in"
+      description: "Returns a JWT valid for 1 hour. A notification email is sent at most once every 24 h."
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
+            schema: { $ref: '#/components/schemas/LoginRequest' }
       responses:
         '200':
-          description: Successful login
+          description: "Successful login"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/AuthResponse'
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '401':
-          description: Invalid credentials
+          description: "Invalid credentials"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
 
   /auth/forgot-password:
     post:
-      tags: [Authentication]
-      summary: Request password recovery
-      description: Sends a recovery code to the user's email
-      parameters:
-        - name: email
-          in: query
-          required: true
-          schema:
-            type: string
-            format: email
+      tags: ["Authentication"]
+      summary: "Request a recovery code"
+      description: "Sends a 6-digit code by email (valid 15 min). Responds the same whether or not the account exists, so registered emails are not revealed."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ForgotPasswordRequest' }
       responses:
         '200':
-          description: Recovery code sent
-        '400':
-          description: Invalid email
+          description: "Request processed"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
   /auth/reset-password:
     post:
-      tags: [Authentication]
-      summary: Reset password
-      description: Resets password using a recovery code
+      tags: ["Authentication"]
+      summary: "Reset password"
+      description: "Changes the password using the received code. After 5 failed attempts the code is no longer valid. Closes all open sessions."
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/ResetPasswordRequest'
+            schema: { $ref: '#/components/schemas/ResetPasswordRequest' }
       responses:
         '200':
-          description: Password reset successfully
-        '400':
-          description: Invalid or expired code
+          description: "Password updated"
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
 
-  /auth/change-password:
-    post:
-      tags: [Authentication]
-      summary: Change password
-      description: Changes the authenticated user's password
-      security:
-        - bearerAuth: []
+  # ----------------------------------------------------------------- USERS
+  /users/profile:
+    get:
+      tags: ["Users"]
+      summary: "Get my profile"
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: "Profile of the authenticated user"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserDto' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    put:
+      tags: ["Users"]
+      summary: "Update my profile"
+      security: [{ bearerAuth: [] }]
       requestBody:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/ChangePasswordRequest'
+            schema: { $ref: '#/components/schemas/UserUpdateDto' }
       responses:
         '200':
-          description: Password changed successfully
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+          description: "Profile updated"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
 
-  /accommodations:
-    get:
-      tags: [Accommodations]
-      summary: Get accommodations list
-      description: Returns a paginated list of all active accommodations
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
+  /users/change-password:
+    post:
+      tags: ["Users"]
+      summary: "Change password"
+      description: "Invalidates every JWT issued so far, including the current one: the user must log in again."
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordRequest' }
       responses:
         '200':
-          description: List of accommodations
+          description: "Password changed"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400':
+          description: "Wrong current password or invalid data"
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AccommodationDto'
-                  totalElements:
-                    type: integer
-                  totalPages:
-                    type: integer
-                  size:
-                    type: integer
-                  number:
-                    type: integer
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+                  error: { type: boolean }
+                  message: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
 
+  /users/become-host:
     post:
-      tags: [Accommodations]
-      summary: Create new accommodation
-      description: Creates a new accommodation (hosts only)
-      security:
-        - bearerAuth: []
+      tags: ["Users"]
+      summary: "Become a host"
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: "Role updated to HOST"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /users/delete-account:
+    delete:
+      tags: ["Users"]
+      summary: "Delete my account"
+      description: "Soft delete. A host can delete the account only if their accommodations have no future pending or confirmed bookings; their accommodations are deactivated. Invalidates all JWTs."
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: "Account deleted"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  # ---------------------------------------------------------- ACCOMMODATIONS
+  /accommodations:
+    get:
+      tags: ["Accommodations"]
+      summary: "List active accommodations"
+      description: "Public. Active accommodations only, 10 per page."
+      parameters:
+        - { $ref: '#/components/parameters/pageParam' }
+      responses:
+        '200':
+          description: "Page of accommodations"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationPage' }
+    post:
+      tags: ["Accommodations"]
+      summary: "Create an accommodation"
+      description: "HOST only. Upload images first with POST /images and send their URLs here."
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AccommodationDetailDto' }
+      responses:
+        '201':
+          description: "Accommodation created"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /accommodations/{id}:
+    get:
+      tags: ["Accommodations"]
+      summary: "Accommodation detail"
+      description: "Public. A deleted (inactive) accommodation is reported as not found."
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Detail"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationDetailDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    put:
+      tags: ["Accommodations"]
+      summary: "Update an accommodation"
+      description: "Owner HOST only. Rating and review count cannot be modified."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AccommodationDetailDto' }
+      responses:
+        '200':
+          description: "Accommodation updated"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationDetailDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    delete:
+      tags: ["Accommodations"]
+      summary: "Delete an accommodation (soft delete)"
+      description: "Owner HOST only. Marks the accommodation inactive and keeps the booking and review history. Fails if it has future pending or confirmed bookings."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Accommodation deleted"
+          content:
+            application/json:
+              schema: { type: string, example: "Accommodation deleted successfully" }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /accommodations/search:
+    post:
+      tags: ["Accommodations"]
+      summary: "Search accommodations"
+      description: "Public. Excludes inactive ones and those booked on the given dates."
+      parameters:
+        - { $ref: '#/components/parameters/pageParam' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SearchCriteria' }
+      responses:
+        '200':
+          description: "Results"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationDetailPage' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /accommodations/host/my-accommodations:
+    get:
+      tags: ["Accommodations"]
+      summary: "My accommodations (host)"
+      description: "HOST only. Deleted ones are not included."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/pageParam' }
+      responses:
+        '200':
+          description: "Page of accommodations"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationDetailPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /accommodations/host/{id}:
+    get:
+      tags: ["Accommodations"]
+      summary: "My accommodation detail (host)"
+      description: "Owner HOST only. Responds {error, content}."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Detail"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: boolean }
+                  content: { $ref: '#/components/schemas/AccommodationDetailDto' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { description: "Not found" }
+
+  /accommodations/{id}/metrics:
+    get:
+      tags: ["Accommodations"]
+      summary: "Accommodation metrics"
+      description: "Owner HOST only. Revenue values are exact decimals."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+        - { name: startDate, in: query, schema: { type: string, format: date } }
+        - { name: endDate, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: "Metrics"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationMetrics' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /accommodations/dates-unavailable/{id}:
+    get:
+      tags: ["Accommodations"]
+      summary: "Unavailable dates"
+      description: "Public. Ranges of future confirmed bookings."
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Booked ranges"
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/BookingDates' } }
+
+  /accommodations/favorites:
+    get:
+      tags: ["Accommodations"]
+      summary: "My favorites"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/pageParam' }
+      responses:
+        '200':
+          description: "Page of favorites"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationPage' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /accommodations/is-favorite/{accommodationId}:
+    get:
+      tags: ["Accommodations"]
+      summary: "Is it a favorite?"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: accommodationId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "true / false"
+          content:
+            application/json:
+              schema: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /accommodations/add-favorite/{accommodationId}:
+    post:
+      tags: ["Accommodations"]
+      summary: "Add to favorites"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: accommodationId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "Result"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /accommodations/remove-favorite/{accommodationId}:
+    delete:
+      tags: ["Accommodations"]
+      summary: "Remove from favorites"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: accommodationId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "Result"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /accommodations/host/accommodation-favorites/{id_accommodation}:
+    get:
+      tags: ["Accommodations"]
+      summary: "How many users favorited it"
+      description: "Owner HOST only."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: id_accommodation, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "Count"
+          content:
+            application/json:
+              schema: { type: integer }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  # -------------------------------------------------------------- BOOKINGS
+  /booking:
+    post:
+      tags: ["Bookings"]
+      summary: "Create a booking"
+      description: "Starts as PENDING until the host confirms it. Validates dates, capacity, that the accommodation is active and that it does not overlap other bookings. A host cannot book their own accommodation."
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BookingRequest' }
+      responses:
+        '201':
+          description: "Booking created"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingDto' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /booking/user:
+    get:
+      tags: ["Bookings"]
+      summary: "My bookings (guest)"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [PENDING, CONFIRMED, COMPLETED, CANCELLED] } }
+        - { $ref: '#/components/parameters/pageParam' }
+        - { $ref: '#/components/parameters/sizeParam' }
+      responses:
+        '200':
+          description: "Page of bookings"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingPage' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /booking/host:
+    get:
+      tags: ["Bookings"]
+      summary: "Bookings of my accommodations (host)"
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: accommodationId, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string, enum: [PENDING, CONFIRMED, COMPLETED, CANCELLED] } }
+        - { $ref: '#/components/parameters/pageParam' }
+        - { $ref: '#/components/parameters/sizeParam' }
+      responses:
+        '200':
+          description: "Page of bookings"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingPage' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /booking/{id}:
+    get:
+      tags: ["Bookings"]
+      summary: "Booking detail"
+      description: "Only the booking guest or the accommodation host."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Booking"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BookingDto' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /booking/{id}/confirm:
+    post:
+      tags: ["Bookings"]
+      summary: "Confirm a booking (host)"
+      description: "Only the HOST who owns the accommodation. Moves the booking from PENDING to CONFIRMED and emails both parties. The guest cannot confirm their own booking."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Booking confirmed"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /booking/{id}/cancel:
+    post:
+      tags: ["Bookings"]
+      summary: "Cancel a booking (guest)"
+      description: "Guest owner only, up to 48 hours before the start date."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Booking cancelled"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /booking/host/{id}/cancel:
+    post:
+      tags: ["Bookings"]
+      summary: "Cancel a booking (host)"
+      description: "Only the HOST who owns the accommodation."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Booking cancelled"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BookingError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  # -------------------------------------------------------------- COMMENTS
+  /comments:
+    post:
+      tags: ["Reviews"]
+      summary: "Create a review"
+      description: "Only the guest of a CONFIRMED or COMPLETED booking, once per booking."
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewRequest' }
+      responses:
+        '200':
+          description: "Review created"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /comments/accommodation/{AccommodationsId}:
+    get:
+      tags: ["Reviews"]
+      summary: "Reviews of an accommodation"
+      description: "Public."
+      parameters:
+        - { name: AccommodationsId, in: path, required: true, schema: { type: integer } }
+        - { $ref: '#/components/parameters/pageParam' }
+      responses:
+        '200':
+          description: "Page of reviews"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CommentPage' }
+
+  /comments/booking/{bookingId}:
+    get:
+      tags: ["Reviews"]
+      summary: "Review of a booking"
+      description: "Only the guest who wrote it or the accommodation host."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: bookingId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "Review"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CommentDTO' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /comments/reply:
+    post:
+      tags: ["Reviews"]
+      summary: "Reply to a review (host)"
+      description: "Only the accommodation HOST, and only if the review has no reply yet."
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CommentAnswer' }
+      responses:
+        '200':
+          description: "Review with its reply"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CommentDTO' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /comments/delete/{id}:
+    delete:
+      tags: ["Reviews"]
+      summary: "Delete my review"
+      description: "Author only. Recalculates the accommodation rating."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Review deleted"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /comments/host/delete/{id}:
+    delete:
+      tags: ["Reviews"]
+      summary: "Delete my reply (host)"
+      description: "Accommodation HOST only. The id is the reply id."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/idPathParam' }
+      responses:
+        '200':
+          description: "Reply deleted"
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InfoDto' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /comments/can-comment/{accommodationId}:
+    get:
+      tags: ["Reviews"]
+      summary: "Can I review this accommodation?"
+      description: "true if I have a CONFIRMED or COMPLETED booking without a review."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: accommodationId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "true / false"
+          content:
+            application/json:
+              schema: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /comments/can-reply/{commentId}:
+    get:
+      tags: ["Reviews"]
+      summary: "Can I reply to this review?"
+      description: "true if I am the accommodation HOST and the review has no reply."
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { name: commentId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: "true / false"
+          content:
+            application/json:
+              schema: { type: boolean }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  # ---------------------------------------------------------------- IMAGES
+  /images:
+    post:
+      tags: ["Images"]
+      summary: "Upload an image"
+      description: "Any authenticated user. JPG, PNG or WEBP only, up to 5 MB."
+      security: [{ bearerAuth: [] }]
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [file]
               properties:
-                accommodationDto:
-                  $ref: '#/components/schemas/AccommodationDto'
-                mainImage:
-                  type: string
-                  format: binary
-                  description: Main image of the accommodation
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: List of additional accommodation images
-      responses:
-        '201':
-          description: Accommodation created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccommodationDetailDto'
-        '400':
-          description: Invalid data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /accommodations/{id}:
-    get:
-      tags: [Accommodations]
-      summary: Get accommodation by ID
-      description: Returns complete details of a specific accommodation
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
+                file: { type: string, format: binary }
       responses:
         '200':
-          description: Accommodation details
+          description: "Image uploaded; content holds the Cloudinary response (url, public_id, ...)"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccommodationDetailDto'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      tags: [Accommodations]
-      summary: Update accommodation
-      description: Updates accommodation information (owner only)
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccommodationDto'
-      responses:
-        '200':
-          description: Accommodation updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccommodationDto'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+                type: object
+                properties:
+                  error: { type: boolean }
+                  content: { type: object }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
     delete:
-      tags: [Accommodations]
-      summary: Delete accommodation (soft delete)
-      description: Marks an accommodation as deleted (owner only)
-      security:
-        - bearerAuth: []
+      tags: ["Images"]
+      summary: "Delete an image"
+      description: "HOST only."
+      security: [{ bearerAuth: [] }]
       parameters:
-        - $ref: '#/components/parameters/idPathParam'
+        - { name: id, in: query, required: true, schema: { type: string }, description: "Cloudinary public_id" }
       responses:
         '200':
-          description: Accommodation deleted successfully
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /accommodations/search:
-    post:
-      tags: [Accommodations]
-      summary: Search accommodations
-      description: Searches accommodations based on specific criteria
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SearchCriteria'
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
-      responses:
-        '200':
-          description: Search results
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AccommodationDto'
-                  totalElements:
-                    type: integer
-                  totalPages:
-                    type: integer
-        '400':
-          description: Invalid search criteria
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /accommodations/host/my-accommodations:
-    get:
-      tags: [Accommodations]
-      summary: Get host accommodations
-      description: Returns the accommodations of the authenticated host
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
-      responses:
-        '200':
-          description: List of host accommodations
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AccommodationDto'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /accommodations/{id}/metrics:
-    get:
-      tags: [Accommodations]
-      summary: Get accommodation metrics
-      description: Returns specific metrics for an accommodation (owner only)
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-        - name: startDate
-          in: query
-          schema:
-            type: string
-            format: date
-        - name: endDate
-          in: query
-          schema:
-            type: string
-            format: date
-      responses:
-        '200':
-          description: Accommodation metrics
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccommodationMetrics'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings:
-    post:
-      tags: [Bookings]
-      summary: Create booking
-      description: Creates a new booking for an accommodation
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookingRequest'
-      responses:
-        '201':
-          description: Booking created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookingDto'
-        '400':
-          description: Dates not available or invalid data
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings/user:
-    get:
-      tags: [Bookings]
-      summary: Get user bookings
-      description: Returns the bookings of the authenticated user
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: status
-          in: query
-          schema:
-            type: string
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
-      responses:
-        '200':
-          description: List of user bookings
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BookingDto'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings/host:
-    get:
-      tags: [Bookings]
-      summary: Get host bookings
-      description: Returns bookings for the host's accommodations
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: accommodationId
-          in: query
-          schema:
-            type: integer
-        - name: status
-          in: query
-          schema:
-            type: string
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
-      responses:
-        '200':
-          description: List of host bookings
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BookingDto'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /bookings/{id}/cancel:
-    post:
-      tags: [Bookings]
-      summary: Cancel booking
-      description: Cancels an existing booking
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      responses:
-        '200':
-          description: Booking canceled successfully
-        '400':
-          description: Cannot cancel booking
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /reviews:
-    post:
-      tags: [Reviews]
-      summary: Create review
-      description: Creates a new review for a completed booking
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReviewRequest'
-      responses:
-        '201':
-          description: Review created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReviewDto'
-        '400':
-          description: Cannot review this booking
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /reviews/accommodation/{accommodationId}:
-    get:
-      tags: [Reviews]
-      summary: Get accommodation reviews
-      description: Returns reviews for a specific accommodation
-      parameters:
-        - name: accommodationId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/sizeParam'
-      responses:
-        '200':
-          description: List of reviews
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  content:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReviewDto'
-        '404':
-          description: Accommodation not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /reviews/{id}/respond:
-    post:
-      tags: [Reviews]
-      summary: Respond to review
-      description: Adds a response to a review (host only)
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-        - name: response
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Response added successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReviewDto'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          description: Review not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /users/profile:
-    get:
-      tags: [Users]
-      summary: Get user profile
-      description: Returns the profile of the authenticated user
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: User profile
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDto'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      tags: [Users]
-      summary: Update profile
-      description: Updates the user's profile information
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserUpdateDto'
-      responses:
-        '200':
-          description: Profile updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDto'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-tags:
-  - name: Authentication
-    description: Endpoints for registration, login and password management
-  - name: Accommodations
-    description: Property management and search
-  - name: Bookings
-    description: Booking creation and management
-  - name: Reviews
-    description: Reviews and ratings
-  - name: Users
-    description: User profile management
+          description: "Image deleted"
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }

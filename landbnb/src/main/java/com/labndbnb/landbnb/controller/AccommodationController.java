@@ -8,17 +8,16 @@ import com.labndbnb.landbnb.dto.booking_dto.BookingDatesDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.labndbnb.landbnb.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,11 +37,12 @@ public class AccommodationController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> createAccommodation(
             @RequestBody  @Valid AccommodationDetailDto accommodationDto,
-            HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = accommodationService.createAccommodation(accommodationDto, request);
-        return ResponseEntity.status(HttpStatus.OK).body(info);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = accommodationService.createAccommodation(accommodationDto, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(info);
     }
 
 
@@ -58,11 +58,11 @@ public class AccommodationController {
     public ResponseEntity<?> updateAccommodation(
             @PathVariable Long id,
             @RequestBody @Valid AccommodationDetailDto accommodationDetailDto,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal User currentUser) {
 
         try {
             AccommodationDetailDto updated =
-                    accommodationService.updateAccommodation(accommodationDetailDto, id, request);
+                    accommodationService.updateAccommodation(accommodationDetailDto, id, currentUser.getId());
             return ResponseEntity.ok(updated);
         } catch (ExceptionAlert e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -72,9 +72,9 @@ public class AccommodationController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
-    public ResponseEntity<?> deleteAccommodation(@PathVariable Long id, HttpServletRequest request) throws ExceptionAlert
+    public ResponseEntity<?> deleteAccommodation(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert
     {
-        accommodationService.deleteAccommodation(id, request);
+        accommodationService.deleteAccommodation(id, currentUser.getId());
         return ResponseEntity.ok("Accommodation deleted successfully");
     }
 
@@ -91,9 +91,9 @@ public class AccommodationController {
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> getMyAccommodations(
             @RequestParam(defaultValue = "0") int page,
-            HttpServletRequest request) throws ExceptionAlert {
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
 
-        Page<AccommodationDetailDto> accommodations = accommodationService.getMyAccommodations(page, request);
+        Page<AccommodationDetailDto> accommodations = accommodationService.getMyAccommodations(page, currentUser.getId());
         return ResponseEntity.ok(accommodations);
     }
 
@@ -105,10 +105,10 @@ public class AccommodationController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            HttpServletRequest request) throws ExceptionAlert {
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
 
         AccommodationMetrics metrics = accommodationService.getAccommodationMetrics(
-                id, startDate, endDate, request);
+                id, startDate, endDate, currentUser.getId());
         return ResponseEntity.ok(metrics);
     }
 
@@ -117,8 +117,8 @@ public class AccommodationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getFavoriteAccommodations(
             @RequestParam(defaultValue = "0") int page,
-            HttpServletRequest request) throws ExceptionAlert {
-        Page<AccommodationDto> favorites = accommodationService.getFavoriteAccommodations(page, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        Page<AccommodationDto> favorites = accommodationService.getFavoriteAccommodations(page, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(favorites);
     }
 
@@ -126,8 +126,8 @@ public class AccommodationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> isFavorite(
             @PathVariable Long accommodationId,
-            HttpServletRequest request) throws ExceptionAlert {
-        boolean isFav = accommodationService.isFavorite(accommodationId, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        boolean isFav = accommodationService.isFavorite(accommodationId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(isFav);
     }
 
@@ -135,8 +135,8 @@ public class AccommodationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> addFavorite(
             @PathVariable Long accommodationId,
-            HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = accommodationService.addFavorite(accommodationId, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = accommodationService.addFavorite(accommodationId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -144,8 +144,8 @@ public class AccommodationController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> removeFavorite(
             @PathVariable Long accommodationId,
-            HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = accommodationService.removeFavorite(accommodationId, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = accommodationService.removeFavorite(accommodationId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -160,8 +160,8 @@ public class AccommodationController {
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> getUsersWhoFavoritedAccommodation(
             @PathVariable Long id_accommodation,
-            HttpServletRequest request) throws ExceptionAlert {
-        int users = accommodationService.getUsersWhoFavoritedAccommodation(id_accommodation, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        int users = accommodationService.getUsersWhoFavoritedAccommodation(id_accommodation, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
@@ -169,9 +169,9 @@ public class AccommodationController {
     @GetMapping("/host/{id}")
     public ResponseEntity<com.labndbnb.landbnb.dto.util_dto.ResponseDTO<AccommodationDetailDto>> getAccommodationForHost(
             @PathVariable Long id,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal User currentUser) {
         try {
-            AccommodationDetailDto dto = accommodationService.getHostAccommodation(id, request);
+            AccommodationDetailDto dto = accommodationService.getHostAccommodation(id, currentUser.getId());
             if (dto == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
 

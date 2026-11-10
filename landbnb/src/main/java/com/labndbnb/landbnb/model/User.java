@@ -1,6 +1,5 @@
 package com.labndbnb.landbnb.model;
 
-import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
 import jakarta.persistence.*;
@@ -59,13 +58,16 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
+    @Builder.Default
     private UserRole role = UserRole.USER;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "email_verified", nullable = false)
+    @Builder.Default
     private boolean emailVerified = false;
 
     @CreationTimestamp
@@ -79,13 +81,18 @@ public class User implements UserDetails {
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
 
+    /** Los JWT emitidos antes de este instante ya no son válidos (cambio/reset de contraseña, borrado de cuenta). */
+    @Column(name = "tokens_valid_after")
+    private LocalDateTime tokensValidAfter;
+
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "accommodation_id")
     )
-    private List<Accommodation> favorites;
+    @Builder.Default
+    private List<Accommodation> favorites = new java.util.ArrayList<>();
 
 
     @Override
@@ -101,6 +108,11 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status == UserStatus.ACTIVE;
     }
 
 

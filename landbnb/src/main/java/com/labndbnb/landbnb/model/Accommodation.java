@@ -45,11 +45,12 @@ public class Accommodation {
     private BigDecimal longitude;
 
     @Column(name = "average_rating", precision = 3, scale = 2)
+    @Builder.Default
     private BigDecimal averageRating = BigDecimal.ZERO;
 
 
-    @Column(name = "price_per_night", nullable = false)
-    private Double pricePerNight;
+    @Column(name = "price_per_night", nullable = false, precision = 12, scale = 2)
+    private BigDecimal pricePerNight;
 
     @Column(name = "capacity", nullable = false)
     private Integer capacity;
@@ -59,6 +60,7 @@ public class Accommodation {
             joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "service", length = 100)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Builder.Default
     private List<String> services = new ArrayList<>();
 
     @Column(name = "principal_image_url", length = 500)
@@ -69,9 +71,11 @@ public class Accommodation {
             joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image_url", length = 500)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Builder.Default
     private List<String> images = new ArrayList<>();
 
     @Column(name = "active", nullable = false)
+    @Builder.Default
     private Boolean active = true;
 
     @CreationTimestamp
@@ -82,10 +86,12 @@ public class Accommodation {
     @JoinColumn(name = "user_id", nullable = false)
     private User host;
 
-    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accommodation")
+    @Builder.Default
     private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "accommodation")
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     @UpdateTimestamp
@@ -94,6 +100,7 @@ public class Accommodation {
 
 
     @Column(name = "number_of_reviews", nullable = false)
+    @Builder.Default
     private Integer numberOfReviews = 0;
 
 

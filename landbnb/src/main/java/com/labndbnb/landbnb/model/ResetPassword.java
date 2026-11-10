@@ -34,7 +34,12 @@ public class ResetPassword {
     private LocalDateTime expiresAt;
 
     @Column(name = "used", nullable = false)
+    @Builder.Default
     private boolean used = false;
+
+    @Column(name = "attempts", nullable = false, columnDefinition = "int default 0")
+    @Builder.Default
+    private int attempts = 0;
 
     
 }

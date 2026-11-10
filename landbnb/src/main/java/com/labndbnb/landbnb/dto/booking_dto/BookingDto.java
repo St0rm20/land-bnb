@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.dto.booking_dto;
 
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDetailDto;
 import com.labndbnb.landbnb.dto.accommodation_dto.AccommodationDto;
@@ -26,7 +27,7 @@ public record BookingDto(
 
         @NotNull(message = "Total price is required")
         @Positive(message = "Total price must be greater than 0")
-        Double totalPrice,
+        BigDecimal totalPrice,
 
         @NotBlank(message = "Status is required")
         @Size(max = 50, message = "Status cannot exceed 50 characters")

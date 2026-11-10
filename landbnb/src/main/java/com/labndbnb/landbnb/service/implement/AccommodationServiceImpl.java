@@ -13,12 +13,12 @@ import com.labndbnb.landbnb.model.Accommodation;
 import com.labndbnb.landbnb.model.Booking;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.BookingStatus;
+import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.repository.AccommodationRepository;
 import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,29 +49,27 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public Page<AccommodationDto> getAccommodations(Integer page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Accommodation> accommodations = accommodationRepository.findAll(pageable);
+        Page<Accommodation> accommodations = accommodationRepository.findByActiveTrue(pageable);
         return accommodations.map(accommodationDtoMapper::toDto);
     }
 
     @Override
-    public InfoDto createAccommodation(AccommodationDetailDto accommodationDetailDto, HttpServletRequest request) throws ExceptionAlert {
+    public InfoDto createAccommodation(AccommodationDetailDto accommodationDetailDto, Long userId) throws ExceptionAlert {
 
-        User user = userService.getUserFromRequest(request);
+        User user = userService.getActiveUser(userId);
         if (user == null) {
             throw new ExceptionAlert("User not found");
         }
 
-        if (!user.getRole().toString().equals("HOST")) {
-            return new InfoDto("User is not a host", "The user is not a host");
+        if (user.getRole() != UserRole.HOST) {
+            throw new ExceptionAlert("User is not a host");
         }
 
 
         Accommodation accommodation = accommodationDetailDtoMapper.toEntity(accommodationDetailDto);
         accommodation.setHost(user);
-        accommodation.setAverageRating(BigDecimal.valueOf(0));
+        accommodation.setAverageRating(BigDecimal.ZERO);
         accommodation.setActive(true);
-        accommodation.setCreatedAt(LocalDateTime.now());
-        accommodation.setUpdatedAt(LocalDateTime.now());
         accommodation.setNumberOfReviews(0);
 
         Accommodation savedAccommodation = accommodationRepository.save(accommodation);
@@ -84,19 +82,21 @@ public class AccommodationServiceImpl implements AccommodationService {
     public AccommodationDetailDto getAccommodation(Long id) throws ExceptionAlert {
 
         Accommodation accommodation = accommodationRepository.findById(id)
+                .filter(a -> Boolean.TRUE.equals(a.getActive()))
                 .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         return accommodationDetailDtoMapper.toDto(accommodation);
     }
 
     @Override
-    public AccommodationDetailDto getHostAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public AccommodationDetailDto getHostAccommodation(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         if (user == null || !user.getRole().toString().equals("HOST")) {
             throw new ExceptionAlert("User is not a host");
         }
 
         Accommodation accommodation = accommodationRepository.findById(id)
+                .filter(a -> Boolean.TRUE.equals(a.getActive()))
                 .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         // Esta es la validación clave
@@ -108,28 +108,32 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public void deleteAccommodation(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public void deleteAccommodation(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Accommodation not found"));
+                .filter(a -> Boolean.TRUE.equals(a.getActive()))
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
         if (user == null || !Objects.equals(accommodation.getHost().getId(), user.getId())) {
             throw new ExceptionAlert("You are not the owner of this accommodation");
         }
         if(bookingService.accommodationHasFutureBookings(id)){
             throw new ExceptionAlert("Cannot delete accommodation with active bookings");
         }
-        accommodationRepository.delete(accommodation);
+        // Borrado lógico: se conserva el historial de reservas y reseñas
+        accommodation.setActive(false);
+        accommodationRepository.save(accommodation);
     }
 
 
     @Override
-    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public AccommodationDetailDto updateAccommodation(AccommodationDetailDto accommodationDetailDto, Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         if (user == null || !user.getRole().toString().equals("HOST")) {
             throw new ExceptionAlert("User is not a host");
         }
 
         Accommodation accommodation = accommodationRepository.findById(id)
+                .filter(a -> Boolean.TRUE.equals(a.getActive()))
                 .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
         if (!Objects.equals(accommodation.getHost().getId(), user.getId())) {
@@ -152,7 +156,15 @@ public class AccommodationServiceImpl implements AccommodationService {
             Sort.Direction direction = "desc".equalsIgnoreCase(criteria.sortDirection())
                     ? Sort.Direction.DESC
                     : Sort.Direction.ASC;
-            sort = Sort.by(direction, criteria.sortBy());
+            // Se mapea el nombre público al de la propiedad de la entidad (lista blanca)
+            String property = switch (criteria.sortBy()) {
+                case "price" -> "pricePerNight";
+                case "rating" -> "averageRating";
+                case "name" -> "name";
+                case "createdDate" -> "createdAt";
+                default -> throw new ExceptionAlert("Invalid sortBy: " + criteria.sortBy());
+            };
+            sort = Sort.by(direction, property);
         } else {
 
             sort = Sort.by(Sort.Order.desc("averageRating"), Sort.Order.desc("createdAt"));
@@ -179,14 +191,14 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public Page<AccommodationDetailDto> getMyAccommodations(int page, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public Page<AccommodationDetailDto> getMyAccommodations(int page, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         if (user == null || !user.getRole().toString().equals("HOST")) {
             throw new ExceptionAlert("User is not a host");
         }
         PageRequest pageable = PageRequest.of(page, size);
 
-        Page<Accommodation> accommodations = accommodationRepository.findByHostId(Long.valueOf(user.getId()), pageable);
+        Page<Accommodation> accommodations = accommodationRepository.findByHostIdAndActiveTrue(user.getId(), pageable);
 
         return accommodations.map(accommodationDetailDtoMapper::toDto);
 
@@ -197,9 +209,9 @@ public class AccommodationServiceImpl implements AccommodationService {
             Integer id,
             LocalDate startDate,
             LocalDate endDate,
-            HttpServletRequest request) throws ExceptionAlert {
+            Long userId) throws ExceptionAlert {
 
-        User user = userService.getUserFromRequest(request);
+        User user = userService.getActiveUser(userId);
 
         if (user == null || !user.getRole().toString().equals("HOST")) {
             throw new ExceptionAlert("User is not a host");
@@ -230,9 +242,9 @@ public class AccommodationServiceImpl implements AccommodationService {
                 id.longValue(), BookingStatus.COMPLETED, start, end);
 
         // ✅ CALCULAR INGRESOS TOTALES
-        Double totalRevenue = bookingRepository.sumRevenueByAccommodation(
+        BigDecimal totalRevenue = bookingRepository.sumRevenueByAccommodation(
                 id.longValue(), start, end);
-        totalRevenue = totalRevenue != null ? totalRevenue : 0.0;
+        totalRevenue = totalRevenue != null ? totalRevenue : BigDecimal.ZERO;
 
         // ✅ CALCULAR TOTAL DE HUÉSPEDES
         Integer totalGuests = bookingRepository.sumGuestsByAccommodation(
@@ -241,9 +253,9 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         // ✅ CALCULAR VALOR PROMEDIO INCLUYENDO CONFIRMED Y COMPLETED
         Long totalSuccessfulBookings = confirmedBookings + completedBookings;
-        Double averageBookingValue = totalSuccessfulBookings > 0
-                ? totalRevenue / totalSuccessfulBookings
-                : 0.0;
+BigDecimal averageBookingValue = totalSuccessfulBookings > 0
+                ? totalRevenue.divide(BigDecimal.valueOf(totalSuccessfulBookings), 2, java.math.RoundingMode.HALF_UP)
+                : BigDecimal.ZERO;
 
         // ✅ CALCULAR TASA DE OCUPACIÓN INCLUYENDO CONFIRMED Y COMPLETED
         Double occupancyRate = 0.0;
@@ -290,8 +302,8 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public InfoDto addFavorite(Long accommodationId, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public InfoDto addFavorite(Long accommodationId, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         if (user == null) {
             return new InfoDto("User not found", "The user could not be found from the request.");
         }
@@ -310,9 +322,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public InfoDto removeFavorite(Long accommodationId, HttpServletRequest request) {
+    public InfoDto removeFavorite(Long accommodationId, Long userId) {
         try {
-            User user = userService.getUserFromRequest(request);
+            User user = userService.getActiveUser(userId);
             if (user == null) {
                 return new InfoDto("User not found", "The user could not be found from the request.");
             }
@@ -334,9 +346,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public Page<AccommodationDto> getFavoriteAccommodations(int page, HttpServletRequest request) throws ExceptionAlert {
+    public Page<AccommodationDto> getFavoriteAccommodations(int page, Long userId) throws ExceptionAlert {
         Pageable pageable = PageRequest.of(page, size);
-        User user = userService.getUserFromRequest(request);
+        User user = userService.getActiveUser(userId);
         if (user == null) {
             throw new ExceptionAlert("User not found");
         }
@@ -345,9 +357,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public boolean isFavorite(Long accommodationId, HttpServletRequest request) {
+    public boolean isFavorite(Long accommodationId, Long userId) {
         try {
-            User user = userService.getUserFromRequest(request);
+            User user = userService.getActiveUser(userId);
             if (user == null) {
                 return false;
             }
@@ -368,9 +380,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public int getUsersWhoFavoritedAccommodation(Long idAccommodation, HttpServletRequest request) {
-        try {
-            User user = userService.getUserFromRequest(request);
+    public int getUsersWhoFavoritedAccommodation(Long idAccommodation, Long userId) throws ExceptionAlert {
+        {
+            User user = userService.getActiveUser(userId);
             if (user == null || !user.getRole().toString().equals("HOST")) {
                 throw new ExceptionAlert("User is not a host");
             }
@@ -385,8 +397,6 @@ public class AccommodationServiceImpl implements AccommodationService {
             Long users = accommodationRepository.countUsersWhoFavoritedAccommodation(idAccommodation);
 
             return Math.toIntExact(users);
-        } catch (ExceptionAlert e) {
-            return 0;
         }
     }
 

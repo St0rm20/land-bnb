@@ -17,7 +17,6 @@ import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import com.labndbnb.landbnb.service.implement.AccommodationServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -65,8 +64,7 @@ class AccommodationServiceImplTest {
     @Mock
     private BookingService bookingService;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
+    private final Long httpServletRequest = 1L;
 
     @InjectMocks
     private AccommodationServiceImpl accommodationService;
@@ -101,7 +99,7 @@ class AccommodationServiceImplTest {
                 .address("123 Test St")
                 .latitude(BigDecimal.valueOf(6.2442))
                 .longitude(BigDecimal.valueOf(-75.5812))
-                .pricePerNight(100000.0)
+                .pricePerNight(new java.math.BigDecimal("100000.00"))
                 .capacity(4)
                 .services(List.of("WiFi", "Kitchen"))
                 .host(testHost)
@@ -113,7 +111,7 @@ class AccommodationServiceImplTest {
 
         testAccommodationDetailDto = new AccommodationDetailDto(
                 1, "Test Accommodation", "Test Description", "Medellín", "123 Test St",
-                6.2442, -75.5812, 100000.0, 4,
+                6.2442, -75.5812, new java.math.BigDecimal("100000.00"), 4,
                 List.of("WiFi", "Kitchen"), null,
                 4.5, 10, "https://example.com/image.jpg",
                 List.of("https://example.com/img1.jpg")
@@ -121,7 +119,7 @@ class AccommodationServiceImplTest {
 
         testAccommodationDto = new AccommodationDto(
                 1, "Test Accommodation", "Test Description", "Medellín", "123 Test St",
-                6.2442, -75.5812, 100000.0, 4,
+                6.2442, -75.5812, new java.math.BigDecimal("100000.00"), 4,
                 List.of("WiFi", "Kitchen"), "https://example.com/image.jpg"
         );
     }
@@ -139,7 +137,7 @@ class AccommodationServiceImplTest {
             Pageable pageable = PageRequest.of(page, 10);
             Page<Accommodation> accommodationPage = new PageImpl<>(List.of(testAccommodation));
 
-            when(accommodationRepository.findAll(pageable)).thenReturn(accommodationPage);
+            when(accommodationRepository.findByActiveTrue(pageable)).thenReturn(accommodationPage);
             when(accommodationDtoMapper.toDto(testAccommodation)).thenReturn(testAccommodationDto);
 
             // When
@@ -149,7 +147,7 @@ class AccommodationServiceImplTest {
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
             assertThat(result.getContent().get(0)).isEqualTo(testAccommodationDto);
-            verify(accommodationRepository).findAll(pageable);
+            verify(accommodationRepository).findByActiveTrue(pageable);
             verify(accommodationDtoMapper).toDto(testAccommodation);
         }
 
@@ -161,14 +159,14 @@ class AccommodationServiceImplTest {
             Pageable pageable = PageRequest.of(page, 10);
             Page<Accommodation> emptyPage = new PageImpl<>(List.of());
 
-            when(accommodationRepository.findAll(pageable)).thenReturn(emptyPage);
+            when(accommodationRepository.findByActiveTrue(pageable)).thenReturn(emptyPage);
 
             // When
             Page<AccommodationDto> result = accommodationService.getAccommodations(page);
 
             // Then
             assertThat(result).isEmpty();
-            verify(accommodationRepository).findAll(pageable);
+            verify(accommodationRepository).findByActiveTrue(pageable);
         }
     }
 
@@ -180,7 +178,7 @@ class AccommodationServiceImplTest {
         @DisplayName("Should create accommodation when user is host and valid data provided")
         void shouldCreateAccommodation_WhenUserIsHostAndValidDataProvided() throws ExceptionAlert {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationDetailDtoMapper.toEntity(testAccommodationDetailDto)).thenReturn(testAccommodation);
             when(accommodationRepository.save(any(Accommodation.class))).thenReturn(testAccommodation);
 
@@ -199,7 +197,7 @@ class AccommodationServiceImplTest {
         @DisplayName("Should throw exception when user not found")
         void shouldThrowException_WhenUserNotFound() throws ExceptionAlert {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(null);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(null);
 
             // When & Then
             assertThatThrownBy(() -> accommodationService.createAccommodation(testAccommodationDetailDto, httpServletRequest))
@@ -209,18 +207,15 @@ class AccommodationServiceImplTest {
         }
 
         @Test
-        @DisplayName("Should return info when user is not host")
-        void shouldReturnInfo_WhenUserIsNotHost() throws ExceptionAlert {
+        @DisplayName("Should throw when user is not host")
+        void shouldThrow_WhenUserIsNotHost() throws ExceptionAlert {
             // Given
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
 
-            // When
-            InfoDto result = accommodationService.createAccommodation(testAccommodationDetailDto, httpServletRequest);
-
-            // Then
-            assertThat(result).isNotNull();
-            // Usando el mensaje exacto que devuelve tu código
-            assertThat(result.message()).isEqualTo("The user is not a host");
+            // When & Then
+            assertThatThrownBy(() -> accommodationService.createAccommodation(testAccommodationDetailDto, httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessage("User is not a host");
             verify(accommodationRepository, never()).save(any(Accommodation.class));
         }
     }
@@ -266,20 +261,47 @@ class AccommodationServiceImplTest {
     class DeleteAccommodationTests {
 
         @Test
-        @DisplayName("Should delete accommodation when user is owner and no future bookings")
+        @DisplayName("Should soft-delete (active=false) when user is owner and no future bookings")
         void shouldDeleteAccommodation_WhenUserIsOwnerAndNoFutureBookings() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
             when(bookingService.accommodationHasFutureBookings(accommodationId)).thenReturn(false);
 
             // When
             accommodationService.deleteAccommodation(accommodationId, httpServletRequest);
 
-            // Then
-            verify(accommodationRepository).delete(testAccommodation);
+            // Then: borrado lógico, nunca se elimina la fila (se conserva el historial)
+            assertThat(testAccommodation.getActive()).isFalse();
+            verify(accommodationRepository).save(testAccommodation);
+            verify(accommodationRepository, never()).delete(any(Accommodation.class));
             verify(bookingService).accommodationHasFutureBookings(accommodationId);
+        }
+
+        @Test
+        @DisplayName("Should treat an already deleted (inactive) accommodation as not found")
+        void shouldThrowNotFound_WhenAccommodationAlreadyInactive() throws ExceptionAlert {
+            Long accommodationId = 1L;
+            testAccommodation.setActive(false);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
+            when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
+
+            assertThatThrownBy(() -> accommodationService.deleteAccommodation(accommodationId, httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessage("Accommodation not found");
+            verify(accommodationRepository, never()).save(any(Accommodation.class));
+        }
+
+        @Test
+        @DisplayName("Public detail hides inactive accommodations")
+        void shouldHideInactiveAccommodationFromPublicDetail() throws ExceptionAlert {
+            testAccommodation.setActive(false);
+            when(accommodationRepository.findById(1L)).thenReturn(Optional.of(testAccommodation));
+
+            assertThatThrownBy(() -> accommodationService.getAccommodation(1L))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessage("Accommodation not found");
         }
 
         @Test
@@ -287,7 +309,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenAccommodationHasFutureBookings() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
             when(bookingService.accommodationHasFutureBookings(accommodationId)).thenReturn(true);
 
@@ -303,7 +325,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenUserIsNotOwner() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
 
             // When & Then
@@ -319,7 +341,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenAccommodationNotFound() throws ExceptionAlert {
             // Given
             Long accommodationId = 999L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
 
             // When & Then
@@ -339,7 +361,7 @@ class AccommodationServiceImplTest {
         void shouldUpdateAccommodation_WhenUserIsHostAndOwner() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
             when(accommodationRepository.save(any(Accommodation.class))).thenReturn(testAccommodation);
             when(accommodationDetailDtoMapper.toDto(testAccommodation)).thenReturn(testAccommodationDetailDto);
@@ -360,7 +382,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenUserIsNotHost() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
 
             // When & Then
             assertThatThrownBy(() -> accommodationService.updateAccommodation(
@@ -375,7 +397,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenAccommodationNotFound() throws ExceptionAlert {
             // Given
             Long accommodationId = 999L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.empty());
 
             // When & Then
@@ -397,14 +419,14 @@ class AccommodationServiceImplTest {
             int page = 0;
             SearchCriteria criteria = new SearchCriteria(
                     "Medellín", LocalDate.now().plusDays(1), LocalDate.now().plusDays(5),
-                    50000.0, 200000.0, List.of("WiFi"),
+                    new java.math.BigDecimal("50000.00"), new java.math.BigDecimal("200000.00"), List.of("WiFi"),
                     "price", "asc", true, false, false, false, false, false
             );
 
             Page<Accommodation> searchPage = new PageImpl<>(List.of(testAccommodation));
             when(accommodationRepository.searchAccommodations(
                     eq("Medellín"), any(LocalDate.class), any(LocalDate.class),
-                    eq(50000.0), eq(200000.0), eq(true), eq(false), eq(false),
+                    eq(new java.math.BigDecimal("50000.00")), eq(new java.math.BigDecimal("200000.00")), eq(true), eq(false), eq(false),
                     eq(false), eq(false), eq(false), any(Pageable.class)
             )).thenReturn(searchPage);
             when(accommodationDetailDtoMapper.toDto(testAccommodation)).thenReturn(testAccommodationDetailDto);
@@ -417,7 +439,7 @@ class AccommodationServiceImplTest {
             assertThat(result.getContent()).hasSize(1);
             verify(accommodationRepository).searchAccommodations(
                     eq("Medellín"), any(LocalDate.class), any(LocalDate.class),
-                    eq(50000.0), eq(200000.0), eq(true), eq(false), eq(false),
+                    eq(new java.math.BigDecimal("50000.00")), eq(new java.math.BigDecimal("200000.00")), eq(true), eq(false), eq(false),
                     eq(false), eq(false), eq(false), any(Pageable.class)
             );
         }
@@ -432,9 +454,9 @@ class AccommodationServiceImplTest {
         void shouldReturnHostAccommodations_WhenUserIsHost() throws ExceptionAlert {
             // Given
             int page = 0;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             Page<Accommodation> hostAccommodations = new PageImpl<>(List.of(testAccommodation));
-            when(accommodationRepository.findByHostId(testHost.getId(), PageRequest.of(page, 10)))
+            when(accommodationRepository.findByHostIdAndActiveTrue(testHost.getId(), PageRequest.of(page, 10)))
                     .thenReturn(hostAccommodations);
             when(accommodationDetailDtoMapper.toDto(testAccommodation)).thenReturn(testAccommodationDetailDto);
 
@@ -444,7 +466,7 @@ class AccommodationServiceImplTest {
             // Then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
-            verify(accommodationRepository).findByHostId(testHost.getId(), PageRequest.of(page, 10));
+            verify(accommodationRepository).findByHostIdAndActiveTrue(testHost.getId(), PageRequest.of(page, 10));
         }
 
         @Test
@@ -452,13 +474,13 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenUserIsNotHost() throws ExceptionAlert {
             // Given
             int page = 0;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
 
             // When & Then
             assertThatThrownBy(() -> accommodationService.getMyAccommodations(page, httpServletRequest))
                     .isInstanceOf(ExceptionAlert.class)
                     .hasMessage("User is not a host");
-            verify(accommodationRepository, never()).findByHostId(anyLong(), any(Pageable.class));
+            verify(accommodationRepository, never()).findByHostIdAndActiveTrue(anyLong(), any(Pageable.class));
         }
     }
 
@@ -474,7 +496,7 @@ class AccommodationServiceImplTest {
             LocalDate startDate = LocalDate.now().minusDays(30);
             LocalDate endDate = LocalDate.now();
 
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testHost);
             when(accommodationRepository.findById(accommodationId.longValue())).thenReturn(Optional.of(testAccommodation));
 
             // Mock booking repository calls
@@ -482,7 +504,7 @@ class AccommodationServiceImplTest {
             when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.CONFIRMED), any(), any())).thenReturn(8L);
             when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.CANCELLED), any(), any())).thenReturn(1L);
             when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.PENDING), any(), any())).thenReturn(1L);
-            when(bookingRepository.sumRevenueByAccommodation(anyLong(), any(), any())).thenReturn(8000000.0);
+            when(bookingRepository.sumRevenueByAccommodation(anyLong(), any(), any())).thenReturn(new java.math.BigDecimal("8000000.00"));
             when(bookingRepository.sumGuestsByAccommodation(anyLong(), any(), any())).thenReturn(32);
             when(bookingRepository.findByAccommodationIdAndStartDateBetween(anyLong(), any(), any())).thenReturn(List.of());
 
@@ -507,7 +529,7 @@ class AccommodationServiceImplTest {
             LocalDate startDate = LocalDate.now().minusDays(30);
             LocalDate endDate = LocalDate.now();
 
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
 
             // When & Then
             assertThatThrownBy(() -> accommodationService.getAccommodationMetrics(
@@ -525,7 +547,7 @@ class AccommodationServiceImplTest {
             LocalDate endDate = LocalDate.now();
 
             User differentHost = User.builder().id(3L).role(UserRole.HOST).build();
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(differentHost);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(differentHost);
             when(accommodationRepository.findById(accommodationId.longValue())).thenReturn(Optional.of(testAccommodation));
 
             // When & Then
@@ -545,7 +567,7 @@ class AccommodationServiceImplTest {
         void shouldAddAccommodationToFavorites_WhenValid() throws ExceptionAlert {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
             // No mock para userService.save() ya que es void
 
@@ -564,7 +586,7 @@ class AccommodationServiceImplTest {
             // Given
             Long accommodationId = 1L;
             testGuest.getFavorites().add(testAccommodation);
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
 
             // When
@@ -582,7 +604,7 @@ class AccommodationServiceImplTest {
             // Given
             Long accommodationId = 1L;
             testGuest.getFavorites().add(testAccommodation);
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
             // No mock para userService.save() ya que es void
 
@@ -600,7 +622,7 @@ class AccommodationServiceImplTest {
         void shouldReturnInfo_WhenAccommodationNotInFavorites() {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
 
             // When
@@ -618,7 +640,7 @@ class AccommodationServiceImplTest {
             // Given
             Long accommodationId = 1L;
             testGuest.getFavorites().add(testAccommodation);
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
 
             // When
@@ -633,7 +655,7 @@ class AccommodationServiceImplTest {
         void shouldReturnFalse_WhenAccommodationIsNotFavorite() {
             // Given
             Long accommodationId = 1L;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(testAccommodation));
 
             // When
@@ -653,7 +675,7 @@ class AccommodationServiceImplTest {
         void shouldReturnFavoriteAccommodations_WhenUserExists() throws ExceptionAlert {
             // Given
             int page = 0;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testGuest);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             Page<Accommodation> favoritesPage = new PageImpl<>(List.of(testAccommodation));
             when(userService.findFavoritesByUserId(testGuest.getId(), PageRequest.of(page, 10)))
                     .thenReturn(favoritesPage);
@@ -673,7 +695,7 @@ class AccommodationServiceImplTest {
         void shouldThrowException_WhenUserNotFound() throws ExceptionAlert {
             // Given
             int page = 0;
-            when(userService.getUserFromRequest(httpServletRequest)).thenReturn(null);
+            when(userService.getActiveUser(httpServletRequest)).thenReturn(null);
 
             // When & Then
             assertThatThrownBy(() -> accommodationService.getFavoriteAccommodations(page, httpServletRequest))

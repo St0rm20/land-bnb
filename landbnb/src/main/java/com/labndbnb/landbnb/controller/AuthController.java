@@ -45,7 +45,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
         try {
-            logger.info("hola");
             AuthResponse authResponse = authService.login(loginRequest);
             return ResponseEntity.ok().body(authResponse);
         } catch (ExceptionAlert e) {

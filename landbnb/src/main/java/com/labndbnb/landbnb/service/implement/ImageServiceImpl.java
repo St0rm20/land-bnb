@@ -48,7 +48,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private File convert(MultipartFile image) throws IOException {
-        File file = File.createTempFile(image.getOriginalFilename(), null);
+        File file = File.createTempFile("landbnb-upload-", ".tmp");
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(image.getBytes());
         }

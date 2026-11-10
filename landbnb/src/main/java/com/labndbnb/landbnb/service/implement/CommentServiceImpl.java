@@ -16,11 +16,12 @@ import com.labndbnb.landbnb.repository.ReviewRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.CommentService;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,6 +34,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 
+@Transactional
 public class CommentServiceImpl implements CommentService {
 
 
@@ -49,21 +51,12 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public InfoDto createComment(ReviewRequest reviewRequest, HttpServletRequest request) throws ExceptionAlert {
+    @Transactional
+    public InfoDto createComment(ReviewRequest reviewRequest, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         Booking booking = bookingService.getBookingById(Long.valueOf(reviewRequest.bookingId()));
-        User user = userService.getUserFromRequest(request);
 
-        if(booking==null){
-            if(bookingRepository.existsByGuest_Id(user.getId())){
-                booking = bookingRepository.findTopByGuest_IdOrderByCreatedAtDesc(user.getId());
-            }else{
-                throw new ExceptionAlert("User has no bookings");
-            }
-        }
-        if(user==null){
-            throw new ExceptionAlert("User is null");
-        }
-        if(!booking.getGuest().getId().equals(user.getId())){
+        if (!booking.getGuest().getId().equals(user.getId())) {
             throw new ExceptionAlert("User is not the owner of the booking");
         }
 
@@ -71,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
         if (!status.equals(BookingStatus.COMPLETED) && !status.equals(BookingStatus.CONFIRMED)) {
             throw new ExceptionAlert("Booking is not completed or confirmed");
         }
-        if(isBookingReviewed(booking.getId(), user)){
+        if (isBookingReviewed(booking.getId(), user)) {
             throw new ExceptionAlert("Booking already reviewed");
         }
 
@@ -93,7 +86,6 @@ public class CommentServiceImpl implements CommentService {
 
         accommodationRepository.save(accommodation);
         return new InfoDto("Review created", "Review created");
-
     }
 
     private boolean isBookingReviewed(Long id, User user) {
@@ -102,21 +94,24 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<CommentDTO> getCommentsByAccommodation(Integer alojamientoId, int page) {
-        Pageable pageable = (Pageable) PageRequest.of(page, SIZE);
+        Pageable pageable = PageRequest.of(page, SIZE);
         Page<Review> reviews =  reviewRepository.getByAccommodationId(Long.valueOf(alojamientoId), pageable);
         return reviews.map(reviewMapper::toDto);
     }
 
 
     @Override
-    public CommentDTO replyToComment(CommentAnswerDto answerDto, HttpServletRequest request) throws ExceptionAlert {
+    public CommentDTO replyToComment(CommentAnswerDto answerDto, Long userId) throws ExceptionAlert {
         Optional<Review> review = reviewRepository.findById(answerDto.commentId());
         if (review.isEmpty()) {
             throw new ExceptionAlert("Review not found");
         }
-        User user = userService.getUserFromRequest(request);
-        if (user == null || !review.get().getAccommodation().getHost().getId().equals(user.getId())) {
+        User user = userService.getActiveUser(userId);
+        if (!review.get().getAccommodation().getHost().getId().equals(user.getId())) {
             throw new ExceptionAlert("User is not the host of the booking");
+        }
+        if (review.get().getReviewAnswer() != null) {
+            throw new ExceptionAlert("This review has already been answered");
         }
 
         ReviewAnswer answer = new ReviewAnswer();
@@ -134,17 +129,24 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public CommentDTO getCommentByBookingId(Long bookingId) throws ExceptionAlert {
+    public CommentDTO getCommentByBookingId(Long bookingId, Long userId) throws ExceptionAlert {
         Review review = reviewRepository.getByBookingId(bookingId);
         if(review==null){
             throw new ExceptionAlert("Review not found");
+        }
+        // Solo el huésped que la escribió o el anfitrión del alojamiento pueden consultarla por reserva
+        User user = userService.getActiveUser(userId);
+        boolean isAuthor = review.getUser().getId().equals(user.getId());
+        boolean isHost = review.getAccommodation().getHost().getId().equals(user.getId());
+        if (!isAuthor && !isHost) {
+            throw new ExceptionAlert("User is not authorized to view this review");
         }
         return reviewMapper.toDto(review);
     }
 
     @Override
-    public InfoDto deleteComment(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public InfoDto deleteComment(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         Review review = reviewRepository.findById(id).orElse(null);
 
         if (review == null) {
@@ -185,16 +187,16 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public InfoDto deleteReplyComment(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = userService.getUserFromRequest(request);
+    public InfoDto deleteReplyComment(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         ReviewAnswer reviewAnswer = reviewAnswerRepository.findById(id).orElse(null);
 
         if (reviewAnswer == null) {
             return new InfoDto("Review answer not found", "Review answer not found");
         }
 
-        if (user == null || !reviewAnswer.getReview().getAccommodation().getHost().getId().equals(user.getId())) {
-            return new InfoDto("User is not the host of the accommodation", "User is not the host of the accommodation");
+        if (!reviewAnswer.getReview().getAccommodation().getHost().getId().equals(user.getId())) {
+            throw new ExceptionAlert("User is not the host of the accommodation");
         }
 
         Review review = reviewAnswer.getReview();
@@ -207,9 +209,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean canUserCommentAccommodation(Long accommodationId, HttpServletRequest request) throws ExceptionAlert {
+    public boolean canUserCommentAccommodation(Long accommodationId, Long userId) throws ExceptionAlert {
 
-        User user = userService.getUserFromRequest(request);
+        User user = userService.getActiveUser(userId);
         if (user == null) {
             return false;
         }
@@ -244,7 +246,7 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public boolean canUserReplyComment(Long commentId, HttpServletRequest request) throws ExceptionAlert {
+    public boolean canUserReplyComment(Long commentId, Long userId) throws ExceptionAlert {
 
         // Buscar el comentario por ID (NO el alojamiento)
         Review comment = reviewRepository.findById(commentId)
@@ -261,13 +263,14 @@ public class CommentServiceImpl implements CommentService {
         }
 
         // Usuario autenticado
-        User user = userService.getUserFromRequest(request);
+        User user = userService.getActiveUser(userId);
         if (user == null) {
             return false;
         }
 
-        // Validar que el host del alojamiento sea el que responde
-        return accommodation.getHost().getId().equals(user.getId());
+        // Solo el host del alojamiento, y solo si la reseña no tiene respuesta aún
+        return comment.getReviewAnswer() == null
+                && accommodation.getHost().getId().equals(user.getId());
     }
 
 

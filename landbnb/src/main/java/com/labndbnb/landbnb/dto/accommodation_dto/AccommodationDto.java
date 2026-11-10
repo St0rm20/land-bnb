@@ -1,5 +1,6 @@
     package com.labndbnb.landbnb.dto.accommodation_dto;
-    
+
+import java.math.BigDecimal;    
     import jakarta.validation.constraints.*;
     import java.util.List;
     
@@ -34,7 +35,7 @@
     
             @NotNull(message = "Price per night is required")
             @Positive(message = "Price per night must be greater than 0")
-            Double pricePerNight,
+            BigDecimal pricePerNight,
     
             @NotNull(message = "Max capacity is required")
             @Positive(message = "Max capacity must be greater than 0")

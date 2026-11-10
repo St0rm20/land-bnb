@@ -8,7 +8,6 @@ import com.labndbnb.landbnb.dto.comment_dto.ReviewRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.CommentService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,8 +34,7 @@ class CommentControllerTest {
     @Mock
     private CommentService commentService;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
+    private com.labndbnb.landbnb.model.User currentUser = com.labndbnb.landbnb.model.User.builder().id(1L).build();
 
     @InjectMocks
     private CommentController commentController;
@@ -56,16 +55,16 @@ class CommentControllerTest {
     void shouldCreateComment_AndReturnOkResponse() throws ExceptionAlert {
         // Given
         InfoDto expectedInfo = new InfoDto("Review created", "Review created");
-        when(commentService.createComment(any(ReviewRequest.class), any(HttpServletRequest.class)))
+        when(commentService.createComment(any(ReviewRequest.class), anyLong()))
                 .thenReturn(expectedInfo);
 
         // When
-        ResponseEntity<?> response = commentController.createComment(testReviewRequest, httpServletRequest);
+        ResponseEntity<?> response = commentController.createComment(testReviewRequest, currentUser);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(expectedInfo);
-        verify(commentService).createComment(testReviewRequest, httpServletRequest);
+        verify(commentService).createComment(testReviewRequest, 1L);
     }
 
     @Test
@@ -92,15 +91,15 @@ class CommentControllerTest {
         // Given
         Long bookingId = 1L;
         CommentDTO expectedComment = mock(CommentDTO.class);
-        when(commentService.getCommentByBookingId(bookingId)).thenReturn(expectedComment);
+        when(commentService.getCommentByBookingId(bookingId, 1L)).thenReturn(expectedComment);
 
         // When
-        ResponseEntity<?> response = commentController.getCommentByBookingId(bookingId);
+        ResponseEntity<?> response = commentController.getCommentByBookingId(bookingId, currentUser);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(expectedComment);
-        verify(commentService).getCommentByBookingId(bookingId);
+        verify(commentService).getCommentByBookingId(bookingId, 1L);
     }
 
     @Test
@@ -108,16 +107,16 @@ class CommentControllerTest {
     void shouldReplyToComment_AndReturnOkResponse() throws ExceptionAlert {
         // Given
         CommentDTO expectedComment = mock(CommentDTO.class);
-        when(commentService.replyToComment(any(CommentAnswerDto.class), any(HttpServletRequest.class)))
+        when(commentService.replyToComment(any(CommentAnswerDto.class), anyLong()))
                 .thenReturn(expectedComment);
 
         // When
-        ResponseEntity<?> response = commentController.answerComment(testCommentAnswerDto, httpServletRequest);
+        ResponseEntity<?> response = commentController.answerComment(testCommentAnswerDto, currentUser);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(expectedComment);
-        verify(commentService).replyToComment(testCommentAnswerDto, httpServletRequest);
+        verify(commentService).replyToComment(testCommentAnswerDto, 1L);
     }
 
     @Test
@@ -126,15 +125,15 @@ class CommentControllerTest {
         // Given
         Long commentId = 1L;
         InfoDto expectedInfo = new InfoDto("Review deleted", "Review deleted");
-        when(commentService.deleteComment(commentId, httpServletRequest)).thenReturn(expectedInfo);
+        when(commentService.deleteComment(commentId, 1L)).thenReturn(expectedInfo);
 
         // When
-        ResponseEntity<?> response = commentController.deleteComment(commentId, httpServletRequest);
+        ResponseEntity<?> response = commentController.deleteComment(commentId, currentUser);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(expectedInfo);
-        verify(commentService).deleteComment(commentId, httpServletRequest);
+        verify(commentService).deleteComment(commentId, 1L);
     }
 
     @Test
@@ -143,14 +142,14 @@ class CommentControllerTest {
         // Given
         Long replyId = 1L;
         InfoDto expectedInfo = new InfoDto("Reply deleted", "Reply deleted");
-        when(commentService.deleteReplyComment(replyId, httpServletRequest)).thenReturn(expectedInfo);
+        when(commentService.deleteReplyComment(replyId, 1L)).thenReturn(expectedInfo);
 
         // When
-        ResponseEntity<?> response = commentController.deleteReplyComment(replyId, httpServletRequest);
+        ResponseEntity<?> response = commentController.deleteReplyComment(replyId, currentUser);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(expectedInfo);
-        verify(commentService).deleteReplyComment(replyId, httpServletRequest);
+        verify(commentService).deleteReplyComment(replyId, 1L);
     }
 }

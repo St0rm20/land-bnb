@@ -3,77 +3,85 @@ package com.labndbnb.landbnb.service.implement;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.exceptions.TokenIncorrect;
-import com.labndbnb.landbnb.mappers.user.UserDtoMapper;
 import com.labndbnb.landbnb.model.ResetPassword;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.repository.ResetPasswordRepository;
 import com.labndbnb.landbnb.service.definition.ResetPasswordService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService {
 
+    private static final int MAX_ATTEMPTS = 5;
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     private final ResetPasswordRepository passwordRepository;
     private final MailServiceImpl emailServiceImpl;
     private final UserService userService;
-    private final UserDtoMapper userDtoMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public Boolean sendResetPasswordEmail(String email) throws ExceptionAlert {
 
-        UserDto user = userService.getByEmail(email);
-        if (user == null) {
+        UserDto userDto = userService.getByEmail(email);
+        if (userDto == null) {
             throw new ExceptionAlert("User not found with email: " + email);
         }
+        User user = userService.getActiveUser(userDto.id().longValue());
 
-
-        String token = String.valueOf(100000 + new java.util.Random().nextInt(900000));
+        String token = String.valueOf(100000 + RANDOM.nextInt(900000));
 
         ResetPassword resetToken = new ResetPassword();
         resetToken.setToken(passwordEncoder.encode(token));
-        resetToken.setUser(userDtoMapper.toEntity(user));
-        resetToken.setExpiresAt(java.time.LocalDateTime.now().plusMinutes(15));
+        resetToken.setUser(user);
+        resetToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
         resetToken.setUsed(false);
 
-        passwordRepository.deleteAllByUserId(user.id());
+        passwordRepository.deleteAllByUserId(user.getId());
         passwordRepository.save(resetToken);
-        String subject = "Password Reset Request";
-        String message = "Use this code to reset your password: " + token;
-        emailServiceImpl.sendSimpleEmail(email, subject, message);
+        emailServiceImpl.sendSimpleEmail(email, "Password Reset Request",
+                "Use this code to reset your password: " + token);
         return true;
     }
 
     @Override
-    public Boolean resetPassword(String email,String token, String newPassword) throws ExceptionAlert {
-        UserDto user = userService.getByEmail(email);
-        if (user == null) {
-            return false;
+    @Transactional(noRollbackFor = TokenIncorrect.class)
+    public Boolean resetPassword(String email, String token, String newPassword) throws ExceptionAlert {
+        UserDto userDto = userService.getByEmail(email);
+        if (userDto == null) {
+            // Misma respuesta que un código incorrecto para no revelar qué correos existen
+            throw new TokenIncorrect();
         }
-        ResetPassword resetToken = passwordRepository.findByUserId(user.id());
-// ... (omitted token validation)
-        if (resetToken == null || resetToken.getExpiresAt().isBefore(java.time.LocalDateTime.now()) || resetToken.isUsed() || !passwordEncoder.matches(token, resetToken.getToken())) {
+        ResetPassword resetToken = passwordRepository.findByUserId(userDto.id().longValue());
+
+        if (resetToken == null || resetToken.isUsed()
+                || resetToken.getExpiresAt().isBefore(LocalDateTime.now())
+                || resetToken.getAttempts() >= MAX_ATTEMPTS) {
             throw new TokenIncorrect();
         }
 
-        boolean isTokenValid = passwordEncoder.matches(token, resetToken.getToken());
-        if (!isTokenValid) {
+        if (!passwordEncoder.matches(token, resetToken.getToken())) {
+            resetToken.setAttempts(resetToken.getAttempts() + 1);
+            passwordRepository.save(resetToken);
             throw new TokenIncorrect();
         }
 
-        User userEntity = userDtoMapper.toEntity(user);
-        userEntity.setPassword(passwordEncoder.encode(newPassword));
-        userService.save(userEntity);
+        User user = userService.getActiveUser(userDto.id().longValue());
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setTokensValidAfter(LocalDateTime.now()); // cierra las sesiones abiertas
+        userService.save(user);
 
         resetToken.setUsed(true);
         passwordRepository.save(resetToken);
-
         return true;
     }
 }

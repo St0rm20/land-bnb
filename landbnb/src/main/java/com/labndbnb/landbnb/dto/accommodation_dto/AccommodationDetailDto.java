@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.dto.accommodation_dto;
 
+import java.math.BigDecimal;
 import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.user_dto.UserInfoDto;
 import com.labndbnb.landbnb.dto.util_dto.ImageDto;
@@ -38,7 +39,7 @@ public record AccommodationDetailDto(
 
         @NotNull(message = "Price per night is required")
         @Positive(message = "Price per night must be greater than 0")
-        Double pricePerNight,
+        BigDecimal pricePerNight,
 
         @NotNull(message = "Max capacity is required")
         @Positive(message = "Max capacity must be greater than 0")

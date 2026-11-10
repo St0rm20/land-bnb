@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.model;
 
+import java.math.BigDecimal;
 import com.labndbnb.landbnb.model.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,8 +28,8 @@ public class Booking {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    @Column(name = "total_price", nullable = false)
-    private Double totalPrice;
+    @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
+    private BigDecimal totalPrice;
 
 
     @CreationTimestamp
@@ -40,6 +41,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "booking_status", nullable = false, length = 20)
+    @Builder.Default
     private BookingStatus bookingStatus = BookingStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,11 +62,11 @@ public class Booking {
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
 
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
-    public void setCompletedAt(LocalDateTime now) {
-    }
 }

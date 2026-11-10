@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.dto.accommodation_dto;
 
+import java.math.BigDecimal;
 import jakarta.validation.constraints.*;
 
 public record AccommodationMetrics(
@@ -34,11 +35,11 @@ public record AccommodationMetrics(
 
         @NotNull(message = "Total revenue is required")
         @DecimalMin(value = "0.0", message = "Total revenue cannot be negative")
-        Double totalRevenue,
+        BigDecimal totalRevenue,
 
         @NotNull(message = "Average booking value is required")
         @DecimalMin(value = "0.0", message = "Average booking value cannot be negative")
-        Double averageBookingValue,
+        BigDecimal averageBookingValue,
 
         @NotNull(message = "Occupancy rate is required")
         @DecimalMin(value = "0.0", message = "Occupancy rate cannot be less than 0")

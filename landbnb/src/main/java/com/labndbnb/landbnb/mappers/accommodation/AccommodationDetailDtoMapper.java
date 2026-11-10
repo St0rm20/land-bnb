@@ -47,6 +47,9 @@ public interface AccommodationDetailDtoMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "averageRating", ignore = true)
+    @Mapping(target = "numberOfReviews", ignore = true)
+    @Mapping(target = "usersWhoFavorited", ignore = true)
     void updateEntityFromDto(AccommodationDetailDto dto, @MappingTarget Accommodation entity);
 
     // Métodos helper

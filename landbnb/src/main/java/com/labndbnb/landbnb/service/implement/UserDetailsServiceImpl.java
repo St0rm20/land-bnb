@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.service.implement;
 
+import com.labndbnb.landbnb.model.enums.UserStatus;
 import com.labndbnb.landbnb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
     }
 }

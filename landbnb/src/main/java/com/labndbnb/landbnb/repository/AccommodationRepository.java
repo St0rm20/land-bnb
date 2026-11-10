@@ -15,6 +15,17 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     Page<Accommodation> findByHostId(Long hostId, Pageable pageable);
 
+    Page<Accommodation> findByHostIdAndActiveTrue(Long hostId, Pageable pageable);
+
+    List<Accommodation> findAllByHostIdAndActiveTrue(Long hostId);
+
+    Page<Accommodation> findByActiveTrue(Pageable pageable);
+
+    /** Bloquea la fila para serializar reservas concurrentes del mismo alojamiento. */
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM Accommodation a WHERE a.id = :id")
+    java.util.Optional<Accommodation> findByIdForUpdate(@Param("id") Long id);
+
     @Query("SELECT DISTINCT a FROM Accommodation a " +
             "WHERE a.active = true " +
             "AND (:city IS NULL OR :city = '' OR LOWER(a.city) LIKE LOWER(CONCAT('%', :city, '%'))) " +
@@ -38,8 +49,8 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("city") String city,
             @Param("checkIn") LocalDate checkIn,
             @Param("checkOut") LocalDate checkOut,
-            @Param("minPrice") Double minPrice,
-            @Param("maxPrice") Double maxPrice,
+            @Param("minPrice") java.math.BigDecimal minPrice,
+            @Param("maxPrice") java.math.BigDecimal maxPrice,
             @Param("hasWifi") Boolean hasWifi,
             @Param("hasPool") Boolean hasPool,
             @Param("allowsPets") Boolean allowsPets,

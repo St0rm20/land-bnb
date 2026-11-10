@@ -14,12 +14,9 @@ import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
 import com.labndbnb.landbnb.repository.UserRepository;
-import com.labndbnb.landbnb.security.JWTutils;
 import com.labndbnb.landbnb.service.implement.UserServiceImpl;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,13 +58,21 @@ class UserServiceImplTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Mock
-    private JWTutils jwtutils;
+    private com.labndbnb.landbnb.repository.BookingRepository bookingRepository;
 
     @Mock
-    private HttpServletRequest httpServletRequest;
+    private com.labndbnb.landbnb.repository.AccommodationRepository accommodationRepository;
+
+
+    private final Long httpServletRequest = 1L;
 
     @InjectMocks
     private UserServiceImpl userService;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setCloudName() {
+        org.springframework.test.util.ReflectionTestUtils.setField(userService, "cloudName", "demo");
+    }
 
     private User testUser;
     private UserRegistration testUserRegistration;
@@ -117,7 +123,7 @@ class UserServiceImplTest {
                 "John Updated",
                 "Doe Updated",
                 "+0987654321",
-                "https://example.com/new-photo.jpg",
+                "https://res.cloudinary.com/demo/image/upload/v1/new-photo.jpg",
                 "Updated description",
                 "Updated bio",
                 "1990-01-01"
@@ -158,7 +164,7 @@ class UserServiceImplTest {
                     .build();
 
             // Given
-            when(userRepository.existsByEmailAndStatus("test@example.com", UserStatus.ACTIVE)).thenReturn(false);
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
 
             // **CORRECCIÓN:** El mapper devuelve el usuario con la contraseña PLANA
             when(userRegistrationMapper.toEntity(testUserRegistration)).thenReturn(userWithPlainPassword);
@@ -175,7 +181,7 @@ class UserServiceImplTest {
 
             // Then
             assertThat(result).isTrue();
-            verify(userRepository).existsByEmailAndStatus("test@example.com", UserStatus.ACTIVE);
+            verify(userRepository).existsByEmail("test@example.com");
             verify(userRegistrationMapper).toEntity(testUserRegistration);
             verify(passwordEncoder).encode("Password123");
 
@@ -187,7 +193,7 @@ class UserServiceImplTest {
         @DisplayName("Should throw exception when email is already in use")
         void shouldThrowException_WhenEmailIsAlreadyInUse() {
             // Given
-            when(userRepository.existsByEmailAndStatus("existing@example.com", UserStatus.ACTIVE)).thenReturn(true);
+            when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
 
             UserRegistration existingUser = new UserRegistration(
                     "existing@example.com",
@@ -202,7 +208,7 @@ class UserServiceImplTest {
             assertThatThrownBy(() -> userService.create(existingUser))
                     .isInstanceOf(EmailAlreadyInUse.class)
                     .hasMessage("Email already in use");
-            verify(userRepository).existsByEmailAndStatus("existing@example.com", UserStatus.ACTIVE);
+            verify(userRepository).existsByEmail("existing@example.com");
             verify(userRepository, never()).save(any(User.class));
         }
     }
@@ -248,41 +254,6 @@ class UserServiceImplTest {
     }
 
     @Nested
-    @DisplayName("Delete User")
-    class DeleteUserTests {
-
-        @Test
-        @DisplayName("Should delete user when valid ID provided")
-        void shouldDeleteUser_WhenValidIdProvided() throws ExceptionAlert {
-            // Given
-            String userId = "1";
-            when(userRepository.existsByIdAndStatus(1L, UserStatus.ACTIVE)).thenReturn(true);
-
-            // When
-            userService.delete(userId);
-
-            // Then
-            verify(userRepository).existsByIdAndStatus(1L, UserStatus.ACTIVE);
-            verify(userRepository).deleteById(1L);
-        }
-
-        @Test
-        @DisplayName("Should throw exception when user not found for deletion")
-        void shouldThrowException_WhenUserNotFoundForDeletion() {
-            // Given
-            String invalidUserId = "999";
-            when(userRepository.existsByIdAndStatus(999L, UserStatus.ACTIVE)).thenReturn(false);
-
-            // When & Then
-            assertThatThrownBy(() -> userService.delete(invalidUserId))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("User with id 999 not found");
-            verify(userRepository).existsByIdAndStatus(999L, UserStatus.ACTIVE);
-            verify(userRepository, never()).deleteById(anyLong());
-        }
-    }
-
-    @Nested
     @DisplayName("Update User")
     class UpdateUserTests {
 
@@ -304,7 +275,7 @@ class UserServiceImplTest {
                     user.getName().equals("John Updated") &&
                             user.getLastName().equals("Doe Updated") &&
                             user.getPhoneNumber().equals("+0987654321") &&
-                            user.getProfilePictureUrl().equals("https://example.com/new-photo.jpg") &&
+                            user.getProfilePictureUrl().equals("https://res.cloudinary.com/demo/image/upload/v1/new-photo.jpg") &&
                             user.getDateOfBirth().equals(LocalDate.of(1990, 1, 1))
             ));
         }
@@ -327,7 +298,7 @@ class UserServiceImplTest {
                     "Host",
                     "User",
                     "+1234567890",
-                    "https://example.com/photo.jpg",
+                    "https://res.cloudinary.com/demo/image/upload/v1/photo.jpg",
                     "Description",
                     "New bio for host",
                     "1990-01-01"
@@ -446,22 +417,18 @@ class UserServiceImplTest {
     class ChangePasswordTests {
 
         @Test
-        @DisplayName("Should return error when token is expired")
-        void shouldReturnError_WhenTokenIsExpired() throws ExceptionAlert {
+        @DisplayName("Should throw when current password is incorrect")
+        void shouldThrow_WhenCurrentPasswordIncorrect() {
             // Given
-            String expiredToken = "expired.jwt.token";
-            when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer " + expiredToken);
-            when(jwtutils.parseJwt(expiredToken)).thenThrow(new ExpiredJwtException(null, null, "Token expired"));
+            setupValidToken();
+            when(passwordEncoder.matches(testChangePasswordRequest.currentPassword(), testUser.getPassword()))
+                    .thenReturn(false);
 
-            // When
-            InfoDto result = userService.changePassword(testChangePasswordRequest, httpServletRequest);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.message()).isEqualTo("Token expired");
-
-            verify(httpServletRequest).getHeader("Authorization");
-            verify(jwtutils).parseJwt(expiredToken);
+            // When & Then
+            assertThatThrownBy(() -> userService.changePassword(testChangePasswordRequest, httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessage("Current password is incorrect");
+            verify(userRepository, never()).save(any(User.class));
         }
     }
 
@@ -535,84 +502,164 @@ class UserServiceImplTest {
         }
 
         @Test
-        @DisplayName("Should return error when host tries to delete account")
-        void shouldReturnError_WhenHostTriesToDeleteAccount() throws ExceptionAlert {
-            // Given
-            User hostUser = User.builder()
-                    .id(1L)
-                    .email("host@example.com")
-                    .role(UserRole.HOST)
-                    .build();
-
+        @DisplayName("Host without active bookings can delete: account and accommodations are deactivated")
+        void shouldDeleteHostAccount_AndDeactivateAccommodations() throws ExceptionAlert {
+            User hostUser = User.builder().id(1L).email("host@example.com").role(UserRole.HOST).build();
+            Accommodation acc = Accommodation.builder().id(5L).host(hostUser).build();
             setupValidTokenWithUser(hostUser);
+            when(bookingRepository.existsByAccommodation_Host_IdAndEndDateAfterAndBookingStatusIn(
+                    eq(1L), any(LocalDateTime.class), any())).thenReturn(false);
+            when(accommodationRepository.findAllByHostIdAndActiveTrue(1L)).thenReturn(List.of(acc));
 
-            // When
             InfoDto result = userService.delete(httpServletRequest);
 
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.message()).isEqualTo("Hosts cannot delete their accounts");
+            assertThat(result.message()).isEqualTo("Your account has been deleted");
+            assertThat(acc.getActive()).isFalse();
+            verify(accommodationRepository).saveAll(List.of(acc));
+            verify(userRepository).save(argThat(u -> u.getStatus() == UserStatus.INACTIVE));
+        }
+
+        @Test
+        @DisplayName("Host with active bookings cannot delete the account")
+        void shouldRejectHostDeletion_WhenActiveBookingsExist() throws ExceptionAlert {
+            User hostUser = User.builder().id(1L).email("host@example.com").role(UserRole.HOST).build();
+            setupValidTokenWithUser(hostUser);
+            when(bookingRepository.existsByAccommodation_Host_IdAndEndDateAfterAndBookingStatusIn(
+                    eq(1L), any(LocalDateTime.class), any())).thenReturn(true);
+
+            assertThatThrownBy(() -> userService.delete(httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessageContaining("active bookings");
 
             verify(userRepository, never()).save(any(User.class));
+            verify(accommodationRepository, never()).saveAll(any());
         }
     }
 
     @Nested
-    @DisplayName("Get User From Request")
-    class GetUserFromRequestTests {
+    @DisplayName("Get Active User")
+    class GetActiveUserTests {
 
         @Test
-        @DisplayName("Should return user when valid token provided")
-        void shouldReturnUser_WhenValidTokenProvided() throws ExceptionAlert {
-            // Given
+        @DisplayName("Should return user when id belongs to an active user")
+        void shouldReturnUser_WhenActive() throws ExceptionAlert {
             setupValidToken();
 
-            // When
-            User result = userService.getUserFromRequest(httpServletRequest);
+            User result = userService.getActiveUser(httpServletRequest);
 
-            // Then
-            assertThat(result).isNotNull();
             assertThat(result).isEqualTo(testUser);
-            verify(httpServletRequest).getHeader("Authorization");
-            verify(jwtutils).parseJwt("valid.jwt.token");
             verify(userRepository).findByIdAndStatus(1L, UserStatus.ACTIVE);
         }
 
         @Test
-        @DisplayName("Should throw exception when authorization header is missing")
-        void shouldThrowException_WhenAuthorizationHeaderIsMissing() {
-            // Given
-            when(httpServletRequest.getHeader("Authorization")).thenReturn(null);
-
-            // When & Then
-            assertThatThrownBy(() -> userService.getUserFromRequest(httpServletRequest))
+        @DisplayName("Should throw exception when user id is null")
+        void shouldThrowException_WhenIdIsNull() {
+            assertThatThrownBy(() -> userService.getActiveUser(null))
                     .isInstanceOf(ExceptionAlert.class)
-                    .hasMessage("Missing or invalid Authorization header");
-            verify(httpServletRequest).getHeader("Authorization");
-            verify(jwtutils, never()).parseJwt(anyString());
+                    .hasMessage("User not found");
+            verify(userRepository, never()).findByIdAndStatus(any(), any());
         }
 
         @Test
-        @DisplayName("Should throw exception when user not found")
+        @DisplayName("Should throw exception when user not found or inactive")
         void shouldThrowException_WhenUserNotFound() {
-            // Given
-            String validToken = "valid.jwt.token";
-            Claims claims = mock(Claims.class);
-            Jws<Claims> jws = mock(Jws.class);
-
-            when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer " + validToken);
-            when(jwtutils.parseJwt(validToken)).thenReturn(jws);
-            when(jws.getPayload()).thenReturn(claims);
-            when(claims.get("userId", String.class)).thenReturn("999");
             when(userRepository.findByIdAndStatus(999L, UserStatus.ACTIVE)).thenReturn(Optional.empty());
 
-            // When & Then
-            assertThatThrownBy(() -> userService.getUserFromRequest(httpServletRequest))
+            assertThatThrownBy(() -> userService.getActiveUser(999L))
                     .isInstanceOf(ExceptionAlert.class)
                     .hasMessage("User not found");
-            verify(httpServletRequest).getHeader("Authorization");
-            verify(jwtutils).parseJwt(validToken);
-            verify(userRepository).findByIdAndStatus(999L, UserStatus.ACTIVE);
+        }
+    }
+
+    @Nested
+    @DisplayName("Seguridad de sesión y datos de perfil")
+    class SessionSecurityTests {
+
+        @Test
+        @DisplayName("cambiar la contraseña invalida los JWT emitidos hasta ese momento")
+        void changePasswordRevokesTokens() throws ExceptionAlert {
+            setupValidToken();
+            when(passwordEncoder.matches(testChangePasswordRequest.currentPassword(), testUser.getPassword())).thenReturn(true);
+            when(passwordEncoder.encode(anyString())).thenReturn("new-hash");
+            LocalDateTime before = LocalDateTime.now().minusSeconds(1);
+
+            userService.changePassword(testChangePasswordRequest, httpServletRequest);
+
+            assertThat(testUser.getTokensValidAfter()).isAfter(before);
+        }
+
+        @Test
+        @DisplayName("borrar la cuenta invalida los JWT")
+        void deleteAccountRevokesTokens() throws ExceptionAlert {
+            setupValidToken();
+
+            userService.delete(httpServletRequest);
+
+            assertThat(testUser.getTokensValidAfter()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("la foto de perfil debe estar alojada en nuestro Cloudinary")
+        void rejectsForeignPhotoUrl() throws ExceptionAlert {
+            setupValidToken();
+            UserUpdateDto dto = new UserUpdateDto("A", "B", "+573001234567",
+                    "https://evil.example.com/tracker.png", "d", "bio", "1990-01-01");
+
+            assertThatThrownBy(() -> userService.update(dto, httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class)
+                    .hasMessageContaining("uploaded through the platform");
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("una URL que solo imita el prefijo de Cloudinary tampoco vale")
+        void rejectsLookalikePhotoUrl() throws ExceptionAlert {
+            setupValidToken();
+            UserUpdateDto dto = new UserUpdateDto("A", "B", "+573001234567",
+                    "https://res.cloudinary.com.evil.example/demo/x.png", "d", "bio", "1990-01-01");
+
+            assertThatThrownBy(() -> userService.update(dto, httpServletRequest))
+                    .isInstanceOf(ExceptionAlert.class);
+        }
+
+        @Test
+        @DisplayName("sin foto (null/vacía) se permite quitarla")
+        void allowsClearingPhoto() throws ExceptionAlert {
+            setupValidToken();
+            UserUpdateDto dto = new UserUpdateDto("A", "B", "+573001234567",
+                    "", "d", "bio", "1990-01-01");
+
+            userService.update(dto, httpServletRequest);
+
+            assertThat(testUser.getProfilePictureUrl()).isNull();
+        }
+
+        @Test
+        @DisplayName("registerLogin: el primer login avisa y guarda lastLoginAt")
+        void firstLoginNotifies() throws ExceptionAlert {
+            setupValidToken();
+            testUser.setLastLoginAt(null);
+
+            assertThat(userService.registerLogin(httpServletRequest)).isTrue();
+            assertThat(testUser.getLastLoginAt()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("registerLogin: no vuelve a avisar dentro de las 24 h")
+        void recentLoginDoesNotNotify() throws ExceptionAlert {
+            setupValidToken();
+            testUser.setLastLoginAt(LocalDateTime.now().minusHours(2));
+
+            assertThat(userService.registerLogin(httpServletRequest)).isFalse();
+        }
+
+        @Test
+        @DisplayName("registerLogin: avisa de nuevo pasadas las 24 h")
+        void oldLoginNotifiesAgain() throws ExceptionAlert {
+            setupValidToken();
+            testUser.setLastLoginAt(LocalDateTime.now().minusHours(25));
+
+            assertThat(userService.registerLogin(httpServletRequest)).isTrue();
         }
     }
 
@@ -640,19 +687,11 @@ class UserServiceImplTest {
         }
     }
 
-    private void setupValidToken() throws ExceptionAlert {
+    private void setupValidToken() {
         setupValidTokenWithUser(testUser);
     }
 
-    private void setupValidTokenWithUser(User user) throws ExceptionAlert {
-        String validToken = "valid.jwt.token";
-        Claims claims = mock(Claims.class);
-        Jws<Claims> jws = mock(Jws.class);
-
-        when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer " + validToken);
-        when(jwtutils.parseJwt(validToken)).thenReturn(jws);
-        when(jws.getPayload()).thenReturn(claims);
-        when(claims.get("userId", String.class)).thenReturn(String.valueOf(user.getId()));
-        when(userRepository.findByIdAndStatus(user.getId(), UserStatus.ACTIVE)).thenReturn(Optional.of(user));
+    private void setupValidTokenWithUser(User user) {
+        when(userRepository.findByIdAndStatus(httpServletRequest, UserStatus.ACTIVE)).thenReturn(Optional.of(user));
     }
 }

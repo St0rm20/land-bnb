@@ -137,6 +137,7 @@ class AuthServiceImplTest {
             when(userService.getByEmail("test@example.com")).thenReturn(testUserDto);
             when(userService.isThePasswordCorrect("test@example.com", "Password123")).thenReturn(true);
             when(jwtUtil.generateToken("test@example.com", expectedClaims)).thenReturn(expectedToken);
+            when(userService.registerLogin(1L)).thenReturn(true);
 
             // When
             AuthResponse result = authService.login(testLoginRequest);
@@ -152,6 +153,20 @@ class AuthServiceImplTest {
                     eq("Nuevo inicio de sesión"),
                     contains("Se ha detectado un nuevo inicio de sesión")
             );
+        }
+
+        @Test
+        @DisplayName("Should NOT send the login email again when one was already sent recently")
+        void shouldNotSendLoginEmail_WhenNotifiedRecently() throws ExceptionAlert {
+            when(userService.getByEmail("test@example.com")).thenReturn(testUserDto);
+            when(userService.isThePasswordCorrect("test@example.com", "Password123")).thenReturn(true);
+            when(jwtUtil.generateToken(eq("test@example.com"), any(Map.class))).thenReturn("tok");
+            when(userService.registerLogin(1L)).thenReturn(false);
+
+            AuthResponse result = authService.login(testLoginRequest);
+
+            assertThat(result.token()).isEqualTo("tok");
+            verify(mailServiceImpl, never()).sendSimpleEmail(anyString(), anyString(), anyString());
         }
 
         @Test

@@ -6,7 +6,8 @@ import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.labndbnb.landbnb.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,15 +27,15 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getProfile(HttpServletRequest request) throws ExceptionAlert {
-        UserDto userDto = userService.getUser(request);
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        UserDto userDto = userService.getUser(currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     @PutMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateProfile(@RequestBody @Valid UserUpdateDto userUpdateDto, HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = userService.update(userUpdateDto, request);
+    public ResponseEntity<?> updateProfile(@RequestBody @Valid UserUpdateDto userUpdateDto, @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = userService.update(userUpdateDto, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -42,28 +43,27 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changePassword(
             @RequestBody @Valid  ChangePasswordRequest changePasswordRequest,
-            HttpServletRequest request) {
+            @AuthenticationPrincipal User currentUser) {
         try {
-            InfoDto info = userService.changePassword(changePasswordRequest, request);
+            InfoDto info = userService.changePassword(changePasswordRequest, currentUser.getId());
             return ResponseEntity.ok(info);
         } catch (ExceptionAlert e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", true, "message", e.getMessage()));
         }
     }
 
     @PostMapping("/become-host")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> becomeHost(HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = userService.becomeHost(request);
+    public ResponseEntity<?> becomeHost(@AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = userService.becomeHost(currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
     @DeleteMapping("/delete-account")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteAccount(HttpServletRequest request) throws ExceptionAlert {
-        InfoDto info = userService.delete(request);
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = userService.delete(currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 }

@@ -9,7 +9,6 @@ import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,6 +24,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 /**
@@ -52,8 +52,7 @@ class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    @Mock
-    private HttpServletRequest request;
+    private com.labndbnb.landbnb.model.User request = com.labndbnb.landbnb.model.User.builder().id(1L).build();
 
     // ---------------------------------------------------------------
     // Objetos de prueba comunes
@@ -124,14 +123,14 @@ class UserControllerTest {
         @Test
         @DisplayName("Debe retornar el perfil del usuario")
         void givenAuthenticatedUser_whenGetProfile_thenReturnUserProfile() throws ExceptionAlert {
-            when(userService.getUser(any(HttpServletRequest.class))).thenReturn(userDto);
+            when(userService.getUser(anyLong())).thenReturn(userDto);
 
             ResponseEntity<?> response = userController.getProfile(request);
 
             assertAll(
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertEquals(userDto, response.getBody()),
-                    () -> verify(userService, times(1)).getUser(any(HttpServletRequest.class))
+                    () -> verify(userService, times(1)).getUser(anyLong())
             );
         }
     }
@@ -149,7 +148,7 @@ class UserControllerTest {
         @Test
         @DisplayName("Debe actualizar el perfil correctamente")
         void givenValidData_whenUpdateProfile_thenReturnSuccess() throws ExceptionAlert {
-            when(userService.update(any(UserUpdateDto.class), any(HttpServletRequest.class)))
+            when(userService.update(any(UserUpdateDto.class), anyLong()))
                     .thenReturn(infoDto);
 
             ResponseEntity<?> response = userController.updateProfile(userUpdateDto, request);
@@ -157,7 +156,7 @@ class UserControllerTest {
             assertAll(
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertEquals(infoDto, response.getBody()),
-                    () -> verify(userService, times(1)).update(any(UserUpdateDto.class), any(HttpServletRequest.class))
+                    () -> verify(userService, times(1)).update(any(UserUpdateDto.class), anyLong())
             );
         }
     }
@@ -176,7 +175,7 @@ class UserControllerTest {
         @Test
         @DisplayName("Debe cambiar la contraseña correctamente")
         void givenValidPasswordChange_whenChangePassword_thenReturnSuccess() {
-            when(userService.changePassword(any(ChangePasswordRequest.class), any(HttpServletRequest.class)))
+            when(userService.changePassword(any(ChangePasswordRequest.class), anyLong()))
                     .thenReturn(infoDto);
 
             ResponseEntity<?> response = userController.changePassword(changePasswordRequest, request);
@@ -185,7 +184,7 @@ class UserControllerTest {
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertEquals(infoDto, response.getBody()),
                     () -> verify(userService, times(1))
-                            .changePassword(any(ChangePasswordRequest.class), any(HttpServletRequest.class))
+                            .changePassword(any(ChangePasswordRequest.class), anyLong())
             );
         }
     }
@@ -203,14 +202,14 @@ class UserControllerTest {
         @Test
         @DisplayName("Debe convertir el usuario en host exitosamente")
         void givenRegularUser_whenBecomeHost_thenReturnSuccess() throws ExceptionAlert {
-            when(userService.becomeHost(any(HttpServletRequest.class))).thenReturn(infoDto);
+            when(userService.becomeHost(anyLong())).thenReturn(infoDto);
 
             ResponseEntity<?> response = userController.becomeHost(request);
 
             assertAll(
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertEquals(infoDto, response.getBody()),
-                    () -> verify(userService, times(1)).becomeHost(any(HttpServletRequest.class))
+                    () -> verify(userService, times(1)).becomeHost(anyLong())
             );
         }
     }
@@ -228,14 +227,14 @@ class UserControllerTest {
         @Test
         @DisplayName("Debe eliminar la cuenta correctamente")
         void givenValidUser_whenDeleteAccount_thenReturnSuccess() throws ExceptionAlert {
-            when(userService.delete(any(HttpServletRequest.class))).thenReturn(infoDto);
+            when(userService.delete(anyLong())).thenReturn(infoDto);
 
             ResponseEntity<?> response = userController.deleteAccount(request);
 
             assertAll(
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertEquals(infoDto, response.getBody()),
-                    () -> verify(userService, times(1)).delete(any(HttpServletRequest.class))
+                    () -> verify(userService, times(1)).delete(anyLong())
             );
         }
     }

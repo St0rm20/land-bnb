@@ -79,13 +79,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     );
 
     // ✅ CORREGIDO: Incluye CONFIRMED y COMPLETED, usa COALESCE para evitar null
-    @Query("SELECT COALESCE(SUM(b.totalPrice), 0.0) FROM Booking b " +
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b " +
             "WHERE b.accommodation.id = :accommodationId " +
             "AND (b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.CONFIRMED " +
             "     OR b.bookingStatus = com.labndbnb.landbnb.model.enums.BookingStatus.COMPLETED) " +
             "AND (:startDate IS NULL OR b.createdAt >= :startDate) " +
             "AND (:endDate IS NULL OR b.createdAt <= :endDate)")
-    Double sumRevenueByAccommodation(
+    /** Puede devolver null si no hay reservas; el llamador lo trata como cero. */
+    java.math.BigDecimal sumRevenueByAccommodation(
             @Param("accommodationId") Long accommodationId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
@@ -135,7 +136,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             LocalDateTime end
     );
 
-    boolean existsByAccommodationIdAndEndDateAfterAndBookingStatusNot(Long accommodationId, LocalDateTime now, BookingStatus bookingStatus);
+    boolean existsByAccommodationIdAndEndDateAfterAndBookingStatusIn(Long accommodationId, LocalDateTime now, Set<BookingStatus> statuses);
 
 
     /**
@@ -149,6 +150,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                              @Param("currentDate") LocalDateTime currentDate);
 
     boolean existsByAccommodation_Id(Long accommodationId);
+
+    boolean existsByAccommodation_Host_IdAndEndDateAfterAndBookingStatusIn(Long hostId, LocalDateTime now, Set<BookingStatus> statuses);
 
 
     List<Booking> findByEndDateBeforeAndBookingStatus(

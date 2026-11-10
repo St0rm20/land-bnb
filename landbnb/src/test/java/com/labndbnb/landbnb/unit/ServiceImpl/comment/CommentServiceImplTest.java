@@ -14,7 +14,6 @@ import com.labndbnb.landbnb.repository.ReviewRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import com.labndbnb.landbnb.service.implement.CommentServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +60,7 @@ class CommentServiceImplTest {
     @Mock
     private AccommodationRepository accommodationRepository;
 
-    @Mock
-    private HttpServletRequest httpServletRequest;
+    private final Long httpServletRequest = 1L;
 
     @InjectMocks
     private CommentServiceImpl commentService;
@@ -114,7 +112,7 @@ class CommentServiceImplTest {
     @DisplayName("Should throw exception when booking not found")
     void shouldThrowException_WhenBookingNotFound() throws ExceptionAlert {
         // Given
-        when(bookingService.getBookingById(2L)).thenReturn(null);
+        when(bookingService.getBookingById(2L)).thenThrow(new ExceptionAlert("Booking not found"));
 
         // When & Then
         assertThatThrownBy(() -> commentService.createComment(testReviewRequest, httpServletRequest))
@@ -128,7 +126,7 @@ class CommentServiceImplTest {
         // Given
         User differentUser = User.builder().id(99L).build();
         when(bookingService.getBookingById(2L)).thenReturn(testBooking);
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(differentUser);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(differentUser);
 
         // When & Then
         assertThatThrownBy(() -> commentService.createComment(testReviewRequest, httpServletRequest))
@@ -164,7 +162,7 @@ class CommentServiceImplTest {
         // Given
         CommentAnswerDto answerDto = new CommentAnswerDto("Thank you for your feedback!", 1L);
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(testReview));
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(testUser);
         when(reviewAnswerRepository.save(any(ReviewAnswer.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(reviewRepository.save(any(Review.class))).thenReturn(testReview);
         when(reviewMapper.toDto(testReview)).thenReturn(mock(CommentDTO.class));
@@ -197,14 +195,27 @@ class CommentServiceImplTest {
         // Given
         Long bookingId = 2L;
         when(reviewRepository.getByBookingId(bookingId)).thenReturn(testReview);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(testUser);
         when(reviewMapper.toDto(testReview)).thenReturn(mock(CommentDTO.class));
 
         // When
-        CommentDTO result = commentService.getCommentByBookingId(bookingId);
+        CommentDTO result = commentService.getCommentByBookingId(bookingId, httpServletRequest);
 
         // Then
         assertThat(result).isNotNull();
         verify(reviewRepository).getByBookingId(bookingId);
+    }
+
+    @Test
+    @DisplayName("Should reject a user who is neither the review author nor the accommodation host")
+    void shouldRejectStranger_WhenGettingCommentByBookingId() throws ExceptionAlert {
+        when(reviewRepository.getByBookingId(2L)).thenReturn(testReview);
+        when(userService.getActiveUser(99L)).thenReturn(User.builder().id(99L).build());
+
+        assertThatThrownBy(() -> commentService.getCommentByBookingId(2L, 99L))
+                .isInstanceOf(ExceptionAlert.class)
+                .hasMessage("User is not authorized to view this review");
+        verify(reviewMapper, never()).toDto(any());
     }
 
     @Test
@@ -215,7 +226,7 @@ class CommentServiceImplTest {
         when(reviewRepository.getByBookingId(bookingId)).thenReturn(null);
 
         // When & Then
-        assertThatThrownBy(() -> commentService.getCommentByBookingId(bookingId))
+        assertThatThrownBy(() -> commentService.getCommentByBookingId(bookingId, httpServletRequest))
                 .isInstanceOf(ExceptionAlert.class)
                 .hasMessage("Review not found");
     }
@@ -225,7 +236,7 @@ class CommentServiceImplTest {
     void shouldDeleteComment_WhenUserIsOwner() throws ExceptionAlert {
         // Given
         Long commentId = 1L;
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(testUser);
         when(reviewRepository.findById(commentId)).thenReturn(Optional.of(testReview));
         when(accommodationRepository.save(any(Accommodation.class))).thenReturn(testAccommodation);
 
@@ -243,7 +254,7 @@ class CommentServiceImplTest {
     void shouldReturnInfo_WhenCommentNotFoundForDeletion() throws ExceptionAlert {
         // Given
         Long commentId = 99L;
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(testUser);
         when(reviewRepository.findById(commentId)).thenReturn(Optional.empty());
 
         // When
@@ -266,7 +277,7 @@ class CommentServiceImplTest {
                 .review(testReview)
                 .build();
 
-        when(userService.getUserFromRequest(httpServletRequest)).thenReturn(testUser);
+        when(userService.getActiveUser(httpServletRequest)).thenReturn(testUser);
         when(reviewAnswerRepository.findById(answerId)).thenReturn(Optional.of(reviewAnswer));
 
         // When

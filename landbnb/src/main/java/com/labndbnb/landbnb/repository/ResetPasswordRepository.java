@@ -19,10 +19,10 @@ public interface ResetPasswordRepository extends JpaRepository<ResetPassword, Lo
     @Query("DELETE FROM ResetPassword t WHERE t.expiresAt < :now")
     void deleteByExpirationTimeBefore(@Param("now") LocalDateTime now);
 
-    ResetPassword findByUserId(Integer user_id);
+    ResetPassword findByUserId(Long user_id);
 
     @Transactional
-    void deleteAllByUserId(Integer user_id);
+    void deleteAllByUserId(Long user_id);
 
     ResetPassword getResetPasswordByUserAndExpiresAtBefore(User user, LocalDateTime now);
 

@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.dto.accommodation_dto;
 
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
@@ -22,10 +23,10 @@ public record SearchCriteria(
         LocalDate checkOut,
 
         @DecimalMin(value = "0.0", message = "Minimum price cannot be negative")
-        Double minPrice,
+        BigDecimal minPrice,
 
         @DecimalMin(value = "0.0", message = "Maximum price cannot be negative")
-        Double maxPrice,
+        BigDecimal maxPrice,
 
         List<@NotBlank(message = "Service cannot be blank") String> services,
 

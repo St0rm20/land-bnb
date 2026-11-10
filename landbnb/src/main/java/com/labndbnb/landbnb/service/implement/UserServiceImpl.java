@@ -13,19 +13,16 @@ import com.labndbnb.landbnb.model.Accommodation;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.model.enums.UserStatus;
+import com.labndbnb.landbnb.model.enums.BookingStatus;
+import com.labndbnb.landbnb.repository.AccommodationRepository;
+import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.repository.UserRepository;
-import com.labndbnb.landbnb.security.JWTutils;
+import org.springframework.transaction.annotation.Transactional;
 import com.labndbnb.landbnb.service.definition.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +30,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,13 @@ public class UserServiceImpl implements UserService {
     private final UserDtoMapper userDtoMapper;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JWTutils jwtutils;
+    private static final long LOGIN_NOTIFICATION_MIN_HOURS = 24;
+
+    @Value("${cloud.name:}")
+    private String cloudName;
+
+    private final BookingRepository bookingRepository;
+    private final AccommodationRepository accommodationRepository;
 
 
     private String encode(String password) {
@@ -51,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean create(UserRegistration userDto) throws ExceptionAlert {
-        if (existsByEmail(userDto.email())) {
+        if (userRepository.existsByEmail(userDto.email())) {
             throw new EmailAlreadyInUse("Email already in use");
         }
 
@@ -65,10 +69,6 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    private boolean existsByEmail(String email) {
-        return userRepository.existsByEmailAndStatus(email, UserStatus.ACTIVE);
-    }
-
 
     @Override
     public UserDto get(String id) throws ExceptionAlert {
@@ -80,21 +80,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(String id) throws ExceptionAlert {
-        if (!userRepository.existsByIdAndStatus(Long.parseLong(id), UserStatus.ACTIVE)) {
-            throw new RuntimeException("User with id " + id + " not found");
-        }
-        userRepository.deleteById(Long.parseLong(id));
-    }
-
-    @Override
     public List<UserDto> findAll() {
         return List.of();
     }
 
     @Override
-    public InfoDto update(UserUpdateDto userUpdateDto, HttpServletRequest request) throws ExceptionAlert {
-        User user = getUserFromRequest(request);
+    public InfoDto update(UserUpdateDto userUpdateDto, Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
         user.setName(userUpdateDto.name());
         user.setLastName(userUpdateDto.lastName());
         user.setPhoneNumber(userUpdateDto.phoneNumber());
@@ -102,11 +94,27 @@ public class UserServiceImpl implements UserService {
             user.setBio(userUpdateDto.bio());
         }
         if(userUpdateDto.dateBirth() != null){
-            user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
+            try {
+                user.setDateOfBirth(LocalDate.parse(userUpdateDto.dateBirth()));
+            } catch (java.time.format.DateTimeParseException e) {
+                throw new ExceptionAlert("Invalid date format, expected yyyy-MM-dd");
+            }
         }
-        user.setProfilePictureUrl(userUpdateDto.photoProfile());
+        user.setProfilePictureUrl(validatedPhotoUrl(userUpdateDto.photoProfile()));
         userRepository.save(user);
         return new InfoDto("Success update info", "Profile updated successfully");
+    }
+
+    /** La foto de perfil solo puede ser una imagen alojada en nuestro Cloudinary (o vacía para quitarla). */
+    private String validatedPhotoUrl(String url) throws ExceptionAlert {
+        if (url == null || url.isBlank()) {
+            return null;
+        }
+        String prefix = "https://res.cloudinary.com/" + cloudName + "/";
+        if (cloudName == null || cloudName.isBlank() || !url.startsWith(prefix)) {
+            throw new ExceptionAlert("Profile picture must be an image uploaded through the platform");
+        }
+        return url;
     }
 
     @Override
@@ -126,43 +134,34 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new ExceptionAlert("User with email " + email + " not found");
         }
-        System.out.println(passwordEncoder.matches(password, user.getPassword()));
         return passwordEncoder.matches(password, user.getPassword());
 
     }
 
     @Override
-    public InfoDto changePassword(ChangePasswordRequest changeRequest, HttpServletRequest request) {
-        try {
-            User user = getUserFromRequest(request);
+    public InfoDto changePassword(ChangePasswordRequest changeRequest, Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
 
-            if (!isThePasswordCorrect(user.getEmail(), changeRequest.currentPassword())) {
-                return new InfoDto("Error", "Current password is incorrect");
-            }
-
-            user.setPassword(encode(changeRequest.newPassword()));
-            userRepository.save(user);
-
-            return new InfoDto("Success", "Password changed successfully");
-
-        } catch (ExpiredJwtException e) {
-            return new InfoDto("Error", "Token expired");
-        } catch (JwtException e) {
-            return new InfoDto("Error", "Invalid token");
-        } catch (ExceptionAlert e) {
-            return new InfoDto("Error", "Unexpected error: " + e.getMessage());
+        if (!passwordEncoder.matches(changeRequest.currentPassword(), user.getPassword())) {
+            throw new ExceptionAlert("Current password is incorrect");
         }
+
+        user.setPassword(encode(changeRequest.newPassword()));
+        user.setTokensValidAfter(LocalDateTime.now()); // invalida los JWT emitidos hasta ahora
+        userRepository.save(user);
+
+        return new InfoDto("Success", "Password changed successfully");
     }
 
     @Override
-    public UserDto getUser(HttpServletRequest request) throws ExceptionAlert {
-        User user = getUserFromRequest(request);
+    public UserDto getUser(Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
         return userDtoMapper.toDto(user);
     }
 
     @Override
-    public InfoDto becomeHost(HttpServletRequest request) throws ExceptionAlert {
-        User user = getUserFromRequest(request);
+    public InfoDto becomeHost(Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
         if (user.getRole() == UserRole.HOST) {
             return new InfoDto("Info", "You are already a host");
         }
@@ -172,31 +171,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public InfoDto delete(HttpServletRequest request) throws ExceptionAlert {
-        User user = getUserFromRequest(request);
+    @Transactional
+    public InfoDto delete(Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
+
         if (user.getRole() == UserRole.HOST) {
-            return new InfoDto("Error", "Hosts cannot delete their accounts");
+            boolean hasActiveBookings = bookingRepository
+                    .existsByAccommodation_Host_IdAndEndDateAfterAndBookingStatusIn(
+                            user.getId(), LocalDateTime.now(),
+                            Set.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
+            if (hasActiveBookings) {
+                throw new ExceptionAlert("Cannot delete your account while your accommodations have active bookings");
+            }
+            // Sus alojamientos dejan de publicarse (borrado lógico, se conserva el historial)
+            List<Accommodation> owned = accommodationRepository.findAllByHostIdAndActiveTrue(user.getId());
+            owned.forEach(a -> a.setActive(false));
+            accommodationRepository.saveAll(owned);
         }
+
         user.setStatus(UserStatus.INACTIVE);
+        user.setTokensValidAfter(LocalDateTime.now());
         userRepository.save(user);
         return new InfoDto("Success", "Your account has been deleted");
     }
 
     @Override
-    public User getUserFromRequest(HttpServletRequest request) throws ExceptionAlert {
-        String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            throw new ExceptionAlert("Missing or invalid Authorization header");
-        }
-        String token = header.substring(7);
-        Jws<Claims> jws = jwtutils.parseJwt(token);
-
-        String userId = jws.getPayload().get("userId", String.class);
+    public User getActiveUser(Long userId) throws ExceptionAlert {
         if (userId == null) {
-            throw new ExceptionAlert("Invalid token: userId missing");
+            throw new ExceptionAlert("User not found");
         }
-        return userRepository.findByIdAndStatus(Long.parseLong(userId), UserStatus.ACTIVE)
+        return userRepository.findByIdAndStatus(userId, UserStatus.ACTIVE)
                 .orElseThrow(() -> new ExceptionAlert("User not found"));
+    }
+
+    @Override
+    public boolean registerLogin(Long userId) throws ExceptionAlert {
+        User user = getActiveUser(userId);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime previous = user.getLastLoginAt();
+        user.setLastLoginAt(now);
+        userRepository.save(user);
+        // Se avisa por correo como máximo una vez cada 24 h
+        return previous == null || previous.isBefore(now.minusHours(LOGIN_NOTIFICATION_MIN_HOURS));
     }
 
     @Override

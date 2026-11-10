@@ -26,7 +26,6 @@ public class JWTutils {
                 .subject(id)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(1, ChronoUnit.HOURS)))
-                // 👇 Asegura que se firme con el mismo algoritmo HS512
                 .signWith(getKey(), Jwts.SIG.HS512)
                 .compact();
     }

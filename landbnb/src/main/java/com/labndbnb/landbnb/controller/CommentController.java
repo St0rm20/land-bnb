@@ -6,7 +6,8 @@ import com.labndbnb.landbnb.dto.comment_dto.ReviewRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.CommentService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.labndbnb.landbnb.model.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.stream.events.Comment;
-
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
@@ -30,9 +29,9 @@ public class CommentController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createComment(@RequestBody ReviewRequest reviewRequest,
-    HttpServletRequest requestServlet) throws ExceptionAlert {
-        InfoDto info =  commentService.createComment(reviewRequest, requestServlet);
+    public ResponseEntity<?> createComment(@RequestBody @Valid ReviewRequest reviewRequest,
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info =  commentService.createComment(reviewRequest, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -46,8 +45,10 @@ public class CommentController {
 
 
     @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<?> getCommentByBookingId(@PathVariable Long bookingId) throws ExceptionAlert {
-        CommentDTO commentDTO = commentService.getCommentByBookingId(bookingId);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getCommentByBookingId(@PathVariable Long bookingId,
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        CommentDTO commentDTO = commentService.getCommentByBookingId(bookingId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
     }
 
@@ -55,15 +56,15 @@ public class CommentController {
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> answerComment(
             @RequestBody @Valid CommentAnswerDto answer,
-            HttpServletRequest request) throws ExceptionAlert {
-        CommentDTO commentDTO = commentService.replyToComment(answer, request);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        CommentDTO commentDTO = commentService.replyToComment(answer, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(commentDTO);
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteComment(@PathVariable Long id, HttpServletRequest request) throws ExceptionAlert{
-        InfoDto info = commentService.deleteComment(id, request);
+    public ResponseEntity<?> deleteComment(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert{
+        InfoDto info = commentService.deleteComment(id, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -72,10 +73,10 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteReplyComment(
             @PathVariable Long id,
-            HttpServletRequest request
+            @AuthenticationPrincipal User currentUser
     ) throws ExceptionAlert {
 
-        InfoDto info = commentService.deleteReplyComment(id, request);
+        InfoDto info = commentService.deleteReplyComment(id, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(info);
     }
 
@@ -83,10 +84,9 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> canUserCommentAccommodation(
             @PathVariable Long accommodationId,
-            HttpServletRequest request) throws ExceptionAlert {
-        boolean canComment = commentService.canUserCommentAccommodation(accommodationId, request);
-        logger.info("Te user can comment: " + canComment);
-        return ResponseEntity.status(HttpStatus.OK).body(false);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        boolean canComment = commentService.canUserCommentAccommodation(accommodationId, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(canComment);
 
     }
 
@@ -94,9 +94,8 @@ public class CommentController {
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> canUserReplyComment(
             @PathVariable Long commentId,
-            HttpServletRequest request) throws ExceptionAlert {
-        boolean canReply = commentService.canUserReplyComment(commentId, request);
-        logger.info("The user can reply: " + canReply);
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        boolean canReply = commentService.canUserReplyComment(commentId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.OK).body(canReply);
     }
 }

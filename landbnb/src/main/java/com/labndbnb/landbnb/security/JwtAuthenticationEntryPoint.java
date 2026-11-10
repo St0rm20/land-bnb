@@ -16,9 +16,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
-        ResponseDTO<String> dto = new ResponseDTO<>(true, "No tienes permisos para acceder a este recurso");
+        ResponseDTO<String> dto = new ResponseDTO<>(true, "Debes iniciar sesión para acceder a este recurso");
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(new ObjectMapper().writeValueAsString(dto));
         response.getWriter().flush();
         response.getWriter().close();

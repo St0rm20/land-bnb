@@ -8,12 +8,14 @@ import com.labndbnb.landbnb.security.JWTutils;
 import com.labndbnb.landbnb.service.definition.AuthService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -35,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse login(LoginRequest request) throws ExceptionAlert {
         UserDto userDto = userService.getByEmail(request.email());
         if (userDto == null) {
-            throw new ExceptionAlert("Credenciales inválidas"); // Mensaje genérico por seguridad
+            throw new ExceptionAlert("Credenciales inválidas");
         }
 
         if (!userService.isThePasswordCorrect(request.email(), request.password())) {
@@ -47,11 +49,10 @@ public class AuthServiceImpl implements AuthService {
         claims.put("userId", userDto.id().toString());
 
         String token = jwtUtil.generateToken(userDto.email(), claims);
-try {
-    mailServiceImpl.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, " + userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
-}catch (ExceptionAlert e){
-    e.printStackTrace();
-}
+        // Aviso por correo limitado a una vez cada 24 h por usuario
+        if (userService.registerLogin(userDto.id().longValue())) {
+            mailServiceImpl.sendSimpleEmail(userDto.email(), "Nuevo inicio de sesión", "Hola, " + userDto.name() + " Se ha detectado un nuevo inicio de sesión en tu cuenta.");
+        }
         return new AuthResponse(
                 token
         );
@@ -63,8 +64,7 @@ try {
             resetPasswordService.sendResetPasswordEmail(email.email());
 
         } catch (ExceptionAlert e) {
-            e.printStackTrace();
-
+            log.debug("Reset password solicitado para un correo no registrado");
         }
         return new InfoDto("If the email exists, a reset code has been sent", "Please check your email for further instructions.");
     }

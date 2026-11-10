@@ -6,7 +6,6 @@ import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.AccommodationService;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -61,8 +60,7 @@ class AccommodationControllerTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private HttpServletRequest request;
+    private com.labndbnb.landbnb.model.User request = com.labndbnb.landbnb.model.User.builder().id(1L).build();
 
     // Controlador bajo prueba
     @InjectMocks
@@ -92,26 +90,26 @@ class AccommodationControllerTest {
     private void setupTestData() {
         accommodationDto = new AccommodationDto(
                 1, "Cozy Apartment", "A comfortable apartment", "Medellín", "123 Main St",
-                6.2442, -75.5812, 120000.0, 4,
+                6.2442, -75.5812, new java.math.BigDecimal("120000.00"), 4,
                 Arrays.asList("WiFi", "Kitchen"), "https://example.com/image.jpg"
         );
 
         accommodationDetailDto = new AccommodationDetailDto(
                 1, "Cozy Apartment", "A comfortable apartment", "Medellín", "123 Main St",
-                6.2442, -75.5812, 120000.0, 4,
+                6.2442, -75.5812, new java.math.BigDecimal("120000.00"), 4,
                 Arrays.asList("WiFi", "Kitchen"), null,
                 4.5, 10, "https://example.com/main.jpg",
                 Arrays.asList("https://example.com/img1.jpg", "https://example.com/img2.jpg")
         );
 
         accommodationMetrics = new AccommodationMetrics(
-                1, "Cozy Apartment", 50, 40, 5, 5,
-                5000000.0, 125000.0, 80.5, 120, 4.5, 35
+                1, "Cozy Apartment", 50, 40, 5, 5, 0,
+                new java.math.BigDecimal("5000000.00"), new java.math.BigDecimal("125000.00"), 80.5, 120, 4.5, 35
         );
 
         searchCriteria = new SearchCriteria(
                 "Medellín", LocalDate.now().plusDays(1), LocalDate.now().plusDays(5),
-                100000.0, 200000.0, Arrays.asList("WiFi", "Pool"),
+                new java.math.BigDecimal("100000.00"), new java.math.BigDecimal("200000.00"), Arrays.asList("WiFi", "Pool"),
                 "price", "asc", true, true, false, true, true, true
         );
 
@@ -222,7 +220,7 @@ class AccommodationControllerTest {
 
             // Then
             assertAll(
-                    () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                    () -> assertEquals(HttpStatus.CREATED, response.getStatusCode()),
                     () -> assertNotNull(response.getBody()),
                     () -> verify(accommodationService, times(1)).createAccommodation(any(), any())
             );

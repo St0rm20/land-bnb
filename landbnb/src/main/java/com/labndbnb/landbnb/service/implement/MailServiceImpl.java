@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl implements MailService {
-    private final boolean enableEmail = true;
+    @Value("${mail.enabled:true}")
+    private boolean enableEmail;
     @Value("${mail.smtp.host}")
     private String host;
 

@@ -6,7 +6,6 @@ import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.service.definition.BookingService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,8 +39,7 @@ class BookingControllerTest {
     @InjectMocks
     private BookingController bookingController;
 
-    @Mock
-    private HttpServletRequest request;
+    private com.labndbnb.landbnb.model.User request = com.labndbnb.landbnb.model.User.builder().id(1L).build();
 
     private BookingRequest bookingRequest;
     private BookingDto bookingDto;
@@ -67,7 +65,7 @@ class BookingControllerTest {
                 LocalDate.now().plusDays(1),
                 LocalDate.now().plusDays(3),
                 2,
-                240000.0,
+                new java.math.BigDecimal("240000.00"),
                 "PENDING",
                 null, // accommodation
                 null  // user
@@ -85,7 +83,7 @@ class BookingControllerTest {
         @DisplayName("Debería crear reserva exitosamente")
         void givenValidBookingRequest_whenCreateBooking_thenReturnCreated() {
             // Given
-            when(bookingService.createBooking(any(BookingRequest.class), any(HttpServletRequest.class)))
+            when(bookingService.createBooking(any(BookingRequest.class), anyLong()))
                     .thenReturn(bookingDto);
 
             // When
@@ -97,7 +95,7 @@ class BookingControllerTest {
                     () -> assertNotNull(response.getBody()),
                     () -> assertEquals(bookingDto, response.getBody()),
                     () -> verify(bookingService, times(1))
-                            .createBooking(any(BookingRequest.class), any(HttpServletRequest.class))
+                            .createBooking(any(BookingRequest.class), anyLong())
             );
         }
 
@@ -105,7 +103,7 @@ class BookingControllerTest {
         @DisplayName("Debería retornar BAD_REQUEST cuando la creación falla")
         void givenInvalidBookingRequest_whenCreateBooking_thenReturnBadRequest() {
             // Given
-            when(bookingService.createBooking(any(BookingRequest.class), any(HttpServletRequest.class)))
+            when(bookingService.createBooking(any(BookingRequest.class), anyLong()))
                     .thenThrow(new ExceptionAlert("Accommodation not found"));
 
             // When
@@ -129,7 +127,7 @@ class BookingControllerTest {
         void givenAuthenticatedUser_whenGetBookingsUser_thenReturnBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByUser(anyString(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByUser(anyString(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -140,7 +138,7 @@ class BookingControllerTest {
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertNotNull(response.getBody()),
                     () -> verify(bookingService, times(1))
-                            .getBookingsByUser(anyString(), anyInt(), anyInt(), any(HttpServletRequest.class))
+                            .getBookingsByUser(anyString(), anyInt(), anyInt(), anyLong())
             );
         }
 
@@ -148,7 +146,7 @@ class BookingControllerTest {
         @DisplayName("Debería retornar BAD_REQUEST cuando falla la obtención de reservas")
         void givenInvalidRequest_whenGetBookingsUser_thenReturnBadRequest() throws ExceptionAlert {
             // Given
-            when(bookingService.getBookingsByUser(anyString(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByUser(anyString(), anyInt(), anyInt(), anyLong()))
                     .thenThrow(new ExceptionAlert("User not found"));
 
             // When
@@ -163,7 +161,7 @@ class BookingControllerTest {
         void givenNoStatus_whenGetBookingsUser_thenReturnAllBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByUser(isNull(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByUser(isNull(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -183,7 +181,7 @@ class BookingControllerTest {
         void givenAuthenticatedHost_whenGetBookingsHost_thenReturnBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -194,7 +192,7 @@ class BookingControllerTest {
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertNotNull(response.getBody()),
                     () -> verify(bookingService, times(1))
-                            .getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), any(HttpServletRequest.class))
+                            .getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), anyLong())
             );
         }
 
@@ -202,7 +200,7 @@ class BookingControllerTest {
         @DisplayName("Debería retornar BAD_REQUEST cuando falla la obtención de reservas del host")
         void givenInvalidRequest_whenGetBookingsHost_thenReturnBadRequest() throws ExceptionAlert {
             // Given
-            when(bookingService.getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), anyLong()))
                     .thenThrow(new ExceptionAlert("User is not a host"));
 
             // When
@@ -217,7 +215,7 @@ class BookingControllerTest {
         void givenNoFilters_whenGetBookingsHost_thenReturnAllHostBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByHost(isNull(), isNull(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByHost(isNull(), isNull(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -236,7 +234,7 @@ class BookingControllerTest {
         @DisplayName("Debería cancelar reserva exitosamente")
         void givenValidBookingId_whenCancelBooking_thenReturnSuccess() throws ExceptionAlert {
             // Given
-            doNothing().when(bookingService).cancelBooking(anyLong(), any(HttpServletRequest.class));
+            doNothing().when(bookingService).cancelBooking(anyLong(), anyLong());
 
             // When
             ResponseEntity<?> response = bookingController.cancelBooking(1L, request);
@@ -246,7 +244,7 @@ class BookingControllerTest {
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertNotNull(response.getBody()),
                     () -> verify(bookingService, times(1))
-                            .cancelBooking(anyLong(), any(HttpServletRequest.class))
+                            .cancelBooking(anyLong(), anyLong())
             );
         }
 
@@ -255,7 +253,7 @@ class BookingControllerTest {
         void givenInvalidBookingId_whenCancelBooking_thenReturnBadRequest() throws ExceptionAlert {
             // Given
             doThrow(new ExceptionAlert("Booking not found"))
-                    .when(bookingService).cancelBooking(anyLong(), any(HttpServletRequest.class));
+                    .when(bookingService).cancelBooking(anyLong(), anyLong());
 
             // When
             ResponseEntity<?> response = bookingController.cancelBooking(1L, request);
@@ -273,7 +271,7 @@ class BookingControllerTest {
         @DisplayName("Debería cancelar reserva por host exitosamente")
         void givenValidBookingId_whenCancelBookingByHost_thenReturnSuccess() {
             // Given
-            doNothing().when(bookingService).cancelBookingByHost(anyLong(), any(HttpServletRequest.class));
+            doNothing().when(bookingService).cancelBookingByHost(anyLong(), anyLong());
 
             // When
             ResponseEntity<?> response = bookingController.cancelBookingByHost(1L, request);
@@ -283,7 +281,7 @@ class BookingControllerTest {
                     () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
                     () -> assertNotNull(response.getBody()),
                     () -> verify(bookingService, times(1))
-                            .cancelBookingByHost(anyLong(), any(HttpServletRequest.class))
+                            .cancelBookingByHost(anyLong(), anyLong())
             );
         }
 
@@ -293,7 +291,7 @@ class BookingControllerTest {
             // Given
             // El servicio maneja la excepción internamente y el controller siempre retorna OK/BAD_REQUEST
             doThrow(new RuntimeException("Booking not found"))
-                    .when(bookingService).cancelBookingByHost(anyLong(), any(HttpServletRequest.class));
+                    .when(bookingService).cancelBookingByHost(anyLong(), anyLong());
 
             // When
             ResponseEntity<?> response = bookingController.cancelBookingByHost(1L, request);
@@ -315,7 +313,7 @@ class BookingControllerTest {
             // Given
             // El servicio maneja la excepción internamente y el controller siempre retorna OK/BAD_REQUEST
             doThrow(new RuntimeException("Booking not found"))
-                    .when(bookingService).completeBooking(anyLong(), any(HttpServletRequest.class));
+                    .when(bookingService).confirmBooking(anyLong(), anyLong());
 
             // When
             ResponseEntity<?> response = bookingController.confirmBooking(1L, request);
@@ -335,7 +333,7 @@ class BookingControllerTest {
         void givenUserWithoutStatus_whenGetBookingsUser_thenReturnAllUserBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByUser(isNull(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByUser(isNull(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -350,7 +348,7 @@ class BookingControllerTest {
         void givenHostWithoutAccommodationId_whenGetBookingsHost_thenReturnAllHostBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByHost(isNull(), anyString(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByHost(isNull(), anyString(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When
@@ -365,7 +363,7 @@ class BookingControllerTest {
         void givenHostWithoutStatus_whenGetBookingsHost_thenReturnAllHostBookings() throws ExceptionAlert {
             // Given
             Page<BookingDto> bookingsPage = new PageImpl<>(Arrays.asList(bookingDto));
-            when(bookingService.getBookingsByHost(anyInt(), isNull(), anyInt(), anyInt(), any(HttpServletRequest.class)))
+            when(bookingService.getBookingsByHost(anyInt(), isNull(), anyInt(), anyInt(), anyLong()))
                     .thenReturn(bookingsPage);
 
             // When

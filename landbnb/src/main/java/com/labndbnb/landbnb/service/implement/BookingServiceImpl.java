@@ -15,7 +15,6 @@ import com.labndbnb.landbnb.repository.AccommodationRepository;
 import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
 import com.labndbnb.landbnb.service.definition.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,8 +24,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,69 +39,67 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final AccommodationRepository accommodationRepository;
-    private final UserService UserService;
+    private final UserService userService;
     private final BookingMapper bookingMapper;
     private final MailServiceImpl mailServiceImpl;
 
 
+    private static BookingStatus parseStatus(String value) throws ExceptionAlert {
+        try {
+            return BookingStatus.valueOf(value.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ExceptionAlert("Invalid booking status: " + value);
+        }
+    }
+
     private static final Logger log = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     @Override
-    public BookingDto createBooking(BookingRequest bookingRequest, HttpServletRequest request) throws ExceptionAlert {
-        User user = UserService.getUserFromRequest(request);
-        Accommodation accommodation = accommodationRepository.findById(bookingRequest.accommodationId().longValue())
+    public BookingDto createBooking(BookingRequest bookingRequest, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
+        // Bloqueo de fila: evita que dos reservas simultáneas pasen la validación de solape
+        Accommodation accommodation = accommodationRepository.findByIdForUpdate(bookingRequest.accommodationId().longValue())
                 .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
 
-        if (bookingRequest.checkIn().isAfter(bookingRequest.checkOut())) {
+        if (!Boolean.TRUE.equals(accommodation.getActive())) {
+            throw new ExceptionAlert("Accommodation is not available");
+        }
+
+        if (!bookingRequest.checkIn().isBefore(bookingRequest.checkOut())) {
             throw new ExceptionAlert("Check-in date must be before check-out date");
         }
 
-        if (bookingRequest.checkIn().isBefore(LocalDate.now())){
+        if (bookingRequest.checkIn().isBefore(LocalDate.now())) {
             throw new ExceptionAlert("Cannot book dates in the past");
         }
 
-        if(user.getId().equals(accommodation.getHost().getId())){
+        if (user.getId().equals(accommodation.getHost().getId())) {
             throw new ExceptionAlert("Hosts cannot book their own accommodations");
+        }
 
+        if (bookingRequest.numberOfGuests() > accommodation.getCapacity()) {
+            throw new ExceptionAlert("Number of guests exceeds the accommodation capacity (" + accommodation.getCapacity() + ")");
         }
 
         LocalDateTime checkInDateTime = bookingRequest.checkIn().atStartOfDay();
         LocalDateTime checkOutDateTime = bookingRequest.checkOut().atStartOfDay();
 
-        boolean hasOverlap= bookingRepository.existsOverlappingBooking(accommodation.getId(), checkInDateTime, checkOutDateTime);
-
-        if (hasOverlap) {
-            throw  new ExceptionAlert("Accommodation is not available for the selected dates");
+        if (!bookingRepository.findOverlappingBookings(accommodation.getId(), checkInDateTime, checkOutDateTime).isEmpty()) {
+            // No se exponen datos de reservas de otros usuarios
+            throw new ExceptionAlert("Accommodation is not available for the selected dates");
         }
 
-        List<Booking> overlappingBookings = bookingRepository.findOverlappingBookings(accommodation.getId(), checkInDateTime, checkOutDateTime);
-        if (!overlappingBookings.isEmpty()) {
-            StringBuilder message = new StringBuilder("Accommodation is not avaliable for the selected dates. Overlapping bookings:\n");
-            for (Booking b : overlappingBookings) {
-                message.append("\n- From ")
-                        .append(b.getStartDate().toLocalDate())
-                        .append(" to ")
-                        .append(b.getEndDate().toLocalDate())
-                        .append(" (Status: ")
-                        .append(b.getBookingStatus())
-                        .append(")");
-            }
-            throw  new ExceptionAlert (message.toString());
-
-        }
-
-
-        Double totalPrice = accommodation.getPricePerNight() * (bookingRequest.checkOut().toEpochDay() - bookingRequest.checkIn().toEpochDay());
+        long nights = ChronoUnit.DAYS.between(bookingRequest.checkIn(), bookingRequest.checkOut());
+        BigDecimal totalPrice = accommodation.getPricePerNight().multiply(BigDecimal.valueOf(nights));
 
         Booking booking = Booking.builder()
                 .guest(user)
                 .accommodation(accommodation)
-                .startDate(bookingRequest.checkIn().atStartOfDay())
-                .endDate(bookingRequest.checkOut().atStartOfDay())
+                .startDate(checkInDateTime)
+                .endDate(checkOutDateTime)
                 .totalPrice(totalPrice)
                 .numberOfGuests(bookingRequest.numberOfGuests())
-                .bookingCode(UUID.randomUUID().toString().substring(0,12).toUpperCase())
-                .createdAt(LocalDateTime.now())
+                .bookingCode(UUID.randomUUID().toString().substring(0, 12).toUpperCase())
                 .bookingStatus(BookingStatus.PENDING)
                 .build();
 
@@ -109,8 +108,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<BookingDto> getBookingsByUser(String estado, int page, int size, HttpServletRequest request) throws ExceptionAlert {
-        User user = UserService.getUserFromRequest(request);
+    public Page<BookingDto> getBookingsByUser(String estado, int page, int size, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
         if(user==null){
             throw  new ExceptionAlert("User not found");
         }
@@ -121,15 +120,15 @@ public class BookingServiceImpl implements BookingService {
         if (estado == null || estado.isBlank()) {
             bookings = bookingRepository.findByGuestId(user.getId(), pageable);
         }else{
-            BookingStatus status = BookingStatus.valueOf(estado.toUpperCase());
+            BookingStatus status = parseStatus(estado);
             bookings = bookingRepository.findByGuestIdAndBookingStatus(user.getId(), status, pageable);
         }
         return bookings.map(bookingMapper::toDto);
     }
 
     @Override
-    public Page<BookingDto> getBookingsByHost(Integer accommodationId, String status, int page, int size, HttpServletRequest request) throws ExceptionAlert {
-        User host = UserService.getUserFromRequest(request);
+    public Page<BookingDto> getBookingsByHost(Integer accommodationId, String status, int page, int size, Long userId) throws ExceptionAlert {
+        User host = userService.getActiveUser(userId);
 
         if (host.getRole() != UserRole.HOST) {
             throw new ExceptionAlert("User is not a host");
@@ -145,7 +144,7 @@ public class BookingServiceImpl implements BookingService {
                         pageable
                 );
             } else {
-                BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+                BookingStatus bookingStatus = parseStatus(status);
                 bookings = bookingRepository.findByAccommodationIdAndAccommodationHostIdAndBookingStatus(accommodationId.longValue(), Long.valueOf(host.getId()), bookingStatus, pageable
                 );
             }
@@ -153,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
         if (status == null || status.isBlank()){
             bookings = bookingRepository.findByAccommodationHostId(Long.valueOf(host.getId()), pageable);
         } else {
-            BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+            BookingStatus bookingStatus = parseStatus(status);
             bookings = bookingRepository.findByAccommodationHostIdAndBookingStatus(Long.valueOf(host.getId()), bookingStatus, pageable);
         }
         return bookings.map(bookingMapper::toDto);
@@ -161,8 +160,8 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public void cancelBooking(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = UserService.getUserFromRequest(request);
+    public void cancelBooking(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
 
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ExceptionAlert("Booking not found"));
@@ -183,28 +182,26 @@ public class BookingServiceImpl implements BookingService {
             throw new ExceptionAlert("Bookings can only be cancelled up to 48 hours before the start date");
         }
 
-        // CORREGIDO: Orden correcto de parámetros
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        booking.setCancelledAt(LocalDateTime.now());
+        bookingRepository.save(booking);
+
         mailServiceImpl.sendSimpleEmail(
-                booking.getGuest().getEmail(),  // to (PRIMERO)
-                "Booking Cancelled",            // subject (SEGUNDO)
+                booking.getGuest().getEmail(),
+                "Booking Cancelled",
                 "Your booking with code " + booking.getBookingCode() + " has been cancelled.\n" +
                         "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
-                        "Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate()  // text (TERCERO)
+                        "Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate()
         );
 
         mailServiceImpl.sendSimpleEmail(
-                booking.getAccommodation().getHost().getEmail(),  // to (PRIMERO)
-                "Booking Cancelled",                              // subject (SEGUNDO)
+                booking.getAccommodation().getHost().getEmail(),
+                "Booking Cancelled",
                 "The booking with code " + booking.getBookingCode() + " has been cancelled.\n" +
                         "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
                         "Dates: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
-                        "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()  // text (TERCERO)
+                        "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()
         );
-
-        booking.setBookingStatus(BookingStatus.CANCELLED);
-        booking.setCancelledAt(LocalDateTime.now());
-
-        bookingRepository.save(booking);
     }
 
     @Override
@@ -214,8 +211,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto getBookingById(Long id, HttpServletRequest request) throws ExceptionAlert {
-        User user = UserService.getUserFromRequest(request);
+    public BookingDto getBookingById(Long id, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
 
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ExceptionAlert("Booking not found"));
@@ -229,95 +226,84 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public InfoDto completeBooking(Long id, HttpServletRequest request) {
-        try {
-            User user = UserService.getUserFromRequest(request);
+    public InfoDto confirmBooking(Long id, Long userId) throws ExceptionAlert {
+        User host = userService.getActiveUser(userId);
 
-            Booking booking = bookingRepository.findById(id)
-                    .orElseThrow(() -> new ExceptionAlert("Booking not found"));
-
-            if (booking.getBookingStatus() == BookingStatus.COMPLETED) {
-                return new InfoDto("Already completed", "Booking has already been completed");
-            }
-
-            if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
-                return new InfoDto("Cannot complete", "Cancelled bookings cannot be completed");
-            }
-
-            if (!booking.getGuest().getId().equals(user.getId())) {
-                return new InfoDto("Unauthorized", "User is not the owner of the booking");
-            }
-            Accommodation accommodation = accommodationRepository.findById(booking.getAccommodation().getId())
-                    .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
-            LocalDateTime checkInDateTime = booking.getStartDate();
-            LocalDateTime checkOutDateTime = booking.getEndDate();
-            boolean hasOverlap= bookingRepository.existsOverlappingBooking(accommodation.getId(), checkInDateTime, checkOutDateTime);
-
-            if (hasOverlap) {
-                throw  new ExceptionAlert("Accommodation is not available for the selected dates");
-            }
-            mailServiceImpl.sendSimpleEmail(
-                    booking.getGuest().getEmail(),
-                    "Booking Completed",
-                    "Your booking with code " + booking.getBookingCode() + " has been marked as completed.\n" +
-                            "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
-                            "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
-                            "We hope you had a great stay!"
-            );
-
-            mailServiceImpl.sendSimpleEmail(booking.getAccommodation().getHost().getEmail(),
-                    "Booking Completed",
-                    "The booking with code " + booking.getBookingCode() + " has been marked as completed.\n" +
-                            "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
-                            "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
-                            "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()
-            );
-
-
-
-            booking.setBookingStatus(BookingStatus.CONFIRMED);
-            bookingRepository.save(booking);
-
-            return new InfoDto("Booking completed", "The booking has been marked as completed successfully");
-
-        } catch (ExceptionAlert e) {
-            return new InfoDto("Error", e.getMessage());
-        } catch (Exception e) {
-            return new InfoDto("Error", "An unexpected error occurred");
+        if (host.getRole() != UserRole.HOST) {
+            throw new ExceptionAlert("User is not a host");
         }
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ExceptionAlert("Booking not found"));
+
+        // Solo el anfitrión del alojamiento puede confirmar la reserva
+        if (!booking.getAccommodation().getHost().getId().equals(host.getId())) {
+            throw new ExceptionAlert("User is not the host of the accommodation for this booking");
+        }
+
+        switch (booking.getBookingStatus()) {
+            case CONFIRMED, COMPLETED -> {
+                return new InfoDto("Already confirmed", "Booking has already been confirmed");
+            }
+            case CANCELLED -> throw new ExceptionAlert("Cancelled bookings cannot be confirmed");
+            default -> { }
+        }
+
+        // Reserva ya validada contra solapes al crearla; se re-verifica contra otras CONFIRMADAS
+        boolean conflict = bookingRepository.findOverlappingBookings(
+                        booking.getAccommodation().getId(), booking.getStartDate(), booking.getEndDate())
+                .stream()
+                .anyMatch(b -> !b.getId().equals(booking.getId()) && b.getBookingStatus() == BookingStatus.CONFIRMED);
+        if (conflict) {
+            throw new ExceptionAlert("Accommodation is not available for the selected dates");
+        }
+
+        booking.setBookingStatus(BookingStatus.CONFIRMED);
+        bookingRepository.save(booking);
+
+        mailServiceImpl.sendSimpleEmail(
+                booking.getGuest().getEmail(),
+                "Booking Confirmed",
+                "Your booking with code " + booking.getBookingCode() + " has been confirmed.\n" +
+                        "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                        "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate()
+        );
+        mailServiceImpl.sendSimpleEmail(
+                booking.getAccommodation().getHost().getEmail(),
+                "Booking Confirmed",
+                "The booking with code " + booking.getBookingCode() + " has been confirmed.\n" +
+                        "The accommodation is: " + booking.getAccommodation().getName() + "\n" +
+                        "In the days: " + booking.getStartDate().toLocalDate() + " to " + booking.getEndDate().toLocalDate() + "\n" +
+                        "Guest: " + booking.getGuest().getName() + " " + booking.getGuest().getLastName()
+        );
+
+        return new InfoDto("Booking confirmed", "The booking has been confirmed successfully");
     }
 
     @Override
-    public void cancelBookingByHost(Long id, HttpServletRequest request) {
-        try {
-            User host = UserService.getUserFromRequest(request);
+    public void cancelBookingByHost(Long id, Long userId) throws ExceptionAlert {
+        User host = userService.getActiveUser(userId);
 
-            if (host.getRole() != UserRole.HOST) {
-                throw new Exception("User is not a host");
-            }
-
-            Booking booking = bookingRepository.findById(id)
-                    .orElseThrow(() -> new Exception("Booking not found"));
-
-            if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
-                throw new Exception("Booking has already been cancelled");
-            }
-
-            if (booking.getBookingStatus() == BookingStatus.COMPLETED) {
-                throw new Exception("Completed bookings cannot be cancelled");
-            }
-
-            if (!booking.getAccommodation().getHost().getId().equals(host.getId())) {
-                throw new Exception("User is not the host of the accommodation for this booking");
-            }
-
-
-            booking.setBookingStatus(BookingStatus.CANCELLED);
-            booking.setCancelledAt(LocalDateTime.now());
-            bookingRepository.save(booking);
-        } catch (Exception e) {
-            throw new ExceptionAlert("Error al cancelar");
+        if (host.getRole() != UserRole.HOST) {
+            throw new ExceptionAlert("User is not a host");
         }
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ExceptionAlert("Booking not found"));
+
+        if (!booking.getAccommodation().getHost().getId().equals(host.getId())) {
+            throw new ExceptionAlert("User is not the host of the accommodation for this booking");
+        }
+        if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
+            throw new ExceptionAlert("Booking has already been cancelled");
+        }
+        if (booking.getBookingStatus() == BookingStatus.COMPLETED) {
+            throw new ExceptionAlert("Completed bookings cannot be cancelled");
+        }
+
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        booking.setCancelledAt(LocalDateTime.now());
+        bookingRepository.save(booking);
     }
 
 @Override
@@ -331,10 +317,11 @@ public class BookingServiceImpl implements BookingService {
             return false;
         }
 
-        return bookingRepository.existsByAccommodationIdAndEndDateAfterAndBookingStatusNot(
+        // Solo bloquean el borrado las reservas activas (pendientes o confirmadas) que aún no terminaron
+        return bookingRepository.existsByAccommodationIdAndEndDateAfterAndBookingStatusIn(
                 accommodationId,
                 now,
-                BookingStatus.CONFIRMED
+                java.util.Set.of(BookingStatus.PENDING, BookingStatus.CONFIRMED)
         );
     }
 
