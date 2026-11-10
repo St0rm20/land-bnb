@@ -1,0 +1,30 @@
+# Gradle / build
+build/
+.gradle/
+out/
+bin/
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secretos / entorno local (nunca versionar credenciales)
+.env
+.env.*
+*.env
+application-local.properties
+application-*.local.properties
