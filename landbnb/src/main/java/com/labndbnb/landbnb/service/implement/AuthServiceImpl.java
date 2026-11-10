@@ -6,6 +6,8 @@ import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
 import com.labndbnb.landbnb.security.JWTutils;
 import com.labndbnb.landbnb.service.definition.AuthService;
+import com.labndbnb.landbnb.service.definition.MailService;
+import com.labndbnb.landbnb.service.definition.ResetPasswordService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +24,9 @@ public class AuthServiceImpl implements AuthService {
 
 
     private final UserService userService;
-    private final MailServiceImpl mailServiceImpl;
+    private final MailService mailServiceImpl;
     private final JWTutils  jwtUtil;
-    private final ResetPasswordServiceImpl  resetPasswordService;
+    private final ResetPasswordService resetPasswordService;
 
     @Override
     public InfoDto register(UserRegistration request) throws ExceptionAlert {

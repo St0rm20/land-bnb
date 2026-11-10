@@ -8,6 +8,7 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,15 +29,29 @@ public class MailServiceImpl implements MailService {
 
     Logger log = LoggerFactory.getLogger(MailServiceImpl.class);
 
+    /** Un único Mailer (con su pool de conexiones) para toda la aplicación, creado la primera vez que se usa. */
+    private volatile Mailer mailer;
+
     private Mailer getMailer() {
-        return MailerBuilder
-                .withSMTPServer(host, port, username, password)
-                .withTransportStrategy(TransportStrategy.SMTP_TLS)
-                .withSessionTimeout(10 * 1000)
-                .buildMailer();
+        Mailer local = mailer;
+        if (local == null) {
+            synchronized (this) {
+                local = mailer;
+                if (local == null) {
+                    local = MailerBuilder
+                            .withSMTPServer(host, port, username, password)
+                            .withTransportStrategy(TransportStrategy.SMTP_TLS)
+                            .withSessionTimeout(10 * 1000)
+                            .buildMailer();
+                    mailer = local;
+                }
+            }
+        }
+        return local;
     }
 
     @Override
+    @Async
     // Email simple
     public void sendSimpleEmail(String to, String subject, String text) {
         if(!enableEmail) return;
@@ -57,32 +72,39 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    @Async
     // Email HTML personalizado
     public void sendHtmlEmail(String to, String subject, String htmlContent) {
         if(!enableEmail) return;
-
-        var email = EmailBuilder.startingBlank()
-                .from("land-bnb", username)
-                .to(to)
-                .withSubject(subject)
-                .withHTMLText(htmlContent)
-                .buildEmail();
-
-        getMailer().sendMail(email);
+        try {
+            var email = EmailBuilder.startingBlank()
+                    .from("land-bnb", username)
+                    .to(to)
+                    .withSubject(subject)
+                    .withHTMLText(htmlContent)
+                    .buildEmail();
+            getMailer().sendMail(email);
+        } catch (Exception e) {
+            log.error("Error al enviar email HTML: {}", e.getMessage());
+        }
     }
 
 
     @Override
+    @Async
     // Email con nombre personalizado del destinatario
     public void sendPersonalizedEmail(String toName, String toEmail, String subject, String htmlContent) {
         if(!enableEmail) return;
-        var email = EmailBuilder.startingBlank()
-                .from("land-bnb", username)
-                .to(toName, toEmail)
-                .withSubject(subject)
-                .withHTMLText(htmlContent)
-                .buildEmail();
-
-        getMailer().sendMail(email);
+        try {
+            var email = EmailBuilder.startingBlank()
+                    .from("land-bnb", username)
+                    .to(toName, toEmail)
+                    .withSubject(subject)
+                    .withHTMLText(htmlContent)
+                    .buildEmail();
+            getMailer().sendMail(email);
+        } catch (Exception e) {
+            log.error("Error al enviar email personalizado: {}", e.getMessage());
+        }
     }
 }

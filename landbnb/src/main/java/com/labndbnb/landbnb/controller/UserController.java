@@ -43,14 +43,9 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changePassword(
             @RequestBody @Valid  ChangePasswordRequest changePasswordRequest,
-            @AuthenticationPrincipal User currentUser) {
-        try {
-            InfoDto info = userService.changePassword(changePasswordRequest, currentUser.getId());
-            return ResponseEntity.ok(info);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", true, "message", e.getMessage()));
-        }
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        InfoDto info = userService.changePassword(changePasswordRequest, currentUser.getId());
+        return ResponseEntity.ok(info);
     }
 
     @PostMapping("/become-host")

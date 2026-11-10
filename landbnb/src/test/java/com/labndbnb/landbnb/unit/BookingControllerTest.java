@@ -1,5 +1,6 @@
 package com.labndbnb.landbnb.unit;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.labndbnb.landbnb.controller.BookingController;
 import com.labndbnb.landbnb.dto.booking_dto.BookingDto;
 import com.labndbnb.landbnb.dto.booking_dto.BookingRequest;
@@ -101,20 +102,13 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando la creación falla")
-        void givenInvalidBookingRequest_whenCreateBooking_thenReturnBadRequest() {
+        void givenInvalidBookingRequest_whenCreateBooking_thenReturnBadRequest() throws Exception {
             // Given
             when(bookingService.createBooking(any(BookingRequest.class), anyLong()))
                     .thenThrow(new ExceptionAlert("Accommodation not found"));
 
-            // When
-            ResponseEntity<?> response = bookingController.createBooking(bookingRequest, request);
-
-            // Then
-            assertAll(
-                    () -> assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode()),
-                    () -> assertNotNull(response.getBody()),
-                    () -> assertTrue(response.getBody() instanceof InfoDto)
-            );
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.createBooking(bookingRequest, request));
         }
     }
 
@@ -144,16 +138,13 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando falla la obtención de reservas")
-        void givenInvalidRequest_whenGetBookingsUser_thenReturnBadRequest() throws ExceptionAlert {
+        void givenInvalidRequest_whenGetBookingsUser_thenReturnBadRequest() throws Exception {
             // Given
             when(bookingService.getBookingsByUser(anyString(), anyInt(), anyInt(), anyLong()))
                     .thenThrow(new ExceptionAlert("User not found"));
 
-            // When
-            ResponseEntity<?> response = bookingController.getBookingsUser("PENDING", 0, 10, request);
-
-            // Then
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.getBookingsUser("PENDING", 0, 10, request));
         }
 
         @Test
@@ -198,16 +189,13 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando falla la obtención de reservas del host")
-        void givenInvalidRequest_whenGetBookingsHost_thenReturnBadRequest() throws ExceptionAlert {
+        void givenInvalidRequest_whenGetBookingsHost_thenReturnBadRequest() throws Exception {
             // Given
             when(bookingService.getBookingsByHost(anyInt(), anyString(), anyInt(), anyInt(), anyLong()))
                     .thenThrow(new ExceptionAlert("User is not a host"));
 
-            // When
-            ResponseEntity<?> response = bookingController.getBookingsHost(1, "PENDING", 0, 10, request);
-
-            // Then
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.getBookingsHost(1, "PENDING", 0, 10, request));
         }
 
         @Test
@@ -250,16 +238,13 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando la cancelación falla")
-        void givenInvalidBookingId_whenCancelBooking_thenReturnBadRequest() throws ExceptionAlert {
+        void givenInvalidBookingId_whenCancelBooking_thenReturnBadRequest() throws Exception {
             // Given
             doThrow(new ExceptionAlert("Booking not found"))
                     .when(bookingService).cancelBooking(anyLong(), anyLong());
 
-            // When
-            ResponseEntity<?> response = bookingController.cancelBooking(1L, request);
-
-            // Then
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.cancelBooking(1L, request));
         }
     }
 
@@ -287,18 +272,14 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando la cancelación por host falla")
-        void givenInvalidBookingId_whenCancelBookingByHost_thenReturnBadRequest() {
+        void givenInvalidBookingId_whenCancelBookingByHost_thenReturnBadRequest() throws Exception {
             // Given
             // El servicio maneja la excepción internamente y el controller siempre retorna OK/BAD_REQUEST
-            doThrow(new RuntimeException("Booking not found"))
+            doThrow(new ExceptionAlert("Booking not found"))
                     .when(bookingService).cancelBookingByHost(anyLong(), anyLong());
 
-            // When
-            ResponseEntity<?> response = bookingController.cancelBookingByHost(1L, request);
-
-            // Then
-            // El controller captura la excepción y retorna BAD_REQUEST
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.cancelBookingByHost(1L, request));
         }
     }
 
@@ -309,18 +290,14 @@ class BookingControllerTest {
 
         @Test
         @DisplayName("Debería retornar BAD_REQUEST cuando la confirmación falla")
-        void givenInvalidBookingId_whenConfirmBooking_thenReturnBadRequest() {
+        void givenInvalidBookingId_whenConfirmBooking_thenReturnBadRequest() throws Exception {
             // Given
             // El servicio maneja la excepción internamente y el controller siempre retorna OK/BAD_REQUEST
-            doThrow(new RuntimeException("Booking not found"))
+            doThrow(new ExceptionAlert("Booking not found"))
                     .when(bookingService).confirmBooking(anyLong(), anyLong());
 
-            // When
-            ResponseEntity<?> response = bookingController.confirmBooking(1L, request);
-
-            // Then
-            // El controller captura la excepción y retorna BAD_REQUEST
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // When & Then: el controlador deja pasar la excepción al RestExceptionHandler
+            assertThrows(ExceptionAlert.class, () -> bookingController.confirmBooking(1L, request));
         }
     }
 

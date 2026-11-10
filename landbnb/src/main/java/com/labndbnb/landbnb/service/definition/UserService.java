@@ -6,10 +6,7 @@ import com.labndbnb.landbnb.dto.user_dto.UserDto;
 import com.labndbnb.landbnb.dto.user_dto.UserUpdateDto;
 import com.labndbnb.landbnb.dto.util_dto.InfoDto;
 import com.labndbnb.landbnb.exceptions.ExceptionAlert;
-import com.labndbnb.landbnb.model.Accommodation;
 import com.labndbnb.landbnb.model.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -31,7 +28,5 @@ public interface UserService {
     boolean registerLogin(Long userId) throws ExceptionAlert;
 
     void save(User user);
-
-    Page<Accommodation> findFavoritesByUserId(Long userId, Pageable pageable);
 
 }

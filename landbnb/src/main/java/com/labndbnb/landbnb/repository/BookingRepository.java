@@ -67,13 +67,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
 
-    @Query("SELECT COUNT(b) FROM Booking b WHERE b.accommodation.id = :accommodationId " +
-            "AND b.bookingStatus = :status " +
+    /** Cantidad de reservas por estado en una sola consulta: filas [BookingStatus, Long]. */
+    @Query("SELECT b.bookingStatus, COUNT(b) FROM Booking b WHERE b.accommodation.id = :accommodationId " +
             "AND (:startDate IS NULL OR b.createdAt >= :startDate) " +
-            "AND (:endDate IS NULL OR b.createdAt <= :endDate)")
-    Long countByAccommodationAndStatus(
+            "AND (:endDate IS NULL OR b.createdAt <= :endDate) " +
+            "GROUP BY b.bookingStatus")
+    List<Object[]> countByStatusForAccommodation(
             @Param("accommodationId") Long accommodationId,
-            @Param("status") BookingStatus status,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );

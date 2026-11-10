@@ -58,16 +58,10 @@ public class AccommodationController {
     public ResponseEntity<?> updateAccommodation(
             @PathVariable Long id,
             @RequestBody @Valid AccommodationDetailDto accommodationDetailDto,
-            @AuthenticationPrincipal User currentUser) {
-
-        try {
-            AccommodationDetailDto updated =
-                    accommodationService.updateAccommodation(accommodationDetailDto, id, currentUser.getId());
-            return ResponseEntity.ok(updated);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Update failed", e.getMessage()));
-        }
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        AccommodationDetailDto updated =
+                accommodationService.updateAccommodation(accommodationDetailDto, id, currentUser.getId());
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")

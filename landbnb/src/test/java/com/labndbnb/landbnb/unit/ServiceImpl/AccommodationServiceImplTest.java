@@ -500,10 +500,10 @@ class AccommodationServiceImplTest {
             when(accommodationRepository.findById(accommodationId.longValue())).thenReturn(Optional.of(testAccommodation));
 
             // Mock booking repository calls
-            when(bookingRepository.countByAccommodationAndStatus(anyLong(), isNull(), any(), any())).thenReturn(10L);
-            when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.CONFIRMED), any(), any())).thenReturn(8L);
-            when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.CANCELLED), any(), any())).thenReturn(1L);
-            when(bookingRepository.countByAccommodationAndStatus(anyLong(), eq(BookingStatus.PENDING), any(), any())).thenReturn(1L);
+            when(bookingRepository.countByStatusForAccommodation(anyLong(), any(), any())).thenReturn(List.of(
+                    new Object[]{BookingStatus.CONFIRMED, 8L},
+                    new Object[]{BookingStatus.CANCELLED, 1L},
+                    new Object[]{BookingStatus.PENDING, 1L}));
             when(bookingRepository.sumRevenueByAccommodation(anyLong(), any(), any())).thenReturn(new java.math.BigDecimal("8000000.00"));
             when(bookingRepository.sumGuestsByAccommodation(anyLong(), any(), any())).thenReturn(32);
             when(bookingRepository.findByAccommodationIdAndStartDateBetween(anyLong(), any(), any())).thenReturn(List.of());
@@ -677,7 +677,7 @@ class AccommodationServiceImplTest {
             int page = 0;
             when(userService.getActiveUser(httpServletRequest)).thenReturn(testGuest);
             Page<Accommodation> favoritesPage = new PageImpl<>(List.of(testAccommodation));
-            when(userService.findFavoritesByUserId(testGuest.getId(), PageRequest.of(page, 10)))
+            when(accommodationRepository.findFavoritesByUserId(testGuest.getId(), PageRequest.of(page, 10)))
                     .thenReturn(favoritesPage);
             when(accommodationDtoMapper.toDto(testAccommodation)).thenReturn(testAccommodationDto);
 
@@ -687,7 +687,7 @@ class AccommodationServiceImplTest {
             // Then
             assertThat(result).isNotNull();
             assertThat(result.getContent()).hasSize(1);
-            verify(userService).findFavoritesByUserId(testGuest.getId(), PageRequest.of(page, 10));
+            verify(accommodationRepository).findFavoritesByUserId(testGuest.getId(), PageRequest.of(page, 10));
         }
 
         @Test

@@ -31,9 +31,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User getUsersByIdAndStatus(Long id, UserStatus status);
 
-    @Query(
-            value = "SELECT a FROM User u JOIN u.favorites a WHERE u.id = :userId",
-            countQuery = "SELECT COUNT(a) FROM User u JOIN u.favorites a WHERE u.id = :userId"
-    )
-    Page<Accommodation> findFavoritesByUserId(@Param("userId") Long userId, Pageable pageable);
+
 }

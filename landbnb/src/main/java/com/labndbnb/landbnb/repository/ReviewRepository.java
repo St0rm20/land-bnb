@@ -21,5 +21,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     boolean existsByUser_IdAndBooking_Id(Long user_id, Long booking_id);
 
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.accommodation.id = :accommodationId")
+    Double averageRatingByAccommodationId(@Param("accommodationId") Long accommodationId);
+
+    long countByAccommodationId(Long accommodationId);
+
     boolean existsByUserIdAndAccommodationId(Long userId, Long accommodationId);
 }

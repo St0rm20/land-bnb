@@ -663,30 +663,6 @@ class UserServiceImplTest {
         }
     }
 
-    @Nested
-    @DisplayName("Find Favorites By User ID")
-    class FindFavoritesByUserIdTests {
-
-        @Test
-        @DisplayName("Should return paginated favorites for user")
-        void shouldReturnPaginatedFavorites_ForUser() {
-            // Given
-            Long userId = 1L;
-            Pageable pageable = PageRequest.of(0, 10);
-            Page<Accommodation> favoritesPage = new PageImpl<>(List.of(mock(Accommodation.class)));
-
-            when(userRepository.findFavoritesByUserId(userId, pageable)).thenReturn(favoritesPage);
-
-            // When
-            Page<Accommodation> result = userService.findFavoritesByUserId(userId, pageable);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result).isEqualTo(favoritesPage);
-            verify(userRepository).findFavoritesByUserId(userId, pageable);
-        }
-    }
-
     private void setupValidToken() {
         setupValidTokenWithUser(testUser);
     }

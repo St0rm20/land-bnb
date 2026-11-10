@@ -29,14 +29,9 @@ public class BookingController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createBooking(
             @RequestBody @Valid BookingRequest reservaRequest,
-            @AuthenticationPrincipal User currentUser) {
-        try {
-            BookingDto booking = bookingService.createBooking(reservaRequest, currentUser.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(booking);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        BookingDto booking = bookingService.createBooking(reservaRequest, currentUser.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(booking);
     }
 
     @GetMapping("/user")
@@ -45,14 +40,9 @@ public class BookingController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @AuthenticationPrincipal User currentUser) {
-        try {
-            Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, currentUser.getId());
-            return ResponseEntity.ok(bookings);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        Page<BookingDto> bookings = bookingService.getBookingsByUser(status, page, size, currentUser.getId());
+        return ResponseEntity.ok(bookings);
     }
 
     @GetMapping("/host")
@@ -62,78 +52,41 @@ public class BookingController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @AuthenticationPrincipal User currentUser) {
-        try {
-            Page<BookingDto> bookings = bookingService.getBookingsByHost(accommodationId, status, page, size, currentUser.getId());
-            return ResponseEntity.ok(bookings);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+            @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        Page<BookingDto> bookings = bookingService.getBookingsByHost(accommodationId, status, page, size, currentUser.getId());
+        return ResponseEntity.ok(bookings);
     }
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> cancelBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
-        try {
-            bookingService.cancelBooking(id, currentUser.getId());
-            return ResponseEntity.ok(new InfoDto("Booking cancelled",
-                    "The booking was successfully cancelled."));
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        bookingService.cancelBooking(id, currentUser.getId());
+        return ResponseEntity.ok(new InfoDto("Booking cancelled",
+                "The booking was successfully cancelled."));
     }
 
 
     @PostMapping("/host/{id}/cancel")
     @PreAuthorize("hasRole('HOST')")
-    public ResponseEntity<?> cancelBookingByHost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
-        try {
-            bookingService.cancelBookingByHost(id, currentUser.getId());
-            return ResponseEntity.ok(new InfoDto("Booking cancelled by host",
-                    "The booking was successfully cancelled by the host."));
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+    public ResponseEntity<?> cancelBookingByHost(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        bookingService.cancelBookingByHost(id, currentUser.getId());
+        return ResponseEntity.ok(new InfoDto("Booking cancelled by host",
+                "The booking was successfully cancelled by the host."));
     }
 
     @PostMapping("/{id}/confirm")
     @PreAuthorize("hasRole('HOST')")
-    public ResponseEntity<?> confirmBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) {
-        try {
-             InfoDto info = bookingService.confirmBooking(id, currentUser.getId());
-            return ResponseEntity.ok(info);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+    public ResponseEntity<?> confirmBooking(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+         InfoDto info = bookingService.confirmBooking(id, currentUser.getId());
+        return ResponseEntity.ok(info);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getBookingById(
-            @PathVariable Long id, @AuthenticationPrincipal User currentUser) {
-        try {
-            BookingDto booking = bookingService.getBookingById(id, currentUser.getId());
-            return ResponseEntity.ok(booking);
-        } catch (ExceptionAlert e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new InfoDto("Error", e.getMessage()));
-        }
+            @PathVariable Long id, @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
+        BookingDto booking = bookingService.getBookingById(id, currentUser.getId());
+        return ResponseEntity.ok(booking);
     }
 
 

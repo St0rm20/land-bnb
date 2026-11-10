@@ -144,14 +144,9 @@ class AuthControllerTest {
                     .thenThrow(new ExceptionAlert("Email already in use"));
 
             // When
-            ResponseEntity<?> response = authController.register(userRegistration);
-
-            // Then
-            assertAll(
-                    () -> assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode()),
-                    () -> assertNotNull(response.getBody()),
-                    () -> assertTrue(response.getBody() instanceof ErrorResponse)
-            );
+            // Then: el controlador deja pasar la excepción al RestExceptionHandler (400)
+            org.junit.jupiter.api.Assertions.assertThrows(ExceptionAlert.class,
+                    () -> authController.register(userRegistration));
         }
     }
 
@@ -202,14 +197,10 @@ class AuthControllerTest {
                     .thenThrow(new ExceptionAlert("Invalid credentials"));
 
             // When
-            ResponseEntity<?> response = authController.login(loginRequest);
-
-            // Then
-            assertAll(
-                    () -> assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode()),
-                    () -> assertNotNull(response.getBody()),
-                    () -> assertTrue(response.getBody() instanceof ErrorResponse)
-            );
+            // Then: se traduce a BadCredentialsException, que el RestExceptionHandler responde con 401
+            org.junit.jupiter.api.Assertions.assertThrows(
+                    org.springframework.security.authentication.BadCredentialsException.class,
+                    () -> authController.login(loginRequest));
         }
     }
 

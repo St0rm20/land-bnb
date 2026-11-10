@@ -6,6 +6,7 @@ import com.labndbnb.landbnb.exceptions.TokenIncorrect;
 import com.labndbnb.landbnb.model.ResetPassword;
 import com.labndbnb.landbnb.model.User;
 import com.labndbnb.landbnb.repository.ResetPasswordRepository;
+import com.labndbnb.landbnb.service.definition.MailService;
 import com.labndbnb.landbnb.service.definition.ResetPasswordService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final ResetPasswordRepository passwordRepository;
-    private final MailServiceImpl emailServiceImpl;
+    private final MailService emailServiceImpl;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
 

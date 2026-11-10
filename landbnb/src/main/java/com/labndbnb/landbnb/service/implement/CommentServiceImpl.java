@@ -74,18 +74,18 @@ public class CommentServiceImpl implements CommentService {
         review.setAccommodation(booking.getAccommodation());
         reviewRepository.save(review);
 
-        Accommodation accommodation = booking.getAccommodation();
-        BigDecimal totalRating = accommodation.getAverageRating()
-                .multiply(BigDecimal.valueOf(accommodation.getNumberOfReviews()));
-
-        BigDecimal newRating = totalRating
-                .add(BigDecimal.valueOf(reviewRequest.rating()))
-                .divide(BigDecimal.valueOf(accommodation.getNumberOfReviews() + 1), 2, RoundingMode.HALF_UP);
-        accommodation.setAverageRating(newRating);
-        accommodation.setNumberOfReviews(accommodation.getNumberOfReviews() + 1);
-
-        accommodationRepository.save(accommodation);
+        refreshRating(booking.getAccommodation());
         return new InfoDto("Review created", "Review created");
+    }
+
+    /** Recalcula promedio y cantidad desde las reseñas reales: no acumula error de redondeo. */
+    private void refreshRating(Accommodation accommodation) {
+        Double avg = reviewRepository.averageRatingByAccommodationId(accommodation.getId());
+        accommodation.setAverageRating(avg == null
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(avg).setScale(2, RoundingMode.HALF_UP));
+        accommodation.setNumberOfReviews((int) reviewRepository.countByAccommodationId(accommodation.getId()));
+        accommodationRepository.save(accommodation);
     }
 
     private boolean isBookingReviewed(Long id, User user) {
@@ -158,30 +158,11 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Accommodation accommodation = review.getAccommodation();
-        if (accommodation != null) {
-            int currentReviews = accommodation.getNumberOfReviews();
-
-            if (currentReviews <= 1) {
-                accommodation.setAverageRating(BigDecimal.ZERO);
-                accommodation.setNumberOfReviews(0);
-            } else {
-                BigDecimal totalRating = accommodation.getAverageRating()
-                        .multiply(BigDecimal.valueOf(currentReviews));
-
-                BigDecimal newTotal = totalRating.subtract(BigDecimal.valueOf(review.getRating()));
-
-                BigDecimal newAverage = newTotal.divide(
-                        BigDecimal.valueOf(currentReviews - 1), 2, RoundingMode.HALF_UP
-                );
-
-                accommodation.setAverageRating(newAverage);
-                accommodation.setNumberOfReviews(currentReviews - 1);
-            }
-
-            accommodationRepository.save(accommodation);
-        }
-
         reviewRepository.delete(review);
+        if (accommodation != null) {
+            reviewRepository.flush();
+            refreshRating(accommodation);
+        }
         return new InfoDto("Review deleted", "Review deleted");
     }
 

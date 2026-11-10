@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +29,9 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserRegistration userRegistration) {
-        try {
-            InfoDto info = authService.register(userRegistration);
-            return ResponseEntity.status(HttpStatus.CREATED).body(info);
-
-        } catch (ExceptionAlert e) {
-            ErrorResponse errorResponse = ErrorResponse.of(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            );
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+    public ResponseEntity<?> register(@RequestBody @Valid UserRegistration userRegistration) throws ExceptionAlert {
+        InfoDto info = authService.register(userRegistration);
+        return ResponseEntity.status(HttpStatus.CREATED).body(info);
     }
 
     @PostMapping("/login")
@@ -48,12 +40,8 @@ public class AuthController {
             AuthResponse authResponse = authService.login(loginRequest);
             return ResponseEntity.ok().body(authResponse);
         } catch (ExceptionAlert e) {
-            ErrorResponse errorResponse = ErrorResponse.of(
-                    HttpStatus.UNAUTHORIZED,
-                    "Credenciales inválidas"
-            );
             logger.info("Login failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            throw new BadCredentialsException("Credenciales inválidas");
         }
     }
 

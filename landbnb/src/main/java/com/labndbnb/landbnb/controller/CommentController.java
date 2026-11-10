@@ -32,7 +32,7 @@ public class CommentController {
     public ResponseEntity<?> createComment(@RequestBody @Valid ReviewRequest reviewRequest,
             @AuthenticationPrincipal User currentUser) throws ExceptionAlert {
         InfoDto info =  commentService.createComment(reviewRequest, currentUser.getId());
-        return ResponseEntity.status(HttpStatus.OK).body(info);
+        return ResponseEntity.status(HttpStatus.CREATED).body(info);
     }
 
     @GetMapping("/accommodation/{AccommodationsId}")

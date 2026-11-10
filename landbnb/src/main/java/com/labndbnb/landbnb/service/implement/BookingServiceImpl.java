@@ -14,6 +14,7 @@ import com.labndbnb.landbnb.model.enums.UserRole;
 import com.labndbnb.landbnb.repository.AccommodationRepository;
 import com.labndbnb.landbnb.repository.BookingRepository;
 import com.labndbnb.landbnb.service.definition.BookingService;
+import com.labndbnb.landbnb.service.definition.MailService;
 import com.labndbnb.landbnb.service.definition.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
     private final AccommodationRepository accommodationRepository;
     private final UserService userService;
     private final BookingMapper bookingMapper;
-    private final MailServiceImpl mailServiceImpl;
+    private final MailService mailServiceImpl;
 
 
     private static BookingStatus parseStatus(String value) throws ExceptionAlert {

@@ -65,4 +65,10 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     )
     Long countUsersWhoFavoritedAccommodation(@Param("accommodationId") Long accommodationId);
 
+
+    @Query(
+            value = "SELECT a FROM User u JOIN u.favorites a WHERE u.id = :userId",
+            countQuery = "SELECT COUNT(a) FROM User u JOIN u.favorites a WHERE u.id = :userId"
+    )
+    Page<Accommodation> findFavoritesByUserId(@Param("userId") Long userId, Pageable pageable);
 }

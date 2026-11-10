@@ -51,7 +51,7 @@ class CommentControllerTest {
     }
 
     @Test
-    @DisplayName("Should create comment and return OK response")
+    @DisplayName("Should create comment and return 201 CREATED")
     void shouldCreateComment_AndReturnOkResponse() throws ExceptionAlert {
         // Given
         InfoDto expectedInfo = new InfoDto("Review created", "Review created");
@@ -62,7 +62,7 @@ class CommentControllerTest {
         ResponseEntity<?> response = commentController.createComment(testReviewRequest, currentUser);
 
         // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isEqualTo(expectedInfo);
         verify(commentService).createComment(testReviewRequest, 1L);
     }

@@ -33,11 +33,11 @@ public interface AccommodationService {
 
     InfoDto addFavorite(Long accommodationId, Long userId) throws ExceptionAlert;
 
-    InfoDto removeFavorite(Long accommodationId, Long userId);
+    InfoDto removeFavorite(Long accommodationId, Long userId) throws ExceptionAlert;
 
     Page<AccommodationDto> getFavoriteAccommodations(int page, Long userId) throws ExceptionAlert;
 
-    boolean isFavorite(Long accommodationId, Long userId);
+    boolean isFavorite(Long accommodationId, Long userId) throws ExceptionAlert;
 
     List<BookingDatesDto> getFutureConfirmedBookingDates(Long accommodationId);
 

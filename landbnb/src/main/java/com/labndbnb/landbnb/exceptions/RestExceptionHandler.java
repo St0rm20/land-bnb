@@ -49,6 +49,13 @@ public class RestExceptionHandler {
                 .body(new ResponseDTO<>(true, "No tienes permisos para acceder a este recurso"));
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ResponseDTO<String>> handleBadCredentials(
+            org.springframework.security.authentication.BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ResponseDTO<>(true, "Credenciales inválidas"));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ResponseDTO<String>> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

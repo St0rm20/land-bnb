@@ -273,10 +273,9 @@ class AccommodationControllerTest {
                     .thenThrow(new ExceptionAlert("Update failed"));
 
             // When
-            ResponseEntity<?> response = accommodationController.updateAccommodation(1L, accommodationDetailDto, request);
-
-            // Then
-            assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+            // Then: el controlador deja pasar la excepción al RestExceptionHandler
+            org.junit.jupiter.api.Assertions.assertThrows(ExceptionAlert.class,
+                    () -> accommodationController.updateAccommodation(1L, accommodationDetailDto, request));
         }
     }
 

@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -227,19 +229,15 @@ public class AccommodationServiceImpl implements AccommodationService {
         LocalDateTime start = startDate != null ? startDate.atStartOfDay() : null;
         LocalDateTime end = endDate != null ? endDate.atTime(23, 59, 59) : null;
 
-        // ✅ CONTAR TODAS LAS RESERVAS POR ESTADO
-        Long totalBookings = bookingRepository.countByAccommodationAndStatus(
-                id.longValue(), null, start, end);
-        Long confirmedBookings = bookingRepository.countByAccommodationAndStatus(
-                id.longValue(), BookingStatus.CONFIRMED, start, end);
-        Long cancelledBookings = bookingRepository.countByAccommodationAndStatus(
-                id.longValue(), BookingStatus.CANCELLED, start, end);
-        Long pendingBookings = bookingRepository.countByAccommodationAndStatus(
-                id.longValue(), BookingStatus.PENDING, start, end);
-
-        // ✅ AGREGAR CONTEO DE RESERVAS COMPLETADAS
-        Long completedBookings = bookingRepository.countByAccommodationAndStatus(
-                id.longValue(), BookingStatus.COMPLETED, start, end);
+        Map<BookingStatus, Long> byStatus = new EnumMap<>(BookingStatus.class);
+        for (Object[] row : bookingRepository.countByStatusForAccommodation(id.longValue(), start, end)) {
+            byStatus.put((BookingStatus) row[0], ((Number) row[1]).longValue());
+        }
+        Long confirmedBookings = byStatus.getOrDefault(BookingStatus.CONFIRMED, 0L);
+        Long cancelledBookings = byStatus.getOrDefault(BookingStatus.CANCELLED, 0L);
+        Long pendingBookings = byStatus.getOrDefault(BookingStatus.PENDING, 0L);
+        Long completedBookings = byStatus.getOrDefault(BookingStatus.COMPLETED, 0L);
+        Long totalBookings = byStatus.values().stream().mapToLong(Long::longValue).sum();
 
         // ✅ CALCULAR INGRESOS TOTALES
         BigDecimal totalRevenue = bookingRepository.sumRevenueByAccommodation(
@@ -295,9 +293,7 @@ BigDecimal averageBookingValue = totalSuccessfulBookings > 0
                 accommodation.getAverageRating() != null
                         ? accommodation.getAverageRating().doubleValue()
                         : 0.0,
-                accommodation.getReviews() != null
-                        ? accommodation.getReviews().size()
-                        : 0
+                accommodation.getNumberOfReviews() != null ? accommodation.getNumberOfReviews() : 0
         );
     }
 
@@ -322,27 +318,16 @@ BigDecimal averageBookingValue = totalSuccessfulBookings > 0
     }
 
     @Override
-    public InfoDto removeFavorite(Long accommodationId, Long userId) {
-        try {
-            User user = userService.getActiveUser(userId);
-            if (user == null) {
-                return new InfoDto("User not found", "The user could not be found from the request.");
-            }
-            Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                    .orElse(null);
-            if (accommodation == null) {
-                return new InfoDto("Accommodation not found", "The accommodation with ID " + accommodationId
-                        + " could not be found.");
-            }
-            if (!user.getFavorites().contains(accommodation)) {
-                return new InfoDto("Not in favorites", "The accommodation is not in the user's favorites.");
-            }
-            user.getFavorites().remove(accommodation);
-            userService.save(user);
-            return new InfoDto("Removed from favorites", "The accommodation has been removed from the user's favorites.");
-        } catch (ExceptionAlert e) {
-            return new InfoDto("Error", "An error occurred while trying to remove the accommodation from favorites: " + e.getMessage());
+    public InfoDto removeFavorite(Long accommodationId, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
+        Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                .orElseThrow(() -> new ExceptionAlert("Accommodation not found"));
+        if (!user.getFavorites().contains(accommodation)) {
+            return new InfoDto("Not in favorites", "The accommodation is not in the user's favorites.");
         }
+        user.getFavorites().remove(accommodation);
+        userService.save(user);
+        return new InfoDto("Removed from favorites", "The accommodation has been removed from the user's favorites.");
     }
 
     @Override
@@ -352,26 +337,16 @@ BigDecimal averageBookingValue = totalSuccessfulBookings > 0
         if (user == null) {
             throw new ExceptionAlert("User not found");
         }
-        Page<Accommodation> accommodations = userService.findFavoritesByUserId(user.getId(), pageable);
+        Page<Accommodation> accommodations = accommodationRepository.findFavoritesByUserId(user.getId(), pageable);
         return accommodations.map(accommodationDtoMapper::toDto);
     }
 
     @Override
-    public boolean isFavorite(Long accommodationId, Long userId) {
-        try {
-            User user = userService.getActiveUser(userId);
-            if (user == null) {
-                return false;
-            }
-            Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                    .orElse(null);
-            if (accommodation == null) {
-                return false;
-            }
-            return user.getFavorites().contains(accommodation);
-        } catch (ExceptionAlert e) {
-            return false;
-        }
+    public boolean isFavorite(Long accommodationId, Long userId) throws ExceptionAlert {
+        User user = userService.getActiveUser(userId);
+        return accommodationRepository.findById(accommodationId)
+                .map(a -> user.getFavorites().contains(a))
+                .orElse(false);
     }
 
     @Override
